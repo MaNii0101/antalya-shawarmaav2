@@ -1272,7 +1272,7 @@ function openFoodModal(foodId) {
     }
     
     updateTotalPrice();
-    document.getElementById('foodModal').classList.add('active');
+    openModal('foodModal');
 }
 
 function toggleCustomization(index) {
@@ -1445,7 +1445,7 @@ function showFavorites() {
         `;
     }
     
-    modal.classList.add('active');
+    openModal('favoritesModal');
 }
 
 // ========================================
@@ -1498,7 +1498,7 @@ function showCart() {
         if (cartTotal) cartTotal.textContent = formatPrice(total);
     }
     
-    modal.classList.add('active');
+    openModal('cartModal');
 }
 
 function updateCartItem(index, delta) {
@@ -1551,8 +1551,7 @@ function showLocationConfirmation() {
     if (modal && addressDisplay) {
         const currentAddress = selectedLocation?.address || currentUser.address || 'No address set';
         addressDisplay.textContent = currentAddress;
-        modal.style.display = 'flex';
-        modal.classList.add('active');
+        openModal('locationConfirmModal');
     }
 }
 
@@ -1626,11 +1625,7 @@ function openCheckoutModal() {
         paymentTotal.textContent = formatPrice(total);
     }
     
-    const checkoutModal = document.getElementById('checkoutModal');
-    if (checkoutModal) {
-        checkoutModal.style.display = 'flex';
-        checkoutModal.classList.add('active');
-    }
+    openModal('checkoutModal');
 }
 
 function handlePayment(event) {
@@ -1779,7 +1774,7 @@ function showNotifications() {
         `).join('');
     }
     
-    modal.classList.add('active');
+    openModal('notificationsModal');
 }
 
 // ========================================
@@ -1890,7 +1885,7 @@ function showAccount() {
         </button>
     `;
     
-    modal.classList.add('active');
+    openModal('accountModal');
 }
 
 // ========================================
@@ -1923,8 +1918,7 @@ function reorderFromHistory(orderId) {
         totalDisplay.querySelector('span:last-child').textContent = formatPrice(order.total);
         
         closeModal('accountModal');
-        modal.style.display = 'flex';
-        modal.classList.add('active');
+        openModal('reorderModal');
     }
 }
 
@@ -1978,8 +1972,7 @@ function openEditProfile() {
         preview.innerHTML = '👤';
     }
     
-    modal.style.display = 'flex';
-    modal.classList.add('active');
+    openModal('editProfileModal');
 }
 
 function previewProfilePic(input) {
@@ -2046,8 +2039,7 @@ function openChangeEmail() {
         document.getElementById('newEmail').value = '';
         document.getElementById('confirmNewEmail').value = '';
         
-        modal.style.display = 'flex';
-        modal.classList.add('active');
+        openModal('changeEmailModal');
     }
 }
 
@@ -2125,8 +2117,7 @@ function openChangePassword() {
         document.getElementById('newPassword').value = '';
         document.getElementById('confirmNewPassword').value = '';
         
-        modal.style.display = 'flex';
-        modal.classList.add('active');
+        openModal('changePasswordModal');
     }
 }
 
@@ -2396,11 +2387,7 @@ function loginWithApple() {
 // RESTAURANT DASHBOARD (FOR EMPLOYERS)
 // ========================================
 function showRestaurantLogin() {
-    const modal = document.getElementById('restaurantLoginModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        modal.classList.add('active');
-    }
+    openModal('restaurantLoginModal');
 }
 
 function handleRestaurantLogin(event) {
@@ -3023,11 +3010,7 @@ function loadBankDetails() {
 // OWNER ACCESS (FULL SYSTEM)
 // ========================================
 function showOwnerLogin() {
-    const modal = document.getElementById('ownerModal');
-    if (modal) {
-        modal.classList.add('active');
-        modal.style.display = 'flex';
-    }
+    openModal('ownerModal');
 }
 
 function handleOwnerLogin() {
@@ -3350,9 +3333,12 @@ function logoutDriver() {
         loginBtn.onclick = showLogin;
     }
     
-    closeModal('driverDashboardModal');
-    
-    alert('✅ Logged out successfully');
+    // Close modal if open
+    const modal = document.getElementById('driverDashboardModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    }
 }
 
 function generateDriverSecretCode() {
@@ -3368,8 +3354,7 @@ function generateDriverSecretCode() {
 // LOCATION FUNCTIONS
 // ========================================
 function pickLocation() {
-    const modal = document.getElementById('mapModal');
-    if (modal) modal.classList.add('active');
+    openModal('mapModal');
     initMap();
 }
 
@@ -3533,72 +3518,49 @@ function confirmLocation() {
 // MODAL & UTILITY FUNCTIONS
 // ========================================
 
-// Track which modals are open
-let openModals = [];
-
 function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    
-    // Remove from open modals list
-    openModals = openModals.filter(id => id !== modalId);
-    
-    // Hide modal
-    modal.classList.remove('active');
-    modal.style.display = 'none';
-    
-    // Reset specific modal states
-    if (modalId === 'loginModal') {
-        const authForm = document.getElementById('authFormSection');
-        const verifySection = document.getElementById('emailVerificationSection');
-        if (authForm) authForm.style.display = 'block';
-        if (verifySection) verifySection.style.display = 'none';
-    }
-    
-    if (modalId === 'driverLoginModal') {
-        showDriverCodeLogin();
-    }
-    
-    // Re-enable body scrolling if no modals open
-    if (openModals.length === 0) {
+    try {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        
+        // Hide modal - both class and inline style for consistency
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        
+        // Reset specific modal states
+        if (modalId === 'loginModal') {
+            const authForm = document.getElementById('authFormSection');
+            const verifySection = document.getElementById('emailVerificationSection');
+            if (authForm) authForm.style.display = 'block';
+            if (verifySection) verifySection.style.display = 'none';
+        }
+        
+        if (modalId === 'driverLoginModal') {
+            const codeLogin = document.getElementById('driverCodeLogin');
+            const emailLogin = document.getElementById('driverEmailLogin');
+            if (codeLogin) codeLogin.style.display = 'block';
+            if (emailLogin) emailLogin.style.display = 'none';
+        }
+        
+        // Re-enable body scrolling
         document.body.style.overflow = '';
+    } catch (e) {
+        console.error('Error closing modal:', e);
     }
 }
 
 function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    
-    // Add to open modals list if not already there
-    if (!openModals.includes(modalId)) {
-        openModals.push(modalId);
+    try {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        
+        // Show modal - both class and inline style for consistency  
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+    } catch (e) {
+        console.error('Error opening modal:', e);
     }
-    
-    // Show modal
-    modal.style.display = 'flex';
-    modal.classList.add('active');
-    
-    // Disable body scrolling
-    document.body.style.overflow = 'hidden';
 }
-
-// Close modal when clicking outside
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal') && e.target.classList.contains('active')) {
-        const modalId = e.target.id;
-        if (modalId) {
-            closeModal(modalId);
-        }
-    }
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && openModals.length > 0) {
-        const lastModal = openModals[openModals.length - 1];
-        closeModal(lastModal);
-    }
-});
 
 function scrollToMenu() {
     document.querySelector('.main-content')?.scrollIntoView({ behavior: 'smooth' });
