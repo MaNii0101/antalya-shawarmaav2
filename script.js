@@ -1744,11 +1744,24 @@ function showAccount() {
     const userOrders = orderHistory.filter(o => o.userId === currentUser.email);
     const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
     
+    // Profile picture display
+    const profilePic = currentUser.profilePicture 
+        ? `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;">`
+        : '👤';
+    
     content.innerHTML = `
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">👤</div>
+            <h2 style="color: #ff6b6b; margin: 0;">My Account</h2>
+        </div>
+        
         <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f); padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 1.5rem;">
-            <div style="font-size: 4rem; margin-bottom: 0.5rem;">👤</div>
+            <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; overflow: hidden; border: 4px solid rgba(255,255,255,0.3);">
+                ${profilePic}
+            </div>
             <h3 style="margin: 0; color: white;">${currentUser.name}</h3>
             <p style="margin: 0.5rem 0 0; color: rgba(255,255,255,0.8);">${currentUser.email}</p>
+            ${currentUser.age ? `<p style="margin: 0.3rem 0 0; color: rgba(255,255,255,0.7); font-size: 0.9rem;">Age: ${currentUser.age}</p>` : ''}
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
@@ -1762,18 +1775,37 @@ function showAccount() {
             </div>
         </div>
         
-        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <!-- User Details -->
+        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                 <span style="color: rgba(255,255,255,0.6);">📞 Phone</span>
                 <span>${currentUser.phone || 'Not set'}</span>
             </div>
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                 <span style="color: rgba(255,255,255,0.6);">📍 Address</span>
                 <span>${currentUser.address || 'Not set'}</span>
             </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: rgba(255,255,255,0.6);">📅 Member Since</span>
+                <span>${currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : 'N/A'}</span>
+            </div>
         </div>
         
-        <h4 style="margin-bottom: 1rem;">Recent Orders</h4>
+        <!-- Edit Buttons -->
+        <div style="display: grid; gap: 0.8rem; margin-bottom: 1.5rem;">
+            <button onclick="openEditProfile()" style="background: linear-gradient(45deg, #3b82f6, #2563eb); color: white; border: none; padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                ✏️ Edit Profile
+            </button>
+            <button onclick="openChangeEmail()" style="background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                📧 Change Email
+            </button>
+            <button onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 1rem; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                🔒 Change Password
+            </button>
+        </div>
+        
+        <!-- Recent Orders -->
+        <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">📦 Recent Orders</h4>
         ${userOrders.length === 0 ? '<p style="color: rgba(255,255,255,0.5); text-align: center;">No orders yet</p>' : 
             userOrders.slice(0, 5).map(o => `
                 <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 0.8rem;">
@@ -1793,6 +1825,231 @@ function showAccount() {
     `;
     
     modal.classList.add('active');
+}
+
+// ========================================
+// PROFILE EDITING FUNCTIONS
+// ========================================
+function openEditProfile() {
+    closeModal('accountModal');
+    
+    const modal = document.getElementById('editProfileModal');
+    if (!modal) return;
+    
+    // Pre-fill form with current data
+    document.getElementById('editName').value = currentUser.name || '';
+    document.getElementById('editAge').value = currentUser.age || '';
+    document.getElementById('editPhone').value = currentUser.phone || '';
+    document.getElementById('editAddress').value = currentUser.address || '';
+    
+    // Show profile picture
+    const preview = document.getElementById('profilePicPreview');
+    if (currentUser.profilePicture) {
+        preview.innerHTML = `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;">`;
+    } else {
+        preview.innerHTML = '👤';
+    }
+    
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+}
+
+function previewProfilePic(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('profilePicPreview');
+            preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            // Store temporarily
+            preview.dataset.newPic = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function saveProfileChanges(event) {
+    event.preventDefault();
+    
+    const name = document.getElementById('editName').value.trim();
+    const age = document.getElementById('editAge').value;
+    const phone = document.getElementById('editPhone').value.trim();
+    const address = document.getElementById('editAddress').value.trim();
+    const preview = document.getElementById('profilePicPreview');
+    const newPic = preview.dataset.newPic;
+    
+    if (!name) {
+        alert('❌ Name is required');
+        return;
+    }
+    
+    // Update current user
+    currentUser.name = name;
+    currentUser.age = age ? parseInt(age) : null;
+    currentUser.phone = phone;
+    currentUser.address = address;
+    
+    if (newPic) {
+        currentUser.profilePicture = newPic;
+    }
+    
+    // Update in database
+    const userIndex = userDatabase.findIndex(u => u.email === currentUser.email);
+    if (userIndex !== -1) {
+        userDatabase[userIndex] = { ...userDatabase[userIndex], ...currentUser };
+    }
+    
+    // Save
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    saveData();
+    
+    closeModal('editProfileModal');
+    showAccount();
+    
+    alert('✅ Profile updated successfully!');
+}
+
+function openChangeEmail() {
+    closeModal('accountModal');
+    
+    const modal = document.getElementById('changeEmailModal');
+    if (modal) {
+        // Clear form
+        document.getElementById('emailCurrentPassword').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('confirmNewEmail').value = '';
+        
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+    }
+}
+
+function verifyAndChangeEmail(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('emailCurrentPassword').value;
+    const newEmail = document.getElementById('newEmail').value.trim();
+    const confirmEmail = document.getElementById('confirmNewEmail').value.trim();
+    
+    // Verify current password
+    if (currentPassword !== currentUser.password) {
+        alert('❌ Current password is incorrect');
+        return;
+    }
+    
+    // Check email match
+    if (newEmail !== confirmEmail) {
+        alert('❌ Emails do not match');
+        return;
+    }
+    
+    // Check if email already exists
+    if (userDatabase.some(u => u.email === newEmail && u.email !== currentUser.email)) {
+        alert('❌ This email is already registered');
+        return;
+    }
+    
+    // Update email
+    const oldEmail = currentUser.email;
+    
+    // Update in database
+    const userIndex = userDatabase.findIndex(u => u.email === oldEmail);
+    if (userIndex !== -1) {
+        userDatabase[userIndex].email = newEmail;
+    }
+    
+    // Update current user
+    currentUser.email = newEmail;
+    
+    // Update related data (favorites, notifications, cart)
+    if (userFavorites[oldEmail]) {
+        userFavorites[newEmail] = userFavorites[oldEmail];
+        delete userFavorites[oldEmail];
+    }
+    
+    if (userNotifications[oldEmail]) {
+        userNotifications[newEmail] = userNotifications[oldEmail];
+        delete userNotifications[oldEmail];
+    }
+    
+    const oldCart = localStorage.getItem('cart_' + oldEmail);
+    if (oldCart) {
+        localStorage.setItem('cart_' + newEmail, oldCart);
+        localStorage.removeItem('cart_' + oldEmail);
+    }
+    
+    // Save all changes
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    saveData();
+    
+    closeModal('changeEmailModal');
+    showAccount();
+    
+    alert('✅ Email changed successfully to: ' + newEmail);
+}
+
+function openChangePassword() {
+    closeModal('accountModal');
+    
+    const modal = document.getElementById('changePasswordModal');
+    if (modal) {
+        // Clear form
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmNewPassword').value = '';
+        
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+    }
+}
+
+function verifyAndChangePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmNewPassword').value;
+    
+    // Verify current password
+    if (currentPassword !== currentUser.password) {
+        alert('❌ Current password is incorrect');
+        return;
+    }
+    
+    // Check password length
+    if (newPassword.length < 6) {
+        alert('❌ New password must be at least 6 characters');
+        return;
+    }
+    
+    // Check password match
+    if (newPassword !== confirmPassword) {
+        alert('❌ New passwords do not match');
+        return;
+    }
+    
+    // Check if new password is same as old
+    if (newPassword === currentPassword) {
+        alert('❌ New password must be different from current password');
+        return;
+    }
+    
+    // Update password
+    currentUser.password = newPassword;
+    
+    // Update in database
+    const userIndex = userDatabase.findIndex(u => u.email === currentUser.email);
+    if (userIndex !== -1) {
+        userDatabase[userIndex].password = newPassword;
+    }
+    
+    // Save
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    saveData();
+    
+    closeModal('changePasswordModal');
+    showAccount();
+    
+    alert('✅ Password changed successfully!');
 }
 
 function logout() {
@@ -2053,24 +2310,31 @@ function showRestaurantDashboard() {
     const modal = document.getElementById('restaurantDashboard');
     if (!modal) return;
     
-    // Calculate stats
-    const todayOrders = pendingOrders.filter(o => {
-        const orderDate = new Date(o.createdAt).toDateString();
-        const today = new Date().toDateString();
-        return orderDate === today;
+    // Calculate MONTHLY stats (current month only)
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Filter orders from current month
+    const monthlyOrders = [...pendingOrders, ...orderHistory].filter(o => {
+        const orderDate = new Date(o.createdAt);
+        return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear;
     });
     
-    const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total, 0);
-    const totalRevenue = orderHistory.reduce((sum, o) => sum + o.total, 0);
+    const monthlyRevenue = monthlyOrders.reduce((sum, o) => sum + o.total, 0);
     const pendingCount = pendingOrders.filter(o => o.status === 'pending').length;
-    const completedCount = orderHistory.filter(o => o.status === 'completed').length;
+    const completedCount = monthlyOrders.filter(o => o.status === 'completed').length;
     
-    // Update stats
-    document.getElementById('todayRevenueStat').textContent = formatPrice(todayRevenue);
-    document.getElementById('totalRevenueStat').textContent = formatPrice(totalRevenue);
-    document.getElementById('pendingOrdersStat').textContent = pendingCount;
-    document.getElementById('completedOrdersStat').textContent = completedCount;
-    document.getElementById('todayOrdersStat').textContent = todayOrders.length;
+    // Update stats - Monthly only (no total revenue for staff)
+    const monthlyRevenueEl = document.getElementById('monthlyRevenueStat');
+    const monthlyOrdersEl = document.getElementById('monthlyOrdersStat');
+    const pendingOrdersEl = document.getElementById('pendingOrdersStat');
+    const completedOrdersEl = document.getElementById('completedOrdersStat');
+    
+    if (monthlyRevenueEl) monthlyRevenueEl.textContent = formatPrice(monthlyRevenue);
+    if (monthlyOrdersEl) monthlyOrdersEl.textContent = monthlyOrders.length;
+    if (pendingOrdersEl) pendingOrdersEl.textContent = pendingCount;
+    if (completedOrdersEl) completedOrdersEl.textContent = completedCount;
     
     // Render pending orders
     const ordersContainer = document.getElementById('restaurantPendingOrders');
@@ -2083,19 +2347,34 @@ function showRestaurantDashboard() {
                 </div>
             `;
         } else {
-            ordersContainer.innerHTML = pendingOrders.map(order => `
+            ordersContainer.innerHTML = pendingOrders.map(order => {
+                // Get user profile picture
+                const user = userDatabase.find(u => u.email === order.userId);
+                const profilePic = user && user.profilePicture 
+                    ? `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;">` 
+                    : '👤';
+                
+                return `
                 <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid ${order.status === 'pending' ? '#f59e0b' : order.status === 'accepted' ? '#10b981' : '#3b82f6'};">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <span style="font-weight: 700; font-size: 1.1rem;">#${order.id}</span>
                         <span style="background: ${order.status === 'pending' ? 'rgba(245,158,11,0.2)' : 'rgba(16,185,129,0.2)'}; color: ${order.status === 'pending' ? '#f59e0b' : '#10b981'}; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${order.status.toUpperCase()}</span>
                     </div>
                     
-                    <div style="margin-bottom: 1rem; font-size: 0.95rem;">
-                        <div style="margin-bottom: 0.5rem;">👤 <strong>${order.userName}</strong></div>
-                        <div style="margin-bottom: 0.5rem;">📞 ${order.userPhone || 'N/A'}</div>
-                        <div style="margin-bottom: 0.5rem;">📍 ${order.address || 'N/A'}</div>
-                        <div style="margin-bottom: 0.5rem;">🕐 ${new Date(order.createdAt).toLocaleString()}</div>
+                    <!-- Customer Info with Profile Picture -->
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: center;">
+                        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; overflow: hidden; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.2);">
+                            ${profilePic}
+                        </div>
+                        <div style="flex: 1; font-size: 0.95rem;">
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem;">${order.userName}</div>
+                            <div style="color: rgba(255,255,255,0.7);">📞 ${order.userPhone || 'N/A'}</div>
+                            <div style="color: rgba(255,255,255,0.7);">📍 ${order.address || 'N/A'}</div>
+                            ${user && user.age ? `<div style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Age: ${user.age}</div>` : ''}
+                        </div>
                     </div>
+                    
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1rem;">🕐 ${new Date(order.createdAt).toLocaleString()}</div>
                     
                     <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
                         <div style="font-weight: 600; margin-bottom: 0.5rem;">Items:</div>
@@ -2121,7 +2400,7 @@ function showRestaurantDashboard() {
                         <button onclick="assignDriver('${order.id}')" style="background: linear-gradient(45deg, #3b82f6, #2563eb); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%;">🚗 Assign Driver</button>
                     ` : ''}
                 </div>
-            `).join('');
+            `}).join('');
         }
     }
     
@@ -2252,6 +2531,157 @@ function completeOrder(orderId) {
 function closeRestaurantDashboard() {
     isRestaurantLoggedIn = false;
     document.getElementById('restaurantDashboard').style.display = 'none';
+}
+
+// ========================================
+// DRIVER MANAGEMENT (OWNER ONLY)
+// ========================================
+function showDriverManagementModal() {
+    if (!isOwnerLoggedIn) {
+        alert('❌ Owner access required!');
+        return;
+    }
+    
+    const modal = document.getElementById('driverManagementModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        renderDriverList();
+    }
+}
+
+function renderDriverList() {
+    const container = document.getElementById('driverListContainer');
+    if (!container) return;
+    
+    const allDrivers = window.driverSystem.getAll();
+    
+    if (allDrivers.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                <div style="font-size: 3rem;">🚗</div>
+                <p>No drivers registered yet</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = allDrivers.map(driver => `
+        <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border-left: 4px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                    <div style="font-weight: 700; font-size: 1.1rem; color: white;">${driver.name}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">Code: ${driver.secretCode}</div>
+                </div>
+                <button onclick="deleteDriver('${driver.id}')" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">🗑️ Remove</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                <div>📧 ${driver.email}</div>
+                <div>📞 ${driver.phone}</div>
+                <div>📦 ${driver.deliveries || 0} deliveries</div>
+                <div>⭐ ${driver.rating || 5.0} rating</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function addNewDriver() {
+    const name = document.getElementById('newDriverName').value.trim();
+    const email = document.getElementById('newDriverEmail').value.trim();
+    const phone = document.getElementById('newDriverPhone').value.trim();
+    
+    if (!name || !email || !phone) {
+        alert('❌ Please fill in all driver details');
+        return;
+    }
+    
+    // Generate unique driver code
+    const driverCount = window.driverSystem.getAll().length + 1;
+    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+    const secretCode = `DRV-${String(driverCount).padStart(3, '0')}-${initials}`;
+    
+    const newDriver = {
+        id: 'driver-' + Date.now(),
+        name: name,
+        email: email,
+        phone: phone,
+        secretCode: secretCode,
+        deliveries: 0,
+        rating: 5.0,
+        createdAt: new Date().toISOString()
+    };
+    
+    window.driverSystem.add(newDriver);
+    
+    // Clear form
+    document.getElementById('newDriverName').value = '';
+    document.getElementById('newDriverEmail').value = '';
+    document.getElementById('newDriverPhone').value = '';
+    
+    // Update UI
+    renderDriverList();
+    updateOwnerStats();
+    
+    alert(`✅ Driver ${name} added!\nSecret Code: ${secretCode}`);
+}
+
+function deleteDriver(driverId) {
+    if (!confirm('Are you sure you want to remove this driver?')) return;
+    
+    window.driverSystem.delete(driverId);
+    renderDriverList();
+    updateOwnerStats();
+    
+    alert('✅ Driver removed');
+}
+
+// ========================================
+// BANK SETTINGS (OWNER ONLY)
+// ========================================
+function showBankSettingsModal() {
+    if (!isOwnerLoggedIn) {
+        alert('❌ Owner access required!');
+        return;
+    }
+    
+    const modal = document.getElementById('bankSettingsModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        
+        // Load existing bank details
+        document.getElementById('bankName').value = ownerBankDetails.bankName || '';
+        document.getElementById('accountHolder').value = ownerBankDetails.accountHolder || '';
+        document.getElementById('accountNumber').value = ownerBankDetails.accountNumber || '';
+        document.getElementById('sortCode').value = ownerBankDetails.sortCode || '';
+        document.getElementById('iban').value = ownerBankDetails.iban || '';
+    }
+}
+
+function saveBankSettings(event) {
+    event.preventDefault();
+    
+    ownerBankDetails = {
+        bankName: document.getElementById('bankName').value,
+        accountHolder: document.getElementById('accountHolder').value,
+        accountNumber: document.getElementById('accountNumber').value,
+        sortCode: document.getElementById('sortCode').value,
+        iban: document.getElementById('iban').value || ''
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('ownerBankDetails', JSON.stringify(ownerBankDetails));
+    
+    closeModal('bankSettingsModal');
+    alert('✅ Bank details saved successfully!');
+}
+
+// Load bank details on init
+function loadBankDetails() {
+    const saved = localStorage.getItem('ownerBankDetails');
+    if (saved) {
+        ownerBankDetails = JSON.parse(saved);
+    }
 }
 
 // ========================================
@@ -2611,6 +3041,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load data
     loadData();
+    loadBankDetails();
     
     // Render categories
     renderCategories();
@@ -2695,5 +3126,17 @@ window.rejectOrder = rejectOrder;
 window.assignDriver = assignDriver;
 window.completeOrder = completeOrder;
 window.closeRestaurantDashboard = closeRestaurantDashboard;
+window.showDriverManagementModal = showDriverManagementModal;
+window.addNewDriver = addNewDriver;
+window.deleteDriver = deleteDriver;
+window.showBankSettingsModal = showBankSettingsModal;
+window.saveBankSettings = saveBankSettings;
 window.logout = logout;
 window.logoutDriver = logoutDriver;
+window.openEditProfile = openEditProfile;
+window.previewProfilePic = previewProfilePic;
+window.saveProfileChanges = saveProfileChanges;
+window.openChangeEmail = openChangeEmail;
+window.verifyAndChangeEmail = verifyAndChangeEmail;
+window.openChangePassword = openChangePassword;
+window.verifyAndChangePassword = verifyAndChangePassword;
