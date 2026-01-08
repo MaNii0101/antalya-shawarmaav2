@@ -107,764 +107,164 @@ const RESTAURANT_CREDENTIALS = {
 };
 
 // ========================================
-// COMPLETE ANTALYA SHAWARMA MENU DATA
+// REAL ANTALYA SHAWARMA MENU DATA
+// From: Antalya Shawarma Hyde - Uber Eats
 // ========================================
-// Using let so owner can modify menu
 let menuData = {
-    // SHAWARMA WRAPS & SANDWICHES
-    shawarma: [
-        { 
-            id: 101, 
-            name: 'Chicken Shawarma Wrap', 
-            price: 6.99, 
-            icon: '🌯',
-            image: '', // Custom image URL (empty = use icon)
-            available: true,
-            desc: 'Tender marinated chicken with garlic sauce, salad & pickles in fresh naan',
-            options: [
-                {name: 'Extra Meat', price: 2.00},
-                {name: 'Extra Garlic Sauce', price: 0.50},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Add Hummus', price: 1.00},
-                {name: 'Make it Spicy', price: 0},
-                {name: 'Extra Pickles', price: 0.50}
-            ]
-        },
-        { 
-            id: 102, 
-            name: 'Lamb Shawarma Wrap', 
-            price: 7.99, 
-            icon: '🌯',
-            image: '',
-            available: true,
-            desc: 'Juicy lamb shawarma with tahini sauce, fresh salad in naan bread',
-            options: [
-                {name: 'Extra Meat', price: 2.50},
-                {name: 'Extra Tahini', price: 0.50},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Add Hummus', price: 1.00},
-                {name: 'Make it Spicy', price: 0}
-            ]
-        },
-        { 
-            id: 103, 
-            name: 'Mixed Shawarma Wrap', 
-            price: 8.99, 
-            icon: '🌯',
-            image: '',
-            available: true,
-            desc: 'Best of both - chicken & lamb shawarma combo with all sauces',
-            options: [
-                {name: 'Extra Meat', price: 3.00},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Extra Sauce', price: 0.50},
-                {name: 'Add Hummus', price: 1.00}
-            ]
-        },
-        { 
-            id: 104, 
-            name: 'Chicken Shawarma Sandwich', 
-            price: 5.99, 
-            icon: '🥪', 
-            desc: 'Chicken shawarma in Turkish bread with salad and sauce',
-            options: [
-                {name: 'Extra Meat', price: 2.00},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Extra Sauce', price: 0.50}
-            ]
-        },
-        { 
-            id: 105, 
-            name: 'Lamb Shawarma Sandwich', 
-            price: 6.99, 
-            icon: '🥪', 
-            desc: 'Lamb shawarma in Turkish bread with salad and tahini',
-            options: [
-                {name: 'Extra Meat', price: 2.50},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Extra Tahini', price: 0.50}
-            ]
-        },
-        { 
-            id: 106, 
-            name: 'Falafel Wrap', 
-            price: 5.99, 
-            icon: '🌯', 
-            desc: 'Crispy falafel with hummus, salad and tahini in fresh naan',
-            options: [
-                {name: 'Extra Falafel (3pc)', price: 1.50},
-                {name: 'Extra Hummus', price: 1.00},
-                {name: 'Add Halloumi', price: 2.00}
-            ]
-        }
+    // GRILL WRAPS
+    grill_wraps: [
+        { id: 101, name: 'Mix Grill Wrap', price: 9.00, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce', popular: true },
+        { id: 102, name: 'Chicken Grill Wrap', price: 7.50, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 103, name: 'Lamb Grill Wrap', price: 9.50, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce & naan. LAMB BACK STRAP FILLET' }
     ],
     
-    // SHAWARMA PORTIONS - CHIPS
-    portions_chips: [
-        { 
-            id: 201, 
-            name: 'Chicken Shawarma & Chips', 
-            price: 8.99, 
-            icon: '🍟', 
-            desc: 'Savoury chicken shawarma served with crispy chips, salad and sauce',
-            options: [
-                {name: 'Extra Meat', price: 2.50},
-                {name: 'Large Chips', price: 1.50},
-                {name: 'Extra Sauce', price: 0.50},
-                {name: 'Add Cheese on Chips', price: 1.00}
-            ]
-        },
-        { 
-            id: 202, 
-            name: 'Lamb Shawarma & Chips', 
-            price: 9.99, 
-            icon: '🍟', 
-            desc: 'Tender lamb shawarma served with crispy chips, salad and sauce',
-            options: [
-                {name: 'Extra Meat', price: 3.00},
-                {name: 'Large Chips', price: 1.50},
-                {name: 'Extra Sauce', price: 0.50},
-                {name: 'Add Cheese on Chips', price: 1.00}
-            ]
-        },
-        { 
-            id: 203, 
-            name: 'Mixed Shawarma & Chips', 
-            price: 10.99, 
-            icon: '🍟', 
-            desc: 'Chicken & lamb shawarma combo with chips, salad and sauce',
-            options: [
-                {name: 'Extra Meat', price: 3.50},
-                {name: 'Large Chips', price: 1.50},
-                {name: 'Extra Sauce', price: 0.50}
-            ]
-        }
+    // GRILL PORTIONS (Boneless pieces)
+    grill_portions: [
+        { id: 201, name: 'Grill Mix Chicken & Lamb Portion', price: 11.90, icon: '🍖', image: '', available: true, desc: 'Served with salad, sauce & naan', popular: true },
+        { id: 202, name: 'Grill Chicken Portion', price: 10.00, icon: '🍖', image: '', available: true, desc: 'Served with salad, sauce & naan' },
+        { id: 203, name: 'Grill Lamb Portion', price: 12.50, icon: '🍖', image: '', available: true, desc: 'Served with salad, sauce & naan. LAMB BACK STRAP FILLET' }
     ],
     
-    // SHAWARMA PORTIONS - RICE
-    portions_rice: [
-        { 
-            id: 301, 
-            name: 'Chicken Shawarma & Rice', 
-            price: 9.99, 
-            icon: '🍚', 
-            desc: 'Juicy chicken shawarma with basmati rice, soup, naan, and salad',
-            options: [
-                {name: 'Extra Meat', price: 2.50},
-                {name: 'Biryani Rice', price: 1.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 302, 
-            name: 'Lamb Shawarma & Rice', 
-            price: 10.99, 
-            icon: '🍚', 
-            desc: 'Tender lamb shawarma with basmati rice, soup, naan, and salad',
-            options: [
-                {name: 'Extra Meat', price: 3.00},
-                {name: 'Biryani Rice', price: 1.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 303, 
-            name: 'Mixed Shawarma & Rice', 
-            price: 11.99, 
-            icon: '🍚', 
-            desc: 'Chicken & lamb shawarma with rice or biryani, soup, naan and salad',
-            options: [
-                {name: 'Extra Meat', price: 3.50},
-                {name: 'Biryani Rice', price: 1.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        }
+    // SHAWARMA PORTIONS WITH CHIPS
+    shawarma_chips: [
+        { id: 301, name: 'Mix Shawarma Portions Chips', price: 8.90, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips' },
+        { id: 302, name: 'Chicken Shawarma Portions Chips', price: 8.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', popular: true },
+        { id: 303, name: 'Lamb Shawarma Portions Chips', price: 9.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips' }
     ],
     
-    // GRILL PORTIONS
-    grill: [
-        { 
-            id: 401, 
-            name: 'Grill Mix Chicken & Lamb', 
-            price: 14.99, 
-            icon: '🍖', 
-            desc: 'Boneless chicken & lamb pieces, served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Meat', price: 4.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 402, 
-            name: 'Lamb Back Strap Fillet', 
-            price: 16.99, 
-            icon: '🥩', 
-            desc: 'Premium lamb fillet served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Fillet', price: 5.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 403, 
-            name: 'Chicken Tikka Portion', 
-            price: 11.99, 
-            icon: '🍗', 
-            desc: 'Marinated chicken tikka served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Tikka', price: 3.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 404, 
-            name: 'Lamb Tikka Portion', 
-            price: 13.99, 
-            icon: '🍖', 
-            desc: 'Tender lamb tikka served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Tikka', price: 4.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 405, 
-            name: 'Adana Kebab', 
-            price: 12.99, 
-            icon: '🥙', 
-            desc: 'Spicy minced lamb kebab served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Kebab', price: 4.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Spicy', price: 0}
-            ]
-        },
-        { 
-            id: 406, 
-            name: 'Kofta Kebab', 
-            price: 11.99, 
-            icon: '🥙', 
-            desc: 'Minced lamb kofta served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Kofta', price: 3.50},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Extra Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 407, 
-            name: 'Chicken Wings (5pc)', 
-            price: 6.99, 
-            icon: '🍗', 
-            desc: 'Crispy marinated chicken wings served with sauce',
-            options: [
-                {name: 'Extra Wings (5pc)', price: 5.00},
-                {name: 'Extra Spicy', price: 0},
-                {name: 'Add Chips', price: 2.50}
-            ]
-        }
+    // SHAWARMA PORTIONS WITH RICE
+    shawarma_rice: [
+        { id: 401, name: 'Chicken Shawarma Portions Rice', price: 8.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', popular: true },
+        { id: 402, name: 'Mix Shawarma Portions Rice', price: 8.90, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice' },
+        { id: 403, name: 'Lamb Shawarma Portions Rice', price: 9.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice' }
     ],
     
-    // FAMILY PLATTERS
-    platters: [
-        { 
-            id: 501, 
-            name: 'Antalya Platter 1', 
-            price: 24.99, 
-            icon: '🍽️', 
-            desc: 'Adana kebab, lamb tikka, chicken tikka, 5 wings, large chips. With salad, hummus, rice, bulgur & 3 naans',
-            options: [
-                {name: 'Extra Naans (3pc)', price: 2.00},
-                {name: 'Extra Hummus', price: 1.50},
-                {name: '2 Extra Drinks', price: 3.00}
-            ]
-        },
-        { 
-            id: 502, 
-            name: 'Antalya Platter 2', 
-            price: 34.99, 
-            icon: '🍽️', 
-            desc: 'Adana, kofta, lamb tikka, chicken tikka, 5 wings, shawarma, large chips. With salad, hummus, rice & 3 naans & 2 drinks',
-            options: [
-                {name: 'Extra Naans (3pc)', price: 2.00},
-                {name: 'Extra Hummus', price: 1.50},
-                {name: 'Upgrade Drinks', price: 2.00}
-            ]
-        },
-        { 
-            id: 503, 
-            name: 'Family Mix Grill', 
-            price: 44.99, 
-            icon: '🍽️', 
-            desc: 'Lamb shish, chicken shish, lamb kofta, wings, ribs, lamb chops, shawarma. With salads and 4 naans',
-            options: [
-                {name: 'Extra Portion', price: 8.00},
-                {name: 'Extra Naans (4pc)', price: 3.00}
-            ]
-        }
+    // SHAWARMA PORTIONS WITH NAAN
+    shawarma_naan: [
+        { id: 501, name: 'Chicken Shawarma Portions Naan', price: 8.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', popular: true },
+        { id: 502, name: 'Mix Shawarma Portions Naan', price: 8.80, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 503, name: 'Lamb Shawarma Portions Naan', price: 9.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce' }
     ],
     
-    // RICE & BIRYANI
-    rice: [
-        { 
-            id: 601, 
-            name: 'Lamb Biryani', 
-            price: 12.99, 
-            icon: '🍚', 
-            desc: 'Spring juicy pure lamb served with rice or biryani, soup, naan, and salad',
-            options: [
-                {name: 'Extra Lamb', price: 4.00},
-                {name: 'Extra Naan', price: 1.00},
-                {name: 'Large Portion', price: 3.00}
-            ]
-        },
-        { 
-            id: 602, 
-            name: 'Chicken Biryani', 
-            price: 10.99, 
-            icon: '🍚', 
-            desc: 'Half chicken served with rice or biryani, soup, naan, and salad',
-            options: [
-                {name: 'Full Chicken', price: 5.00},
-                {name: 'Extra Naan', price: 1.00},
-                {name: 'Extra Rice', price: 2.00}
-            ]
-        },
-        { 
-            id: 603, 
-            name: 'Vegetable Biryani', 
-            price: 8.99, 
-            icon: '🍚', 
-            desc: 'Mixed vegetable biryani with soup, naan, and salad',
-            options: [
-                {name: 'Extra Vegetables', price: 2.00},
-                {name: 'Extra Naan', price: 1.00},
-                {name: 'Add Halloumi', price: 2.50}
-            ]
-        }
+    // SHAWARMA PORTIONS WITH TURKISH BREAD
+    shawarma_turkish: [
+        { id: 601, name: 'Chicken Shawarma Turkish Bread', price: 8.00, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 602, name: 'Mix Shawarma Turkish Bread', price: 8.80, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 603, name: 'Lamb Shawarma Turkish Bread', price: 9.00, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce' }
     ],
     
-    // ROASTED CHICKEN
-    chicken: [
-        { 
-            id: 701, 
-            name: 'Half Roasted Chicken', 
-            price: 9.99, 
-            icon: '🍗', 
-            desc: 'Half chicken served with chips or rice, salad and sauce',
-            options: [
-                {name: 'Upgrade to Full', price: 5.00},
-                {name: 'Extra Chips', price: 2.00},
-                {name: 'Extra Sauce', price: 0.50}
-            ]
-        },
-        { 
-            id: 702, 
-            name: 'Full Roasted Chicken', 
-            price: 14.99, 
-            icon: '🍗', 
-            desc: 'Whole roasted chicken with chips or rice, salad and sauce',
-            options: [
-                {name: 'Large Chips', price: 2.00},
-                {name: 'Extra Sauce', price: 0.50},
-                {name: 'Add Naan (2pc)', price: 1.50}
-            ]
-        },
-        { 
-            id: 703, 
-            name: 'Chicken Tenders (6pc)', 
-            price: 7.99, 
-            icon: '🍗', 
-            desc: 'Crispy chicken strips served with chips and dip',
-            options: [
-                {name: 'Extra Tenders (3pc)', price: 3.00},
-                {name: 'Extra Dip', price: 0.50},
-                {name: 'Large Chips', price: 1.50}
-            ]
-        },
-        { 
-            id: 704, 
-            name: 'Hot Wings (6pc)', 
-            price: 6.99, 
-            icon: '🍗', 
-            desc: 'Spicy buffalo wings served with chips and blue cheese dip',
-            options: [
-                {name: 'Extra Wings (6pc)', price: 5.00},
-                {name: 'Extra Hot', price: 0},
-                {name: 'Ranch Dip', price: 0.75}
-            ]
-        }
+    // FALAFEL
+    falafel: [
+        { id: 701, name: '6 Falafel Portions', price: 6.00, icon: '🧆', image: '', available: true, desc: 'Served with mix salad and yoghurt sauce' },
+        { id: 702, name: 'Falafel Wrap', price: 5.80, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 703, name: 'Falafel Sandwich', price: 5.80, icon: '🥪', image: '', available: true, desc: 'Served with salad and sauce' },
+        { id: 704, name: 'Portion Halloumi With Salad', price: 6.50, icon: '🧀', image: '', available: true, desc: '4 large grilled halloumi' }
     ],
     
-    // FATAYER (Turkish Pastries)
-    fatayer: [
-        { 
-            id: 801, 
-            name: 'Chicken Cheese Fatayer', 
-            price: 4.99, 
-            icon: '🥟', 
-            desc: 'Turkish pastry filled with chicken and melted cheese',
-            options: [
-                {name: 'Extra Cheese', price: 1.00},
-                {name: 'Add Jalapeños', price: 0.50}
-            ]
-        },
-        { 
-            id: 802, 
-            name: 'Lamb Cheese Fatayer', 
-            price: 5.49, 
-            icon: '🥟', 
-            desc: 'Pastry filled with a blend of lamb and cheese',
-            options: [
-                {name: 'Extra Cheese', price: 1.00},
-                {name: 'Extra Spicy', price: 0}
-            ]
-        },
-        { 
-            id: 803, 
-            name: 'Spinach Fatayer', 
-            price: 3.99, 
-            icon: '🥟', 
-            desc: 'Vegetarian pastry with spinach and onion filling',
-            options: [
-                {name: 'Add Feta Cheese', price: 1.00}
-            ]
-        },
-        { 
-            id: 804, 
-            name: 'Cheese Fatayer', 
-            price: 3.99, 
-            icon: '🥟', 
-            desc: 'A blend of cheeses combined for mild flavour',
-            options: [
-                {name: 'Extra Cheese', price: 1.00}
-            ]
-        }
+    // SHAWARMA WRAPS
+    shawarma_wraps: [
+        { id: 801, name: 'Chicken Shawarma Wrap', price: 6.50, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread' },
+        { id: 802, name: 'Lamb Shawarma Wrap', price: 7.00, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread' },
+        { id: 803, name: 'Mix Shawarma Wrap', price: 6.80, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread' }
+    ],
+    
+    // SHAWARMA SANDWICH
+    shawarma_sandwich: [
+        { id: 901, name: 'Chicken Shawarma Sandwich', price: 6.50, icon: '🥪', image: '', available: true, desc: 'Served with salad, sauce and Turkish bread' },
+        { id: 902, name: 'Mix Shawarma Sandwich', price: 6.80, icon: '🥪', image: '', available: true, desc: 'Served with salad, sauce and Turkish bread' },
+        { id: 903, name: 'Lamb Shawarma Sandwich', price: 7.00, icon: '🥪', image: '', available: true, desc: 'Served with salad, sauce and Turkish bread' }
     ],
     
     // PIZZA
     pizza: [
-        { 
-            id: 901, 
-            name: 'Margherita Pizza 10"', 
-            price: 8.99, 
-            icon: '🍕', 
-            desc: 'Classic pizza with tomato, mozzarella, and basil',
-            options: [
-                {name: 'Extra Cheese', price: 2.00},
-                {name: 'Add Toppings (2)', price: 2.00},
-                {name: '12" Size', price: 3.00}
-            ]
-        },
-        { 
-            id: 902, 
-            name: 'Chicken Pizza 10"', 
-            price: 10.99, 
-            icon: '🍕', 
-            desc: 'Chicken pizza with your choice of two toppings',
-            options: [
-                {name: 'Extra Chicken', price: 2.50},
-                {name: 'Extra Toppings (2)', price: 2.00},
-                {name: '12" Size', price: 3.00}
-            ]
-        },
-        { 
-            id: 903, 
-            name: 'Lamb Pizza 10"', 
-            price: 11.99, 
-            icon: '🍕', 
-            desc: 'Pizza topped with lamb and two additional toppings',
-            options: [
-                {name: 'Extra Lamb', price: 3.00},
-                {name: 'Extra Toppings (2)', price: 2.00},
-                {name: '12" Size', price: 3.00}
-            ]
-        },
-        { 
-            id: 904, 
-            name: 'Pepperoni Pizza 10"', 
-            price: 10.99, 
-            icon: '🍕', 
-            desc: 'Classic topped with pepperoni and two toppings',
-            options: [
-                {name: 'Extra Pepperoni', price: 2.00},
-                {name: 'Extra Cheese', price: 2.00},
-                {name: '12" Size', price: 3.00}
-            ]
-        },
-        { 
-            id: 905, 
-            name: 'Vegetarian Pizza 10"', 
-            price: 9.99, 
-            icon: '🍕', 
-            desc: 'Pizza topped with variety of vegetables',
-            options: [
-                {name: 'Extra Veggies', price: 2.00},
-                {name: 'Add Halloumi', price: 2.50},
-                {name: '12" Size', price: 3.00}
-            ]
-        },
-        { 
-            id: 906, 
-            name: 'Garlic Bread with Cheese', 
-            price: 4.99, 
-            icon: '🥖', 
-            desc: 'Soft bread topped with garlic and melted cheese',
-            options: [
-                {name: 'Extra Cheese', price: 1.00},
-                {name: 'Add Mushrooms', price: 1.00}
-            ]
-        }
+        { id: 1001, name: 'Cheese and Tomato', price: 5.50, icon: '🍕', image: '', available: true, desc: 'Fresh cheese and tomato on a delicious base' },
+        { id: 1002, name: 'Cheese Tomato 2 Toppings', price: 6.50, icon: '🍕', image: '', available: true, desc: 'Melted cheese with your choice of two toppings' },
+        { id: 1003, name: 'Cheese Tomato 3 Toppings', price: 7.00, icon: '🍕', image: '', available: true, desc: 'Melted cheese with your choice of three toppings' },
+        { id: 1004, name: 'Antalya Special Pizza', price: 8.00, icon: '🍕', image: '', available: true, desc: 'A bit of everything - various ingredients combined' },
+        { id: 1005, name: 'Mediterranean Pizza', price: 7.00, icon: '🍕', image: '', available: true, desc: 'Jalapeño, fresh tomato, onion, green pepper, olives' },
+        { id: 1006, name: 'Tuna Sweet Corn Pizza', price: 6.50, icon: '🍕', image: '', available: true, desc: 'Tuna and sweet corn pizza topping' }
     ],
     
-    // KEBABS (Halal)
-    kebabs: [
-        { 
-            id: 1001, 
-            name: 'Adana Kebab', 
-            price: 9.99, 
-            icon: '🥙', 
-            desc: 'Spiced minced lamb kebab served with salad, rice & naan',
-            options: [
-                {name: 'Extra Meat', price: 2.50},
-                {name: 'Add Hummus', price: 1.00},
-                {name: 'Extra Naan', price: 1.50}
-            ]
-        },
-        { 
-            id: 1002, 
-            name: 'Lamb Tikka Kebab', 
-            price: 10.99, 
-            icon: '🥙', 
-            desc: 'Tender lamb tikka pieces with salad & fresh naan',
-            options: [
-                {name: 'Extra Meat', price: 3.00},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Add Hummus', price: 1.00}
-            ]
-        },
-        { 
-            id: 1003, 
-            name: 'Chicken Tikka Kebab', 
-            price: 9.49, 
-            icon: '🥙', 
-            desc: 'Marinated chicken tikka with salad & naan bread',
-            options: [
-                {name: 'Extra Chicken', price: 2.50},
-                {name: 'Add Rice', price: 2.00},
-                {name: 'Make it Spicy', price: 0}
-            ]
-        },
-        { 
-            id: 1004, 
-            name: 'Kofte Kebab', 
-            price: 8.99, 
-            icon: '🥙', 
-            desc: 'Traditional lamb kofte with fresh salad & sauce',
-            options: [
-                {name: 'Extra Kofte', price: 2.00},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Extra Naan', price: 1.50}
-            ]
-        },
-        { 
-            id: 1005, 
-            name: 'Lamb Back Strap Fillet', 
-            price: 12.99, 
-            icon: '🥩', 
-            desc: 'Premium lamb fillet served with salad, sauce & naan',
-            options: [
-                {name: 'Extra Fillet', price: 4.00},
-                {name: 'Add Rice', price: 2.00}
-            ]
-        }
+    // FATAYER PIE
+    fatayer: [
+        { id: 1101, name: 'Chicken Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1102, name: 'Spicy Lamb Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1103, name: 'Spicy Lamb Chicken Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1104, name: 'Antalya Special Fatayer', price: 7.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1105, name: 'Spinach Lamb Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza with spinach and lamb. Served with salad' },
+        { id: 1106, name: 'Cheese Fatayer', price: 5.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza with cheese. Served with salad' },
+        { id: 1107, name: 'Chicken Spinach Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1108, name: 'Spinach Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza with spinach and cheese' },
+        { id: 1109, name: 'Tuna Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Tuna and cheese filled pastry' }
     ],
     
-    // MEAL DEALS
-    meals: [
-        { 
-            id: 1101, 
-            name: 'Shawarma Meal Deal', 
-            price: 10.99, 
-            icon: '🌯', 
-            desc: 'Chicken shawarma wrap with chips and drink',
-            options: [
-                {name: 'Upgrade to Lamb', price: 1.00},
-                {name: 'Large Chips', price: 1.50}
-            ]
-        },
-        { 
-            id: 1102, 
-            name: 'Kebab Meal Deal', 
-            price: 12.99, 
-            icon: '🥙', 
-            desc: 'Choice of kebab with chips and drink',
-            options: [
-                {name: 'Upgrade Drink', price: 1.00},
-                {name: 'Large Chips', price: 1.50}
-            ]
-        },
-        { 
-            id: 1103, 
-            name: 'Grill Meal Deal', 
-            price: 14.99, 
-            icon: '🍖', 
-            desc: 'Mixed grill portion with chips and drink',
-            options: [
-                {name: 'Extra Meat', price: 3.00},
-                {name: 'Upgrade Drink', price: 1.00}
-            ]
-        },
-        { 
-            id: 1104, 
-            name: 'Family Sharing Deal', 
-            price: 29.99, 
-            icon: '🍽️', 
-            desc: '2 shawarma wraps, 2 portions chips, hummus & 2 drinks',
-            options: [
-                {name: 'Add Extra Wrap', price: 5.00},
-                {name: 'Add Falafel', price: 3.00}
-            ]
-        }
-    ],
-    
-    // SIDES & EXTRAS
+    // MEZZE STARTER / SIDES
     sides: [
-        { 
-            id: 1201, 
-            name: 'Regular Chips', 
-            price: 2.99, 
-            icon: '🍟', 
-            desc: 'Crispy golden chips',
-            options: [
-                {name: 'Large Size', price: 1.50},
-                {name: 'Add Cheese', price: 1.00},
-                {name: 'Cajun Seasoning', price: 0.50}
-            ]
-        },
-        { 
-            id: 1202, 
-            name: 'Cheese Chips', 
-            price: 4.99, 
-            icon: '🍟', 
-            desc: 'Chips covered in melted cheese',
-            options: [
-                {name: 'Extra Cheese', price: 1.00},
-                {name: 'Add Jalapeños', price: 0.75}
-            ]
-        },
-        { 
-            id: 1203, 
-            name: 'Hummus', 
-            price: 3.49, 
-            icon: '🥣', 
-            desc: 'Creamy chickpea dip with olive oil',
-            options: [
-                {name: 'Large Portion', price: 1.50},
-                {name: 'Add Naan', price: 1.00}
-            ]
-        },
-        { 
-            id: 1204, 
-            name: 'Large Salad', 
-            price: 4.99, 
-            icon: '🥗', 
-            desc: 'Fresh mixed salad with dressing',
-            options: [
-                {name: 'Add Feta Cheese', price: 1.50},
-                {name: 'Add Halloumi', price: 2.00}
-            ]
-        },
-        { 
-            id: 1205, 
-            name: 'Naan Bread (3pc)', 
-            price: 1.50, 
-            icon: '🫓', 
-            desc: 'Freshly baked soft naan bread',
-            options: [
-                {name: 'Extra Naan (3pc)', price: 1.50}
-            ]
-        },
-        { 
-            id: 1206, 
-            name: 'Rice Portion', 
-            price: 2.99, 
-            icon: '🍚', 
-            desc: 'Basmati rice portion',
-            options: [
-                {name: 'Biryani Rice', price: 1.00},
-                {name: 'Large Portion', price: 1.50}
-            ]
-        },
-        { 
-            id: 1207, 
-            name: 'Soup of the Day', 
-            price: 3.49, 
-            icon: '🍲', 
-            desc: 'Fresh homemade soup with bread',
-            options: [
-                {name: 'Large Bowl', price: 1.50}
-            ]
-        },
-        { 
-            id: 1208, 
-            name: 'Falafel (5pc)', 
-            price: 4.49, 
-            icon: '🧆', 
-            desc: 'Crispy homemade falafel',
-            options: [
-                {name: 'Extra Falafel (5pc)', price: 3.50},
-                {name: 'Add Hummus', price: 1.00}
-            ]
-        }
+        { id: 1201, name: 'Peri-Peri Chips', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Spicy chips seasoned with peri-peri salt', popular: true },
+        { id: 1202, name: 'Garlic Bread with Cheese', price: 5.50, icon: '🧄', image: '', available: true, desc: 'Freshly baked bread with garlic and melted cheese' },
+        { id: 1203, name: 'Chips', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Crispy fried potato strips' },
+        { id: 1204, name: 'Cheese Chips', price: 4.00, icon: '🍟', image: '', available: true, desc: 'Crispy chips smothered in melted cheese' },
+        { id: 1205, name: 'Spicy Potatoes', price: 4.00, icon: '🥔', image: '', available: true, desc: 'Crunchy potatoes with a spicy kick' },
+        { id: 1206, name: 'Garlic Bread', price: 4.50, icon: '🧄', image: '', available: true, desc: 'Freshly baked bread infused with aromatic garlic' },
+        { id: 1207, name: 'Turkish Mix Salad', price: 4.50, icon: '🥗', image: '', available: true, desc: 'Fresh vegetables and herbs with Turkish flair' },
+        { id: 1208, name: 'Hummus', price: 4.00, icon: '🫘', image: '', available: true, desc: 'Traditional Middle Eastern chickpea dip' },
+        { id: 1209, name: 'Salsa Salad', price: 4.00, icon: '🥗', image: '', available: true, desc: 'Fresh salsa style salad portion' },
+        { id: 1210, name: 'Tzatziki (Cacik)', price: 4.00, icon: '🥛', image: '', available: true, desc: 'Diced cucumbers, garlic, mint in yogurt' },
+        { id: 1211, name: 'Rice', price: 4.00, icon: '🍚', image: '', available: true, desc: 'Plain white rice' }
     ],
     
-    // SAUCES
-    sauces: [
-        { id: 1301, name: 'Garlic Sauce', price: 0.99, icon: '🧄', desc: 'Creamy garlic mayo sauce' },
-        { id: 1302, name: 'Chilli Sauce', price: 0.99, icon: '🌶️', desc: 'Hot chilli sauce' },
-        { id: 1303, name: 'Tahini Sauce', price: 0.99, icon: '🥜', desc: 'Traditional sesame tahini' },
-        { id: 1304, name: 'Yoghurt Sauce', price: 0.99, icon: '🥛', desc: 'Cool yoghurt dip' },
-        { id: 1305, name: 'BBQ Sauce', price: 0.99, icon: '🍖', desc: 'Smoky BBQ sauce' },
-        { id: 1306, name: 'Mayo', price: 0.79, icon: '🥄', desc: 'Classic mayonnaise' },
-        { id: 1307, name: 'Ketchup', price: 0.79, icon: '🍅', desc: 'Tomato ketchup' }
+    // KIDS
+    kids: [
+        { id: 1301, name: '6 Chicken Nuggets', price: 6.00, icon: '🍗', image: '', available: true, desc: 'Served with chips and side drink' }
+    ],
+    
+    // EXTRAS / SAUCES
+    extras: [
+        { id: 1401, name: 'Turkish Bread (Samoon)', price: 1.00, icon: '🥖', image: '', available: true, desc: 'Soft bread topped with sesame seeds' },
+        { id: 1402, name: 'Amba Sauce', price: 0.45, icon: '🥫', image: '', available: true, desc: 'Tangy and sweet mango pickle sauce' },
+        { id: 1403, name: 'Sweet Chilli', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Sweet Chilli Dipping Sauce' },
+        { id: 1404, name: 'Sriracha Mayonnaise', price: 0.50, icon: '🥫', image: '', available: true, desc: 'Spicy mayo with Sriracha chillies' },
+        { id: 1405, name: 'Garlic Mayo', price: 0.45, icon: '🧄', image: '', available: true, desc: 'Rich and creamy mayonnaise with garlic' },
+        { id: 1406, name: 'Chilli Sauce', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Spicy condiment for your meal' },
+        { id: 1407, name: 'Yoghurt Sauce', price: 0.45, icon: '🥛', image: '', available: true, desc: 'Tangy and creamy yoghurt sauce' },
+        { id: 1408, name: 'Naan', price: 1.00, icon: '🫓', image: '', available: true, desc: 'Soft, lightly leavened flatbread' },
+        { id: 1409, name: 'Fresh Green Chilli Garlic', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Fresh green chilli with garlic' },
+        { id: 1410, name: 'BBQ Sauce', price: 0.45, icon: '🥫', image: '', available: true, desc: 'Sweet and tangy BBQ sauce' }
     ],
     
     // DRINKS
     drinks: [
-        { id: 1401, name: 'Coca Cola', price: 1.99, icon: '🥤', desc: 'Ice cold 330ml can' },
-        { id: 1402, name: 'Pepsi', price: 1.99, icon: '🥤', desc: 'Ice cold 330ml can' },
-        { id: 1403, name: 'Fanta', price: 1.99, icon: '🥤', desc: 'Orange 330ml can' },
-        { id: 1404, name: 'Sprite', price: 1.99, icon: '🥤', desc: 'Lemon-lime 330ml can' },
-        { id: 1405, name: 'Water', price: 1.49, icon: '💧', desc: 'Still water 500ml' },
-        { id: 1406, name: 'Fresh Orange Juice', price: 3.49, icon: '🧃', desc: 'Freshly squeezed orange' },
-        { id: 1407, name: 'Ayran', price: 2.49, icon: '🥛', desc: 'Traditional Turkish yoghurt drink' },
-        { id: 1408, name: '1.5L Coca Cola', price: 3.49, icon: '🍾', desc: 'Large bottle for sharing' },
-        { id: 1409, name: '1.5L Pepsi', price: 3.49, icon: '🍾', desc: 'Large bottle for sharing' }
+        { id: 1501, name: 'Coca-Cola', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Classic cola beverage 330ml' },
+        { id: 1502, name: 'Rio', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Tropical fruit drink' },
+        { id: 1503, name: 'Rubicon Mango', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fresh mango drink' },
+        { id: 1504, name: 'Pepsi Max', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Zero sugar cola' },
+        { id: 1505, name: 'Fanta', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fizzy orange drink' },
+        { id: 1506, name: 'Pepsi', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Refreshing cola' },
+        { id: 1507, name: 'Water', price: 1.00, icon: '💧', image: '', available: true, desc: 'Still water 500ml' },
+        { id: 1508, name: 'Sprite', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Lemon-lime soft drink' },
+        { id: 1509, name: 'Fruitshoot', price: 1.00, icon: '🧃', image: '', available: true, desc: 'Apple & Blackcurrant' },
+        { id: 1510, name: 'Irn Bru', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Scottish soft drink' }
     ]
 };
 
 // ========================================
-// CATEGORY NAMES & ICONS (can be modified by owner)
+// CATEGORY NAMES & ICONS
 // ========================================
 let categories = {
-    shawarma: { name: 'Shawarma Wraps', icon: '🌯', image: '' },
-    portions_chips: { name: 'Portions (Chips)', icon: '🍟', image: '' },
-    portions_rice: { name: 'Portions (Rice)', icon: '🍚', image: '' },
-    grill: { name: 'Grill Portions', icon: '🍖', image: '' },
-    platters: { name: 'Family Platters', icon: '🍽️', image: '' },
-    rice: { name: 'Rice & Biryani', icon: '🍚', image: '' },
-    chicken: { name: 'Roasted Chicken', icon: '🍗', image: '' },
-    fatayer: { name: 'Fatayer', icon: '🥟', image: '' },
+    grill_wraps: { name: 'Grill Wraps', icon: '🌯', image: '' },
+    grill_portions: { name: 'Grill Portions', icon: '🍖', image: '' },
+    shawarma_chips: { name: 'Shawarma Chips', icon: '🍟', image: '' },
+    shawarma_rice: { name: 'Shawarma Rice', icon: '🍚', image: '' },
+    shawarma_naan: { name: 'Shawarma Naan', icon: '🫓', image: '' },
+    shawarma_turkish: { name: 'Turkish Bread', icon: '🥖', image: '' },
+    falafel: { name: 'Falafel', icon: '🧆', image: '' },
+    shawarma_wraps: { name: 'Shawarma Wraps', icon: '🌯', image: '' },
+    shawarma_sandwich: { name: 'Sandwich', icon: '🥪', image: '' },
     pizza: { name: 'Pizza', icon: '🍕', image: '' },
-    kebabs: { name: 'Kebabs', icon: '🥙', image: '' },
-    meals: { name: 'Meal Deals', icon: '🎁', image: '' },
-    sides: { name: 'Sides & Extras', icon: '🥗', image: '' },
-    sauces: { name: 'Sauces', icon: '🧄', image: '' },
+    fatayer: { name: 'Fatayer', icon: '🥟', image: '' },
+    sides: { name: 'Sides', icon: '🥗', image: '' },
+    kids: { name: 'Kids', icon: '🍗', image: '' },
+    extras: { name: 'Extras', icon: '🧄', image: '' },
     drinks: { name: 'Drinks', icon: '🥤', image: '' }
 };
 
@@ -911,7 +311,7 @@ let selectedFood = null;
 let selectedCustomizations = [];
 let quantity = 1;
 let isSignUpMode = false;
-let currentCategory = 'shawarma';
+let currentCategory = 'grill_wraps';
 let userDatabase = [];
 let orderHistory = [];
 let userFavorites = {};
@@ -1218,6 +618,11 @@ function loadData() {
     if (savedCurrentUser) {
         currentUser = JSON.parse(savedCurrentUser);
         updateHeaderForLoggedInUser();
+        
+        // Restore selectedLocation from user's saved location
+        if (currentUser.location) {
+            selectedLocation = currentUser.location;
+        }
         
         const savedCart = localStorage.getItem('cart_' + currentUser.email);
         if (savedCart) {
@@ -1998,8 +1403,23 @@ function showNotifications() {
         `;
     } else {
         content.innerHTML = notifications.map(n => {
-            // Special styling for driver on way notifications
+            // Check if order still exists and its current status
+            const order = pendingOrders.find(o => o.id === n.orderId) || orderHistory.find(o => o.id === n.orderId);
+            const isStillDelivering = order && order.status === 'out_for_delivery';
+            const isAlreadyRated = order && order.driverRated === true;
+            
+            // Driver on way notification - only show track if still delivering
             if (n.type === 'driver_on_way') {
+                if (!isStillDelivering) {
+                    // Order already delivered - show simple completed message
+                    return `
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 0.8rem; border-left: 3px solid #10b981;">
+                            <div style="font-weight: 600; margin-bottom: 0.3rem;">✅ Order Delivered</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Your order #${n.orderId} has been delivered.</div>
+                            <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
+                        </div>
+                    `;
+                }
                 return `
                     <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.2)); padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem; border: 2px solid rgba(16,185,129,0.4);">
                         <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; color: #10b981;">${n.title}</div>
@@ -2016,15 +1436,13 @@ function showNotifications() {
                 `;
             }
             
-            // Order completed notification with rate button
-            if (n.type === 'order_completed' && n.driverId) {
+            // Order completed notification - only show rate button if not already rated
+            if (n.type === 'order_completed') {
                 return `
                     <div style="background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(37,99,235,0.2)); padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem; border: 2px solid rgba(59,130,246,0.4);">
                         <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; color: #3b82f6;">${n.title}</div>
-                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; white-space: pre-line; margin-bottom: 1rem;">${n.message}</div>
-                        <button onclick="openDriverRating('${n.orderId}', '${n.driverId}', '${n.driverName || 'Driver'}'); closeModal('notificationsModal');" style="background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; padding: 0.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%;">
-                            ⭐ Rate Driver
-                        </button>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">${n.message}</div>
+                        ${isAlreadyRated ? `<div style="color: #f59e0b; font-size: 0.85rem;">⭐ You rated this delivery ${order.driverRating}/5</div>` : ''}
                         <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
                     </div>
                 `;
@@ -2379,9 +1797,36 @@ function saveProfileChanges(event) {
     const preview = document.getElementById('profilePicPreview');
     const newPic = preview.dataset.newPic;
     
+    // Password change fields
+    const currentPassword = document.getElementById('editCurrentPassword')?.value;
+    const newPassword = document.getElementById('editNewPassword')?.value;
+    const confirmPassword = document.getElementById('editConfirmPassword')?.value;
+    
     if (!name) {
         alert('❌ Name is required');
         return false;
+    }
+    
+    // Handle password change if fields are filled
+    if (currentPassword || newPassword || confirmPassword) {
+        if (!currentPassword) {
+            alert('❌ Please enter your current password');
+            return false;
+        }
+        if (currentPassword !== currentUser.password) {
+            alert('❌ Current password is incorrect');
+            return false;
+        }
+        if (!newPassword || newPassword.length < 6) {
+            alert('❌ New password must be at least 6 characters');
+            return false;
+        }
+        if (newPassword !== confirmPassword) {
+            alert('❌ New passwords do not match');
+            return false;
+        }
+        // Update password
+        currentUser.password = newPassword;
     }
     
     // Update current user
@@ -2414,6 +1859,13 @@ function saveProfileChanges(event) {
     if (modal) {
         modal.style.display = 'none';
         modal.classList.remove('active');
+    }
+    
+    // Clear password fields
+    if (document.getElementById('editCurrentPassword')) {
+        document.getElementById('editCurrentPassword').value = '';
+        document.getElementById('editNewPassword').value = '';
+        document.getElementById('editConfirmPassword').value = '';
     }
     
     // Show success and refresh account
@@ -2598,6 +2050,7 @@ function toggleAuthMode() {
     const addressGroup = document.getElementById('addressGroup');
     const submitBtn = document.getElementById('authSubmitBtn');
     const toggleText = document.getElementById('authToggleText');
+    const forgotLink = document.getElementById('forgotPasswordLink');
     
     if (isSignUpMode) {
         if (title) title.textContent = '📝 Create Account';
@@ -2607,6 +2060,7 @@ function toggleAuthMode() {
         if (addressGroup) addressGroup.style.display = 'block';
         if (submitBtn) submitBtn.textContent = 'Sign Up';
         if (toggleText) toggleText.textContent = 'Already have an account?';
+        if (forgotLink) forgotLink.style.display = 'none';
     } else {
         if (title) title.textContent = '🔐 Login';
         if (nameGroup) nameGroup.style.display = 'none';
@@ -2615,6 +2069,112 @@ function toggleAuthMode() {
         if (addressGroup) addressGroup.style.display = 'none';
         if (submitBtn) submitBtn.textContent = 'Login';
         if (toggleText) toggleText.textContent = "Don't have an account?";
+        if (forgotLink) forgotLink.style.display = 'block';
+    }
+}
+
+// Forgot Password Functions
+function showForgotPasswordSection(show) {
+    const authSection = document.getElementById('authFormSection');
+    const forgotSection = document.getElementById('forgotPasswordSection');
+    const title = document.getElementById('authTitle');
+    
+    if (show) {
+        if (authSection) authSection.style.display = 'none';
+        if (forgotSection) forgotSection.style.display = 'block';
+        if (title) title.textContent = '🔑 Reset Password';
+    } else {
+        if (authSection) authSection.style.display = 'block';
+        if (forgotSection) forgotSection.style.display = 'none';
+        if (title) title.textContent = '🔐 Login';
+    }
+}
+
+function sendPasswordResetCode() {
+    const email = document.getElementById('forgotPasswordEmail').value.trim();
+    
+    if (!email) {
+        alert('❌ Please enter your email');
+        return;
+    }
+    
+    const user = userDatabase.find(u => u.email === email);
+    if (!user) {
+        alert('❌ No account found with this email');
+        return;
+    }
+    
+    // Generate reset code
+    const resetCode = generateVerificationCode();
+    pendingVerification = {
+        email: email,
+        code: resetCode,
+        type: 'password_reset'
+    };
+    
+    // Show code in console and alert (in real app, send email)
+    console.log('Password Reset Code for', email, ':', resetCode);
+    alert(`📧 Password reset code sent!\n\nFor demo: Your code is ${resetCode}\n\n(In production, this would be sent to your email)`);
+    
+    // Show code entry
+    document.getElementById('forgotPasswordSection').innerHTML = `
+        <div style="background: rgba(245,158,11,0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+            <h3 style="color: #f59e0b;">🔑 Enter Reset Code</h3>
+            <p style="color: rgba(255,255,255,0.8);">Code sent to <strong>${email}</strong></p>
+        </div>
+        <div class="form-group">
+            <label>Reset Code</label>
+            <input type="text" id="passwordResetCode" placeholder="Enter 6-digit code" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3rem;">
+        </div>
+        <div class="form-group">
+            <label>New Password *</label>
+            <input type="password" id="newPasswordReset" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+            <label>Confirm Password *</label>
+            <input type="password" id="confirmPasswordReset" placeholder="Confirm new password">
+        </div>
+        <button class="submit-btn" onclick="resetPassword()">🔐 Reset Password</button>
+        <p style="text-align: center; margin-top: 1rem;">
+            <a href="#" onclick="location.reload(); return false;" style="color: #ff6b6b;">← Back to Login</a>
+        </p>
+    `;
+}
+
+function resetPassword() {
+    const code = document.getElementById('passwordResetCode').value.trim();
+    const newPassword = document.getElementById('newPasswordReset').value;
+    const confirmPassword = document.getElementById('confirmPasswordReset').value;
+    
+    if (!pendingVerification || pendingVerification.type !== 'password_reset') {
+        alert('❌ Invalid reset session. Please try again.');
+        return;
+    }
+    
+    if (code !== pendingVerification.code) {
+        alert('❌ Invalid code. Please check and try again.');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        alert('❌ Password must be at least 6 characters');
+        return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+        alert('❌ Passwords do not match');
+        return;
+    }
+    
+    // Update user password
+    const user = userDatabase.find(u => u.email === pendingVerification.email);
+    if (user) {
+        user.password = newPassword;
+        saveData();
+        pendingVerification = null;
+        
+        alert('✅ Password reset successfully!\n\nYou can now login with your new password.');
+        location.reload();
     }
 }
 
@@ -5143,7 +4703,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCategories();
     
     // Display initial menu
-    displayMenu('shawarma');
+    displayMenu('grill_wraps');
     
     // Update badges
     updateCartBadge();
@@ -5300,6 +4860,11 @@ window.showLocationConfirmation = showLocationConfirmation;
 window.confirmCurrentLocation = confirmCurrentLocation;
 window.changeDeliveryLocation = changeDeliveryLocation;
 window.openCheckoutModal = openCheckoutModal;
+
+// Forgot password functions
+window.showForgotPasswordSection = showForgotPasswordSection;
+window.sendPasswordResetCode = sendPasswordResetCode;
+window.resetPassword = resetPassword;
 
 // Menu management functions (Owner)
 window.openMenuManager = openMenuManager;

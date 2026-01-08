@@ -11,16 +11,16 @@
     --accent: #f4a261;
     --success: #2a9d8f;
     --warning: #e9c46a;
-    --dark: #0d1b2a;
-    --dark-lighter: #1b2838;
+    --dark: #0a0a0a;
+    --dark-lighter: #141414;
     --text-primary: #f1faee;
     --text-secondary: #a8dadc;
-    --card-bg: rgba(27, 40, 56, 0.95);
+    --card-bg: rgba(20, 20, 20, 0.98);
     --glass: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --radius-sm: 8px;
     --radius-md: 12px;
-    --radius-lg: 20px;
+    --radius-lg: 16px;
 }
 
 /* Global Mobile Fixes */
@@ -39,7 +39,8 @@ html {
     /* Header redesign */
     .header {
         padding: 0.6rem 1rem;
-        background: linear-gradient(180deg, rgba(13, 27, 42, 0.98) 0%, rgba(13, 27, 42, 0.95) 100%);
+        background: linear-gradient(180deg, #0f0f0f 0%, rgba(15, 15, 15, 0.95) 100%);
+        border-bottom: 1px solid rgba(230, 57, 70, 0.15);
     }
     
     .logo {
@@ -349,6 +350,8 @@ html {
     /* Footer */
     .social-footer {
         padding: 2rem 1rem;
+        background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+        border-top: 1px solid rgba(230, 57, 70, 0.15);
     }
     
     .social-content {
@@ -358,6 +361,10 @@ html {
     
     .footer-section {
         text-align: center;
+    }
+    
+    .footer-section h3 {
+        color: var(--primary);
     }
 }
 

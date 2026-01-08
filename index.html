@@ -149,11 +149,35 @@
                 </p>
             </div>
 
+            <!-- Forgot Password Section -->
+            <div id="forgotPasswordSection" style="display: none;">
+                <div style="background: rgba(245,158,11,0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #f59e0b;">🔑 Reset Password</h3>
+                    <p style="color: rgba(255,255,255,0.8);">Enter your email to receive a reset code</p>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="forgotPasswordEmail" placeholder="your@email.com">
+                </div>
+                <button class="submit-btn" onclick="sendPasswordResetCode()">📧 Send Reset Code</button>
+                <p style="text-align: center; margin-top: 1rem;">
+                    <a href="#" onclick="showForgotPasswordSection(false); return false;" style="color: #ff6b6b;">← Back to Login</a>
+                </p>
+            </div>
+
             <!-- Auth Form Section -->
             <div id="authFormSection">
                 <div class="auth-options">
-                    <button class="auth-btn google-btn" onclick="loginWithGoogle()">🔵 Continue with Google</button>
-                    <button class="auth-btn apple-btn" onclick="loginWithApple()">🍎 Continue with Apple</button>
+                    <button class="auth-btn google-btn" onclick="loginWithGoogle()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px; margin-right: 8px;">
+                        Continue with Google
+                    </button>
+                    <button class="auth-btn apple-btn" onclick="loginWithApple()">
+                        <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; fill: white;">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                        Continue with Apple
+                    </button>
                 </div>
                 <div class="divider">or use email</div>
                 <form onsubmit="handleEmailAuth(event)">
@@ -168,6 +192,9 @@
                     <div class="form-group">
                         <label>Password *</label>
                         <input type="password" id="authPassword" placeholder="Min 6 characters" required>
+                    </div>
+                    <div id="forgotPasswordLink" style="text-align: right; margin-bottom: 1rem;">
+                        <a href="#" onclick="showForgotPasswordSection(true); return false;" style="color: #6ba3ff; font-size: 0.9rem;">Forgot password?</a>
                     </div>
                     <div class="form-group" id="phoneGroup" style="display: none;">
                         <label>Phone Number *</label>
@@ -666,6 +693,24 @@
                         📍 Pick Location on Map
                     </button>
                 </div>
+                
+                <!-- Change Password Section -->
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; margin-top: 1.5rem;">
+                    <h3 style="color: rgba(255,255,255,0.8); margin-bottom: 1rem; font-size: 1rem;">🔑 Change Password</h3>
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="editCurrentPassword" placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="editNewPassword" placeholder="Enter new password (min 6 chars)">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="editConfirmPassword" placeholder="Confirm new password">
+                    </div>
+                </div>
+                
                 <button type="submit" class="submit-btn" style="background: linear-gradient(45deg, #3b82f6, #2563eb);">💾 Save Changes</button>
             </form>
         </div>
