@@ -132,14 +132,27 @@ html {
         font-weight: 600;
     }
     
-    /* Menu grid */
+    /* Menu grid/list */
     .menu-grid {
         grid-template-columns: 1fr !important;
-        gap: 1rem;
-        padding: 1rem;
+        gap: 0;
+        padding: 0 1rem;
     }
     
-    /* Food card redesign - BIGGER */
+    .menu-list {
+        padding: 0 1rem;
+    }
+    
+    /* Menu section title */
+    #menuTitle {
+        font-size: 1.4rem !important;
+        font-weight: 700;
+        padding: 0.5rem 1rem 0.8rem;
+        margin: 0;
+        border-bottom: 1px solid rgba(230, 57, 70, 0.2);
+    }
+    
+    /* Food card redesign - for fallback only */
     .food-card {
         display: flex;
         flex-direction: row;

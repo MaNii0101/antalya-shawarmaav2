@@ -61,35 +61,81 @@ function getRestaurantStatus() {
     return { open: true, message: 'Open for orders' };
 }
 
-// Reset all website data
-function resetAllData() {
-    if (!confirm('⚠️ Are you sure you want to delete ALL data?\n\nThis will remove:\n- All user accounts\n- All order history\n- All driver data\n- All favorites & notifications\n\nThis cannot be undone!')) {
+// Show reset options modal
+function showResetOptions() {
+    const modal = document.getElementById('resetOptionsModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+// Reset specific data based on selection
+function resetSelectedData() {
+    const resetUsers = document.getElementById('resetUsers')?.checked;
+    const resetOrders = document.getElementById('resetOrders')?.checked;
+    const resetDrivers = document.getElementById('resetDrivers')?.checked;
+    const resetFavorites = document.getElementById('resetFavorites')?.checked;
+    const resetMenu = document.getElementById('resetMenu')?.checked;
+    
+    if (!resetUsers && !resetOrders && !resetDrivers && !resetFavorites && !resetMenu) {
+        alert('⚠️ Please select at least one option to reset');
         return;
     }
     
-    // Clear all localStorage
-    localStorage.clear();
-    sessionStorage.clear();
+    let message = 'This will reset:\n';
+    if (resetUsers) message += '• All user accounts\n';
+    if (resetOrders) message += '• All order history\n';
+    if (resetDrivers) message += '• All driver data\n';
+    if (resetFavorites) message += '• All favorites & notifications\n';
+    if (resetMenu) message += '• Menu to default\n';
+    message += '\nThis cannot be undone!';
     
-    // Reset global variables
-    cart = [];
-    currentUser = null;
-    userDatabase = [];
-    orderHistory = [];
-    pendingOrders = [];
-    userFavorites = {};
-    userNotifications = {};
-    selectedLocation = null;
-    isOwnerLoggedIn = false;
-    isRestaurantLoggedIn = false;
+    if (!confirm('⚠️ ' + message)) return;
     
-    // Reset driver system
-    if (window.driverSystem) {
-        window.driverSystem.drivers = {};
+    // Reset selected items
+    if (resetUsers) {
+        localStorage.removeItem('restaurantUsers');
+        localStorage.removeItem('currentUser');
+        userDatabase = [];
+        currentUser = null;
     }
     
-    alert('✅ All data has been reset!\n\nThe page will now reload.');
+    if (resetOrders) {
+        localStorage.removeItem('orderHistory');
+        localStorage.removeItem('pendingOrders');
+        orderHistory = [];
+        pendingOrders = [];
+    }
+    
+    if (resetDrivers) {
+        localStorage.removeItem('drivers');
+        localStorage.removeItem('driverLiveLocations');
+        if (window.driverSystem) {
+            window.driverSystem.drivers = {};
+        }
+    }
+    
+    if (resetFavorites) {
+        localStorage.removeItem('userFavorites');
+        localStorage.removeItem('userNotifications');
+        userFavorites = {};
+        userNotifications = {};
+    }
+    
+    if (resetMenu) {
+        localStorage.removeItem('menuData');
+        localStorage.removeItem('categories');
+        loadMenuData(); // Reload defaults
+    }
+    
+    closeModal('resetOptionsModal');
+    alert('✅ Selected data has been reset!');
     location.reload();
+}
+
+// Reset all website data (legacy function)
+function resetAllData() {
+    showResetOptions();
 }
 
 // ========================================
@@ -713,45 +759,89 @@ function displayMenu(category) {
     if (menuTitle) menuTitle.textContent = catInfo.name;
     
     menuGrid.innerHTML = '';
+    menuGrid.className = 'menu-list-container';
     
     const items = menuData[category] || [];
+    const isMobile = window.innerWidth <= 768;
+    
+    // Container styling
+    if (isMobile) {
+        menuGrid.style.cssText = 'display: flex; flex-direction: column; gap: 0; padding: 0 1rem;';
+    } else {
+        menuGrid.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; padding: 1rem;';
+    }
+    
     items.forEach(item => {
         // Skip unavailable items for regular users (show for owner)
         if (item.available === false && !isOwnerLoggedIn) return;
         
         const isFavorite = currentUser && userFavorites[currentUser.email]?.includes(item.id);
+        const unavailable = item.available === false;
         
-        // Determine image display: custom image > icon
+        // Image display
         const imageDisplay = item.image 
-            ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` 
-            : item.icon;
+            ? `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">` 
+            : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${item.icon}</div>`;
         
-        const unavailableStyle = item.available === false ? 'opacity: 0.5;' : '';
-        const unavailableBadge = item.available === false ? '<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(239,68,68,0.9); color: white; padding: 0.3rem 0.6rem; border-radius: 5px; font-size: 0.7rem; font-weight: 700;">UNAVAILABLE</span>' : '';
+        const row = document.createElement('div');
         
-        const card = document.createElement('div');
-        card.className = 'food-card';
-        card.style.cssText = unavailableStyle;
-        card.innerHTML = `
-            <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id}, event)">
-                ${isFavorite ? '❤️' : '🤍'}
-            </button>
-            <div class="food-image" style="position: relative;">
-                ${imageDisplay}
-                ${unavailableBadge}
-            </div>
-            <div class="food-info">
-                <div class="food-name">${item.name}</div>
-                <div class="food-desc">${item.desc}</div>
-                <div class="food-footer">
-                    <div class="food-price">${formatPrice(item.price)}</div>
-                    ${item.available !== false ? `<button class="add-btn" onclick="openFoodModal(${item.id})">Order</button>` : '<span style="color: #ef4444; font-size: 0.8rem;">Not Available</span>'}
+        if (isMobile) {
+            // Mobile: Full width list items
+            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid rgba(230, 57, 70, 0.15); ${unavailable ? 'opacity: 0.5;' : ''}`;
+            row.innerHTML = `
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'};">${item.name}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
+                    <div style="font-weight: 700; font-size: 1.05rem; color: #fff;">${formatPrice(item.price)}</div>
                 </div>
-            </div>
-        `;
-        menuGrid.appendChild(card);
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <div style="width: 110px; height: 110px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative;">
+                        ${imageDisplay}
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            ${isFavorite ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                    ${!unavailable ? `
+                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem;">Add</button>
+                    ` : '<span style="color: #ef4444; font-size: 0.75rem; font-weight: 600;">Unavailable</span>'}
+                </div>
+            `;
+        } else {
+            // Desktop: Card style but with same list appearance
+            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem; background: rgba(20, 20, 20, 0.8); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); ${unavailable ? 'opacity: 0.5;' : ''}`;
+            row.innerHTML = `
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'};">${item.name}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
+                    <div style="font-weight: 700; font-size: 1.05rem; color: #fff;">${formatPrice(item.price)}</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <div style="width: 120px; height: 120px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative;">
+                        ${imageDisplay}
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            ${isFavorite ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                    ${!unavailable ? `
+                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#e63946'; this.style.color='white';" onmouseout="this.style.background='rgba(255, 220, 220, 0.95)'; this.style.color='#e63946';">Add</button>
+                    ` : '<span style="color: #ef4444; font-size: 0.75rem; font-weight: 600;">Unavailable</span>'}
+                </div>
+            `;
+        }
+        menuGrid.appendChild(row);
     });
 }
+
+// Handle window resize for menu display
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (currentCategory) {
+            displayMenu(currentCategory);
+        }
+    }, 150);
+});
 
 function filterCategory(category) {
     document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
@@ -817,9 +907,9 @@ function openFoodModal(foodId) {
     // Show image or icon
     const iconContainer = document.getElementById('modalFoodIcon');
     if (selectedFood.image) {
-        iconContainer.innerHTML = `<img src="${selectedFood.image}" alt="${selectedFood.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px;">`;
+        iconContainer.innerHTML = `<img src="${selectedFood.image}" alt="${selectedFood.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
     } else {
-        iconContainer.innerHTML = selectedFood.icon;
+        iconContainer.innerHTML = `<span style="font-size: 4rem;">${selectedFood.icon}</span>`;
     }
     
     document.getElementById('modalFoodDesc').textContent = selectedFood.desc;
@@ -827,20 +917,24 @@ function openFoodModal(foodId) {
     document.getElementById('quantity').textContent = '1';
     document.getElementById('specialInstructions').value = '';
     
-    // Customization options
+    // Customization options with circular checkboxes
     const customSection = document.getElementById('customizationSection');
     const customOptions = document.getElementById('customOptions');
     
     if (selectedFood.options && selectedFood.options.length > 0) {
         customSection.style.display = 'block';
         customOptions.innerHTML = selectedFood.options.map((opt, i) => `
-            <label style="display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 0.5rem; cursor: pointer;">
-                <input type="checkbox" id="opt_${i}" onchange="toggleCustomization(${i})" style="width: 20px; height: 20px; accent-color: #ff6b6b;">
-                <span style="flex: 1;">${opt.name}</span>
-                <span style="color: ${opt.price > 0 ? '#ff6b6b' : '#10b981'}; font-weight: 600;">
-                    ${opt.price > 0 ? '+' + formatPrice(opt.price) : 'FREE'}
-                </span>
-            </label>
+            <div onclick="toggleCustomizationCircle(${i})" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <span style="font-size: 0.95rem;">${opt.name}</span>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        ${opt.price > 0 ? '+' + formatPrice(opt.price) : 'FREE'}
+                    </span>
+                    <div id="optCircle_${i}" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(230,57,70,0.5); display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                    </div>
+                </div>
+                <input type="checkbox" id="opt_${i}" style="display: none;">
+            </div>
         `).join('');
     } else {
         customSection.style.display = 'none';
@@ -850,16 +944,31 @@ function openFoodModal(foodId) {
     openModal('foodModal');
 }
 
-function toggleCustomization(index) {
+function toggleCustomizationCircle(index) {
     const checkbox = document.getElementById('opt_' + index);
+    const circle = document.getElementById('optCircle_' + index);
+    
+    checkbox.checked = !checkbox.checked;
+    
     if (checkbox.checked) {
+        circle.style.background = '#e63946';
+        circle.style.borderColor = '#e63946';
+        circle.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         if (!selectedCustomizations.includes(index)) {
             selectedCustomizations.push(index);
         }
     } else {
+        circle.style.background = 'transparent';
+        circle.style.borderColor = 'rgba(230,57,70,0.5)';
+        circle.innerHTML = '';
         selectedCustomizations = selectedCustomizations.filter(i => i !== index);
     }
     updateTotalPrice();
+}
+
+// Backwards compatible alias
+function toggleCustomization(index) {
+    toggleCustomizationCircle(index);
 }
 
 function changeQuantity(delta) {
@@ -1015,24 +1124,24 @@ function showFavorites() {
         `;
     } else {
         content.innerHTML = `
-            <div class="menu-grid" style="grid-template-columns: 1fr;">
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
                 ${favItems.map(item => {
                     const isUnavailable = item.available === false;
                     const imageDisplay = item.image 
-                        ? `<img src="${item.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">` 
-                        : `<span style="font-size: 2.5rem;">${item.icon}</span>`;
+                        ? `<img src="${item.image}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 10px;">` 
+                        : `<span style="font-size: 2rem;">${item.icon}</span>`;
                     
                     return `
-                    <div class="food-card" style="display: grid; grid-template-columns: 70px 1fr auto; align-items: center; padding: 1rem; ${isUnavailable ? 'opacity: 0.5;' : ''}">
-                        <div style="display: flex; align-items: center; justify-content: center;">${imageDisplay}</div>
-                        <div>
-                            <div class="food-name" style="${isUnavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
-                            <div class="food-price">${formatPrice(item.price)}</div>
-                            ${isUnavailable ? '<div style="color: #ef4444; font-size: 0.75rem; font-weight: 600;">NOT AVAILABLE</div>' : ''}
+                    <div style="display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); ${isUnavailable ? 'opacity: 0.5;' : ''}">
+                        <div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${imageDisplay}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; font-size: 0.95rem; ${isUnavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
+                            <div style="color: #e63946; font-weight: 700; font-size: 1rem;">${formatPrice(item.price)}</div>
+                            ${isUnavailable ? '<div style="color: #ef4444; font-size: 0.7rem; font-weight: 600;">NOT AVAILABLE</div>' : ''}
                         </div>
                         ${isUnavailable 
-                            ? '<span style="color: #ef4444; font-size: 0.8rem;">Unavailable</span>'
-                            : `<button class="add-btn" onclick="openFoodModal(${item.id}); closeModal('favoritesModal');">Order</button>`
+                            ? '<span style="color: #ef4444; font-size: 0.75rem; padding: 0.4rem 0.8rem;">N/A</span>'
+                            : `<button onclick="openFoodModal(${item.id}); closeModal('favoritesModal');" style="background: linear-gradient(135deg, #e63946, #c1121f); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; flex-shrink: 0;">Add</button>`
                         }
                     </div>
                 `}).join('')}
@@ -4589,10 +4698,23 @@ function confirmLocation() {
         return;
     }
     
+    // Generate fallback address if geocoding hasn't completed
+    if (!selectedLocation.address) {
+        selectedLocation.address = `Location: ${selectedLocation.lat.toFixed(4)}, ${selectedLocation.lng.toFixed(4)} (${distance.toFixed(1)} miles)`;
+    }
+    
     if (currentUser) {
         currentUser.location = selectedLocation;
         currentUser.address = selectedLocation.address;
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Also update in userDatabase
+        const userIndex = userDatabase.findIndex(u => u.email === currentUser.email);
+        if (userIndex !== -1) {
+            userDatabase[userIndex].location = selectedLocation;
+            userDatabase[userIndex].address = selectedLocation.address;
+            saveData();
+        }
     }
     
     // Close map modal
@@ -4757,6 +4879,7 @@ window.filterCategory = filterCategory;
 window.openFoodModal = openFoodModal;
 window.toggleFavorite = toggleFavorite;
 window.toggleCustomization = toggleCustomization;
+window.toggleCustomizationCircle = toggleCustomizationCircle;
 window.changeQuantity = changeQuantity;
 window.addToCart = addToCart;
 window.proceedToCheckout = proceedToCheckout;
@@ -4847,6 +4970,8 @@ window.getRestaurantStatus = getRestaurantStatus;
 window.getUKTime = getUKTime;
 window.getUKHour = getUKHour;
 window.resetAllData = resetAllData;
+window.showResetOptions = showResetOptions;
+window.resetSelectedData = resetSelectedData;
 
 // Location functions
 window.pickLocationForProfile = pickLocationForProfile;

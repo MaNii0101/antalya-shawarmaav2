@@ -51,8 +51,8 @@
     </div>
 
     <!-- MENU -->
-    <div class="main-content">
-        <h2 class="section-title" id="menuTitle">Our Menu</h2>
+    <div class="main-content" style="padding: 0;">
+        <h2 class="section-title" id="menuTitle" style="padding: 1rem 1rem 0.8rem; margin: 0; font-size: 1.5rem; font-weight: 700; border-bottom: 2px solid rgba(230, 57, 70, 0.3);">Our Menu</h2>
         <div class="menu-grid" id="menuGrid"></div>
     </div>
 
@@ -97,33 +97,55 @@
 
     <!-- FOOD DETAIL MODAL -->
     <div class="modal" id="foodModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('foodModal')">×</button>
-            <h2 id="modalFoodName"></h2>
-            <div style="text-align: center; font-size: 5rem; margin: 1rem 0;" id="modalFoodIcon"></div>
-            <p id="modalFoodDesc" style="color: rgba(255,255,255,0.7); text-align: center;"></p>
-            <p style="font-size: 2rem; color: #ff6b6b; font-weight: bold; text-align: center;" id="modalFoodPrice"></p>
+        <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden;">
+            <button class="close-btn" onclick="closeModal('foodModal')" style="position: absolute; top: 1rem; right: 1rem; z-index: 10; background: rgba(60,60,60,0.9); width: 36px; height: 36px;">×</button>
             
-            <div id="customizationSection" style="display: none;">
-                <label style="font-size: 1.1rem; margin-bottom: 1rem; display: block; color: #ff6b6b;">🎯 Customize Your Order</label>
-                <div id="customOptions"></div>
-            </div>
-            
-            <div class="form-group">
-                <label>Quantity</label>
-                <div class="quantity-control">
-                    <button class="qty-btn" onclick="changeQuantity(-1)">-</button>
-                    <span class="qty-display" id="quantity">1</span>
-                    <button class="qty-btn" onclick="changeQuantity(1)">+</button>
+            <!-- Food Header -->
+            <div style="padding: 1.5rem; background: linear-gradient(180deg, rgba(30,30,30,1) 0%, rgba(20,20,20,1) 100%);">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div id="modalFoodIcon" style="width: 130px; height: 130px; background: #f5f5f5; border-radius: 12px; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem;"></div>
+                    <div style="flex: 1; min-width: 0;">
+                        <h2 id="modalFoodName" style="margin: 0 0 0.5rem 0; font-size: 1.3rem; font-weight: 700; color: #fff;"></h2>
+                        <p id="modalFoodDesc" style="color: rgba(255,255,255,0.6); margin: 0; font-size: 0.9rem; line-height: 1.4;"></p>
+                    </div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label>Special Instructions</label>
-                <textarea id="specialInstructions" rows="3" placeholder="E.g., Extra spicy, no onions..."></textarea>
+            <!-- Customization Options -->
+            <div id="customizationSection" style="display: none; border-top: 6px solid rgba(230,57,70,0.15);">
+                <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700;">Extras</h3>
+                        <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.6);">Optional</span>
+                    </div>
+                </div>
+                <div id="customOptions" style="padding: 0;"></div>
             </div>
             
-            <button class="submit-btn" onclick="addToCart()">Add to Cart - <span id="totalPrice">£0.00</span></button>
+            <!-- Special Instructions -->
+            <div style="padding: 1.2rem 1.5rem; border-top: 6px solid rgba(230,57,70,0.15);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                    <h3 style="margin: 0; font-size: 1rem; font-weight: 600;">Special Instructions</h3>
+                    <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.6);">Optional</span>
+                </div>
+                <textarea id="specialInstructions" rows="2" placeholder="E.g., Extra spicy, no onions..." style="width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 0.9rem; resize: none;"></textarea>
+            </div>
+            
+            <!-- Bottom Action Bar -->
+            <div style="padding: 1rem 1.5rem; background: rgba(15,15,15,1); border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 1rem;">
+                <div style="display: flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden;">
+                    <button onclick="changeQuantity(-1)" style="background: transparent; border: none; color: #e63946; width: 44px; height: 44px; font-size: 1.5rem; cursor: pointer; font-weight: 700;">−</button>
+                    <span id="quantity" style="min-width: 30px; text-align: center; font-size: 1.1rem; font-weight: 600; color: white;">1</span>
+                    <button onclick="changeQuantity(1)" style="background: transparent; border: none; color: #e63946; width: 44px; height: 44px; font-size: 1.5rem; cursor: pointer; font-weight: 700;">+</button>
+                </div>
+                <button class="submit-btn" onclick="addToCart()" style="flex: 1; margin: 0; padding: 0.9rem; background: linear-gradient(135deg, #e63946, #c1121f); border-radius: 8px; font-size: 1rem; font-weight: 700; display: flex; justify-content: center; gap: 0.5rem;">
+                    <span>Add Item</span>
+                    <span id="totalPrice" style="opacity: 0.9;">£0.00</span>
+                </button>
+            </div>
+            
+            <!-- Hidden price display for reference -->
+            <span id="modalFoodPrice" style="display: none;"></span>
         </div>
     </div>
 
@@ -435,8 +457,71 @@
             <div style="margin-top: 2rem; background: rgba(239,68,68,0.1); border: 2px solid rgba(239,68,68,0.3); padding: 2rem; border-radius: 15px;">
                 <h3 style="color: #ef4444; margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">⚠️ Danger Zone</h3>
                 <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 0.9rem;">These actions cannot be undone. Please proceed with caution.</p>
-                <button onclick="resetAllData()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                    🗑️ Reset All Data
+                <button onclick="showResetOptions()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    🗑️ Reset Data Options
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RESET OPTIONS MODAL -->
+    <div class="modal" id="resetOptionsModal" style="display: none; z-index: 10005;">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="close-btn" onclick="closeModal('resetOptionsModal')">×</button>
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">⚠️</div>
+                <h2 style="color: #ef4444;">Reset Data Options</h2>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Select what you want to reset</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" id="resetUsers" style="width: 20px; height: 20px; accent-color: #ef4444;">
+                    <div>
+                        <div style="font-weight: 600;">👥 User Accounts</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Delete all customer accounts</div>
+                    </div>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" id="resetOrders" style="width: 20px; height: 20px; accent-color: #ef4444;">
+                    <div>
+                        <div style="font-weight: 600;">📦 Order History</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Delete all orders (pending & completed)</div>
+                    </div>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" id="resetDrivers" style="width: 20px; height: 20px; accent-color: #ef4444;">
+                    <div>
+                        <div style="font-weight: 600;">🚗 Driver Data</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Delete all driver accounts & locations</div>
+                    </div>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" id="resetFavorites" style="width: 20px; height: 20px; accent-color: #ef4444;">
+                    <div>
+                        <div style="font-weight: 600;">❤️ Favorites & Notifications</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Delete all user favorites & notifications</div>
+                    </div>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" id="resetMenu" style="width: 20px; height: 20px; accent-color: #ef4444;">
+                    <div>
+                        <div style="font-weight: 600;">🍽️ Menu to Default</div>
+                        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Reset menu to original items</div>
+                    </div>
+                </label>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <button onclick="closeModal('resetOptionsModal')" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    Cancel
+                </button>
+                <button onclick="resetSelectedData()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 1rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    🗑️ Reset Selected
                 </button>
             </div>
         </div>
