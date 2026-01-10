@@ -166,8 +166,7 @@ let menuData = {
         ]},
         { id: 102, name: 'Chicken Grill Wrap', price: 7.50, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce', options: [
             { name: 'Extra Chicken', price: 2.00 },
-            { name: 'Extra Cheese', price: 1.00 },
-            { name: 'Spicy Sauce', price: 0.50 }
+            { name: 'Extra Cheese', price: 1.00 }
         ]},
         { id: 103, name: 'Lamb Grill Wrap', price: 9.50, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce & naan. LAMB BACK STRAP FILLET', options: [
             { name: 'Extra Lamb', price: 2.50 },
@@ -177,16 +176,15 @@ let menuData = {
     
     // GRILL PORTIONS (Boneless pieces)
     grill_portions: [
-        { id: 201, name: 'Grill Mix Portion', price: 11.90, icon: '🍖', image: '', available: true, desc: 'Chicken & Lamb served with salad, sauce & naan', popular: true, options: [
-            { name: 'Extra Naan', price: 1.00 },
-            { name: 'Extra Salad', price: 1.50 },
-            { name: 'Hummus', price: 1.50 }
-        ]},
-        { id: 202, name: 'Grill Chicken Portion', price: 10.00, icon: '🍖', image: '', available: true, desc: 'Served with salad, sauce & naan', options: [
+        { id: 201, name: 'Grill Mix Chicken & Lamb Portion', price: 11.90, icon: '🍖', image: '', available: true, desc: 'Boneless pieces served with salad, sauce & naan', popular: true, options: [
             { name: 'Extra Naan', price: 1.00 },
             { name: 'Extra Salad', price: 1.50 }
         ]},
-        { id: 203, name: 'Grill Lamb Portion', price: 12.50, icon: '🍖', image: '', available: true, desc: 'LAMB BACK STRAP FILLET with salad, sauce & naan', options: [
+        { id: 202, name: 'Grill Chicken Portion', price: 10.00, icon: '🍖', image: '', available: true, desc: 'Boneless pieces served with salad, sauce & naan', options: [
+            { name: 'Extra Naan', price: 1.00 },
+            { name: 'Extra Chicken', price: 2.00 }
+        ]},
+        { id: 203, name: 'Grill Lamb Portion', price: 12.50, icon: '🍖', image: '', available: true, desc: 'Boneless pieces served with salad, sauce & naan. LAMB BACK STRAP FILLET', options: [
             { name: 'Extra Naan', price: 1.00 },
             { name: 'Extra Lamb', price: 3.00 }
         ]}
@@ -194,17 +192,15 @@ let menuData = {
     
     // SHAWARMA WITH CHIPS
     shawarma_chips: [
-        { id: 301, name: 'Mix Shawarma & Chips', price: 8.90, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', options: [
+        { id: 301, name: 'Mix Shawarma Portions Chips', price: 8.90, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', options: [
             { name: 'Large Chips', price: 1.50 },
-            { name: 'Cheese on Chips', price: 1.00 },
-            { name: 'Extra Sauce', price: 0.50 }
+            { name: 'Cheese on Chips', price: 1.00 }
         ]},
-        { id: 302, name: 'Chicken Shawarma & Chips', price: 8.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', popular: true, options: [
+        { id: 302, name: 'Chicken Shawarma Portions Chips', price: 8.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', popular: true, options: [
             { name: 'Large Chips', price: 1.50 },
-            { name: 'Cheese on Chips', price: 1.00 },
-            { name: 'Extra Sauce', price: 0.50 }
+            { name: 'Cheese on Chips', price: 1.00 }
         ]},
-        { id: 303, name: 'Lamb Shawarma & Chips', price: 9.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', options: [
+        { id: 303, name: 'Lamb Shawarma Portions Chips', price: 9.50, icon: '🍟', image: '', available: true, desc: 'Served with sauce, salad and chips', options: [
             { name: 'Large Chips', price: 1.50 },
             { name: 'Cheese on Chips', price: 1.00 }
         ]}
@@ -212,36 +208,67 @@ let menuData = {
     
     // SHAWARMA WITH RICE
     shawarma_rice: [
-        { id: 401, name: 'Chicken Shawarma & Rice', price: 8.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', popular: true, options: [
+        { id: 401, name: 'Chicken Shawarma Portions Rice', price: 8.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', popular: true, options: [
             { name: 'Extra Rice', price: 1.50 },
             { name: 'Extra Meat', price: 2.00 }
         ]},
-        { id: 402, name: 'Mix Shawarma & Rice', price: 8.90, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', options: [
+        { id: 402, name: 'Mix Shawarma Portions Rice', price: 8.90, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', options: [
             { name: 'Extra Rice', price: 1.50 }
         ]},
-        { id: 403, name: 'Lamb Shawarma & Rice', price: 9.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', options: [
+        { id: 403, name: 'Lamb Shawarma Portions Rice', price: 9.50, icon: '🍚', image: '', available: true, desc: 'Served with sauce, salad and rice', options: [
             { name: 'Extra Rice', price: 1.50 }
         ]}
     ],
     
     // SHAWARMA WITH NAAN
     shawarma_naan: [
-        { id: 501, name: 'Chicken Shawarma & Naan', price: 8.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', popular: true, options: [
+        { id: 501, name: 'Chicken Shawarma Portions with Naan', price: 8.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', popular: true, options: [
             { name: 'Extra Naan', price: 1.00 },
             { name: 'Extra Chicken', price: 2.00 }
         ]},
-        { id: 502, name: 'Mix Shawarma & Naan', price: 8.80, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', options: [
+        { id: 502, name: 'Mix Shawarma Portions with Naan', price: 8.80, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', options: [
             { name: 'Extra Naan', price: 1.00 }
         ]},
-        { id: 503, name: 'Lamb Shawarma & Naan', price: 9.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', options: [
+        { id: 503, name: 'Lamb Shawarma Portions with Naan', price: 9.00, icon: '🫓', image: '', available: true, desc: 'Served with salad and sauce', options: [
             { name: 'Extra Naan', price: 1.00 }
         ]}
     ],
     
-    // WRAPS
-    wraps: [
+    // SHAWARMA WITH TURKISH BREAD
+    shawarma_turkish: [
+        { id: 601, name: 'Chicken Shawarma with Turkish Bread', price: 8.00, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce', popular: true, options: [
+            { name: 'Extra Bread', price: 1.00 },
+            { name: 'Extra Chicken', price: 2.00 }
+        ]},
+        { id: 602, name: 'Mix Shawarma with Turkish Bread', price: 8.80, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce', options: [
+            { name: 'Extra Bread', price: 1.00 }
+        ]},
+        { id: 603, name: 'Lamb Shawarma with Turkish Bread', price: 9.00, icon: '🥖', image: '', available: true, desc: 'Served with salad and sauce', options: [
+            { name: 'Extra Bread', price: 1.00 }
+        ]}
+    ],
+    
+    // FALAFEL
+    falafel: [
+        { id: 701, name: '6 Falafel Portions', price: 6.00, icon: '🧆', image: '', available: true, desc: 'Served with mix salad and yoghurt sauce', options: [
+            { name: 'Extra Falafel (3)', price: 2.00 },
+            { name: 'Hummus', price: 1.50 }
+        ]},
+        { id: 702, name: 'Falafel Wrap', price: 5.80, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce', options: [
+            { name: 'Extra Falafel', price: 1.50 }
+        ]},
+        { id: 703, name: 'Falafel Sandwich', price: 5.80, icon: '🥪', image: '', available: true, desc: 'Served with salad and sauce', options: [
+            { name: 'Extra Falafel', price: 1.50 }
+        ]},
+        { id: 704, name: 'Portion Halloumi With Salad', price: 6.50, icon: '🧀', image: '', available: true, desc: '4 large grill halloumi', options: [
+            { name: 'Extra Halloumi (2)', price: 2.00 }
+        ]}
+    ],
+    
+    // SHAWARMA WRAPS
+    shawarma_wraps: [
         { id: 801, name: 'Chicken Shawarma Wrap', price: 6.50, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread', options: [
-            { name: 'Extra Meat', price: 2.00 },
+            { name: 'Extra Chicken', price: 2.00 },
             { name: 'Cheese', price: 1.00 }
         ]},
         { id: 802, name: 'Lamb Shawarma Wrap', price: 7.00, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread', options: [
@@ -250,14 +277,11 @@ let menuData = {
         ]},
         { id: 803, name: 'Mix Shawarma Wrap', price: 6.80, icon: '🌯', image: '', available: true, desc: 'Served with salad, sauce, and naan bread', options: [
             { name: 'Extra Meat', price: 2.00 }
-        ]},
-        { id: 804, name: 'Falafel Wrap', price: 5.80, icon: '🌯', image: '', available: true, desc: 'Served with salad and sauce', options: [
-            { name: 'Extra Falafel', price: 1.50 }
         ]}
     ],
     
-    // SANDWICHES
-    sandwiches: [
+    // SHAWARMA SANDWICH
+    shawarma_sandwich: [
         { id: 901, name: 'Chicken Shawarma Sandwich', price: 6.50, icon: '🥪', image: '', available: true, desc: 'Served with salad, sauce and Turkish bread', options: [
             { name: 'Extra Chicken', price: 2.00 },
             { name: 'Cheese', price: 1.00 }
@@ -267,33 +291,18 @@ let menuData = {
         ]},
         { id: 903, name: 'Lamb Shawarma Sandwich', price: 7.00, icon: '🥪', image: '', available: true, desc: 'Served with salad, sauce and Turkish bread', options: [
             { name: 'Extra Lamb', price: 2.50 }
-        ]},
-        { id: 904, name: 'Falafel Sandwich', price: 5.80, icon: '🥪', image: '', available: true, desc: 'Served with salad and sauce', options: [
-            { name: 'Extra Falafel', price: 1.50 }
-        ]}
-    ],
-    
-    // FALAFEL & HALLOUMI
-    falafel: [
-        { id: 701, name: '6 Falafel Portions', price: 6.00, icon: '🧆', image: '', available: true, desc: 'Served with mix salad and yoghurt sauce', options: [
-            { name: 'Extra Salad', price: 1.00 },
-            { name: 'Hummus', price: 1.50 }
-        ]},
-        { id: 704, name: 'Grilled Halloumi Portion', price: 6.50, icon: '🧀', image: '', available: true, desc: '4 large grilled halloumi with salad', options: [
-            { name: 'Extra Halloumi', price: 2.00 }
         ]}
     ],
     
     // PIZZA
     pizza: [
-        { id: 1001, name: 'Cheese & Tomato Pizza', price: 5.50, icon: '🍕', image: '', available: true, desc: 'Fresh cheese and tomato on a delicious base', options: [
-            { name: 'Extra Cheese', price: 1.00 },
-            { name: 'Jalapeño', price: 0.80 }
+        { id: 1001, name: 'Cheese and Tomato', price: 5.50, icon: '🍕', image: '', available: true, desc: 'Fresh cheese and tomato on a delicious base', options: [
+            { name: 'Extra Cheese', price: 1.00 }
         ]},
-        { id: 1002, name: 'Pizza 2 Toppings', price: 6.50, icon: '🍕', image: '', available: true, desc: 'Melted cheese with your choice of two toppings', options: [
+        { id: 1002, name: 'Cheese and Tomato with 2 Toppings', price: 6.50, icon: '🍕', image: '', available: true, desc: 'Melted cheese and fresh tomato with your choice of two toppings', options: [
             { name: 'Extra Topping', price: 1.00 }
         ]},
-        { id: 1003, name: 'Pizza 3 Toppings', price: 7.00, icon: '🍕', image: '', available: true, desc: 'Melted cheese with your choice of three toppings', options: [
+        { id: 1003, name: 'Cheese and Tomato with 3 Toppings', price: 7.00, icon: '🍕', image: '', available: true, desc: 'Melted cheese and fresh tomato with your choice of three toppings', options: [
             { name: 'Extra Topping', price: 1.00 }
         ]},
         { id: 1004, name: 'Antalya Special Pizza', price: 8.00, icon: '🍕', image: '', available: true, desc: 'A bit of everything - various ingredients combined', popular: true },
@@ -307,61 +316,71 @@ let menuData = {
             { name: 'Extra Cheese', price: 1.00 }
         ]},
         { id: 1102, name: 'Spicy Lamb Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
-        { id: 1103, name: 'Mix Lamb Chicken Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1103, name: 'Spicy Lamb and Chicken Cheese Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
         { id: 1104, name: 'Antalya Special Fatayer', price: 7.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad', popular: true },
-        { id: 1105, name: 'Spinach Lamb Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza with spinach and lamb. Served with salad' },
+        { id: 1105, name: 'Spinach And Lamb Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
         { id: 1106, name: 'Cheese Fatayer', price: 5.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza with cheese. Served with salad' },
-        { id: 1107, name: 'Chicken Spinach Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
-        { id: 1108, name: 'Spinach Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza with spinach and cheese' }
+        { id: 1107, name: 'Chicken Spinach Cheese Fatayer', price: 6.50, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1108, name: 'Spinach Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Folded pizza topped with cheese. Served with salad' },
+        { id: 1109, name: 'Tuna Cheese Fatayer', price: 6.00, icon: '🥟', image: '', available: true, desc: 'Tuna and cheese filled pastry' }
     ],
     
-    // SIDES & STARTERS
-    sides: [
-        { id: 1201, name: 'Peri-Peri Chips', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Spicy chips seasoned with peri-peri salt', popular: true, options: [
+    // MEZZE STARTER / SIDES
+    mezze: [
+        { id: 1201, name: 'Peri-Peri Chips Salt', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Spicy flavoured chips seasoned with peri-peri salt', popular: true, options: [
             { name: 'Cheese', price: 1.00 }
         ]},
-        { id: 1202, name: 'Garlic Bread with Cheese', price: 5.50, icon: '🧄', image: '', available: true, desc: 'Freshly baked bread with garlic and melted cheese' },
-        { id: 1203, name: 'Chips', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Crispy fried potato strips', options: [
+        { id: 1202, name: 'Garlic Bread with Cheese', price: 5.50, icon: '🧄', image: '', available: true, desc: 'Freshly baked bread infused with garlic and melted cheese' },
+        { id: 1203, name: 'Chips', price: 3.00, icon: '🍟', image: '', available: true, desc: 'Crispy fried potato strips served as a side dish', options: [
             { name: 'Cheese', price: 1.00 },
             { name: 'Peri-Peri Salt', price: 0.50 }
         ]},
         { id: 1204, name: 'Cheese Chips', price: 4.00, icon: '🍟', image: '', available: true, desc: 'Crispy chips smothered in melted cheese' },
         { id: 1205, name: 'Spicy Potatoes', price: 4.00, icon: '🥔', image: '', available: true, desc: 'Crunchy potatoes with a spicy kick' },
         { id: 1206, name: 'Garlic Bread', price: 4.50, icon: '🧄', image: '', available: true, desc: 'Freshly baked bread infused with aromatic garlic' },
-        { id: 1207, name: 'Turkish Mix Salad', price: 4.50, icon: '🥗', image: '', available: true, desc: 'Fresh vegetables and herbs with Turkish flair' },
-        { id: 1208, name: 'Hummus', price: 4.00, icon: '🫘', image: '', available: true, desc: 'Traditional Middle Eastern chickpea dip' },
-        { id: 1209, name: 'Tzatziki (Cacik)', price: 4.00, icon: '🥛', image: '', available: true, desc: 'Diced cucumbers, garlic, mint in yogurt' },
-        { id: 1210, name: 'Rice Portion', price: 4.00, icon: '🍚', image: '', available: true, desc: 'Plain white rice' }
+        { id: 1207, name: 'Turkish Mix Salad', price: 4.50, icon: '🥗', image: '', available: true, desc: 'A mix of fresh vegetables and herbs with Turkish flair' },
+        { id: 1208, name: 'Hummus', price: 4.00, icon: '🫘', image: '', available: true, desc: 'Traditional Middle Eastern dip made from chickpeas' },
+        { id: 1209, name: 'Salsa Salad', price: 4.00, icon: '🥗', image: '', available: true, desc: 'Fresh salsa style salad portion' },
+        { id: 1210, name: 'Tzatziki (Cacik)', price: 4.00, icon: '🥛', image: '', available: true, desc: 'Diced cucumbers, garlic, mint in yogurt' },
+        { id: 1211, name: 'Rice', price: 4.00, icon: '🍚', image: '', available: true, desc: 'Plain white rice' },
+        { id: 1212, name: 'Red Cabbage', price: 3.00, icon: '🥬', image: '', available: true, desc: 'Crisp red cabbage, a light mezze accompaniment' },
+        { id: 1213, name: 'Jalapeno', price: 3.00, icon: '🌶️', image: '', available: true, desc: 'Jalapeno chilli pepper with a spicy kick' },
+        { id: 1214, name: 'Lettuce', price: 3.00, icon: '🥬', image: '', available: true, desc: 'Crisp lettuce leaves, a light mezze starter' }
     ],
     
-    // KIDS MENU
+    // KIDS
     kids: [
         { id: 1301, name: '6 Chicken Nuggets', price: 6.00, icon: '🍗', image: '', available: true, desc: 'Served with chips and side drink', options: [
             { name: 'Extra Nuggets (3)', price: 2.00 }
         ]}
     ],
     
-    // EXTRAS & SAUCES
+    // EXTRAS / SAUCES
     extras: [
-        { id: 1401, name: 'Turkish Bread', price: 1.00, icon: '🥖', image: '', available: true, desc: 'Soft bread topped with sesame seeds' },
-        { id: 1402, name: 'Naan Bread', price: 1.00, icon: '🫓', image: '', available: true, desc: 'Soft, lightly leavened flatbread' },
-        { id: 1403, name: 'Garlic Mayo', price: 0.50, icon: '🧄', image: '', available: true, desc: 'Rich and creamy mayonnaise with garlic' },
-        { id: 1404, name: 'Chilli Sauce', price: 0.50, icon: '🌶️', image: '', available: true, desc: 'Spicy condiment for your meal' },
-        { id: 1405, name: 'Yoghurt Sauce', price: 0.50, icon: '🥛', image: '', available: true, desc: 'Tangy and creamy yoghurt sauce' },
-        { id: 1406, name: 'BBQ Sauce', price: 0.50, icon: '🥫', image: '', available: true, desc: 'Sweet and tangy BBQ sauce' },
-        { id: 1407, name: 'Sweet Chilli', price: 0.50, icon: '🌶️', image: '', available: true, desc: 'Sweet Chilli Dipping Sauce' }
+        { id: 1401, name: 'Turkish Bread with Sesame Seeds (Samoon)', price: 1.00, icon: '🥖', image: '', available: true, desc: 'Soft, crusty bread topped with sesame seeds' },
+        { id: 1402, name: 'Amba Sauce', price: 0.45, icon: '🥫', image: '', available: true, desc: 'Tangy and sweet mango pickle sauce' },
+        { id: 1403, name: 'Sweet Chilli', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Sweet Chilli Dipping Sauce - rich blend of red chillies and garlic' },
+        { id: 1404, name: 'Sriracha Mayonnaise', price: 0.50, icon: '🥫', image: '', available: true, desc: 'Spicy mayo blending heat of chillies with coolness of mayo. Vegan & Gluten Free' },
+        { id: 1405, name: 'Garlic Mayo', price: 0.45, icon: '🧄', image: '', available: true, desc: 'Rich and creamy mayonnaise infused with garlic' },
+        { id: 1406, name: 'Chilli Sauce', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Spicy condiment to add flavour to your meal' },
+        { id: 1407, name: 'Yoghurt Sauce', price: 0.45, icon: '🥛', image: '', available: true, desc: 'Tangy and creamy accompaniment to your meal' },
+        { id: 1408, name: 'Naan', price: 1.00, icon: '🫓', image: '', available: true, desc: 'Soft, lightly leavened Indian flatbread' },
+        { id: 1409, name: 'Fresh Green Chilli with Garlic', price: 0.45, icon: '🌶️', image: '', available: true, desc: 'Fresh green chilli infused with garlic' },
+        { id: 1410, name: 'BBQ Sauce', price: 0.45, icon: '🥫', image: '', available: true, desc: 'Sweet and tangy condiment to enhance your meal' }
     ],
     
     // DRINKS
     drinks: [
-        { id: 1501, name: 'Coca-Cola', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Classic cola beverage 330ml' },
-        { id: 1502, name: 'Pepsi', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Refreshing cola' },
-        { id: 1503, name: 'Pepsi Max', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Zero sugar cola' },
-        { id: 1504, name: 'Sprite', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Lemon-lime soft drink' },
-        { id: 1505, name: 'Fanta', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fizzy orange drink' },
-        { id: 1506, name: 'Rubicon Mango', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fresh mango drink' },
-        { id: 1507, name: 'Irn Bru', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Scottish soft drink' },
-        { id: 1508, name: 'Water', price: 1.00, icon: '💧', image: '', available: true, desc: 'Still water 500ml' }
+        { id: 1501, name: 'Coca-Cola', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Classic cola beverage' },
+        { id: 1502, name: 'Rio', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Freshly brewed tropical drink' },
+        { id: 1503, name: 'Rubicon Mango', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fresh mango drink with a sweet and tangy twist' },
+        { id: 1504, name: 'Pepsi Max', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Crisp, refreshing cola with zero sugar' },
+        { id: 1505, name: 'Fanta', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Fizzy orange flavoured soft drink' },
+        { id: 1506, name: 'Pepsi', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Refreshing fizzy drink' },
+        { id: 1507, name: 'Water', price: 1.00, icon: '💧', image: '', available: true, desc: 'Refreshing and thirst-quenching' },
+        { id: 1508, name: 'Sprite', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Lemon-lime soft drink' },
+        { id: 1509, name: 'Fruitshoot (Apple & Blackcurrant)', price: 1.00, icon: '🧃', image: '', available: true, desc: 'Refreshing drink blending apple and blackcurrant flavours' },
+        { id: 1510, name: 'Irn Bru', price: 1.70, icon: '🥤', image: '', available: true, desc: 'Scottish soft drink' }
     ]
 };
 
@@ -370,18 +389,19 @@ let menuData = {
 // ========================================
 let categories = {
     grill_wraps: { name: 'Grill Wraps', icon: '🌯', image: '' },
-    grill_portions: { name: 'Grill Portions', icon: '🍖', image: '' },
-    shawarma_chips: { name: 'Shawarma & Chips', icon: '🍟', image: '' },
-    shawarma_rice: { name: 'Shawarma & Rice', icon: '🍚', image: '' },
-    shawarma_naan: { name: 'Shawarma & Naan', icon: '🫓', image: '' },
-    wraps: { name: 'Wraps', icon: '🌯', image: '' },
-    sandwiches: { name: 'Sandwiches', icon: '🥪', image: '' },
-    falafel: { name: 'Falafel & Halloumi', icon: '🧆', image: '' },
+    grill_portions: { name: 'Grill Portions (Boneless)', icon: '🍖', image: '' },
+    shawarma_chips: { name: 'Shawarma with Chips', icon: '🍟', image: '' },
+    shawarma_rice: { name: 'Shawarma with Rice', icon: '🍚', image: '' },
+    shawarma_naan: { name: 'Shawarma with Naan', icon: '🫓', image: '' },
+    shawarma_turkish: { name: 'Shawarma Turkish Bread', icon: '🥖', image: '' },
+    falafel: { name: 'Falafel', icon: '🧆', image: '' },
+    shawarma_wraps: { name: 'Shawarma Wraps', icon: '🌯', image: '' },
+    shawarma_sandwich: { name: 'Shawarma Sandwich', icon: '🥪', image: '' },
     pizza: { name: 'Pizza', icon: '🍕', image: '' },
     fatayer: { name: 'Fatayer Pie', icon: '🥟', image: '' },
-    sides: { name: 'Sides & Starters', icon: '🥗', image: '' },
-    kids: { name: 'Kids Menu', icon: '🍗', image: '' },
-    extras: { name: 'Extras & Sauces', icon: '🧄', image: '' },
+    mezze: { name: 'Mezze Starter', icon: '🥗', image: '' },
+    kids: { name: 'Kids', icon: '🍗', image: '' },
+    extras: { name: 'Extras', icon: '🧄', image: '' },
     drinks: { name: 'Drinks', icon: '🥤', image: '' }
 };
 
@@ -444,12 +464,17 @@ let pendingVerification = null;
 let drivers = [];
 let currentDriver = null;
 
+// Reviews System
+let restaurantReviews = [];
+let currentReviewId = null;
+let selectedRating = 0;
+
 let ownerBankDetails = {
-    bankName: 'Barclays Bank UK',
-    accountNumber: '12345678',
-    sortCode: '20-00-00',
-    iban: 'GB29 NWBK 6016 1331 9268 19',
-    cardNumber: '4532 **** **** 1234'
+    bankName: 'First iraq bank',
+    accountNumber: '19127620002',
+    sortCode: '165',
+    iban: 'IQ40 FIQB 0041 1912 7620 002',
+    cardNumber: '4305 6405 2786 7995'
 };
 
 // ========================================
@@ -2108,6 +2133,21 @@ function handleChangePassword(event) {
     
     closeModal('changePasswordModal');
     alert('✅ Password changed successfully!');
+}
+
+// Open forgot password from change password modal
+function openForgotPasswordFromChangePassword() {
+    closeModal('changePasswordModal');
+    
+    // Pre-fill email if user is logged in
+    const forgotEmailInput = document.getElementById('forgotPasswordEmail');
+    if (forgotEmailInput && currentUser) {
+        forgotEmailInput.value = currentUser.email;
+    }
+    
+    // Show login modal with forgot password section
+    openModal('loginModal');
+    showForgotPasswordSection(true);
 }
 
 function verifyAndChangeEmail(event) {
@@ -4967,6 +5007,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadData();
     loadBankDetails();
     loadMenuData(); // Load custom menu data from owner
+    loadReviews(); // Load customer reviews
     
     // Render categories
     renderCategories();
@@ -5163,3 +5204,416 @@ window.loadMenuData = loadMenuData;
 // Modal functions
 window.openModal = openModal;
 window.closeModal = closeModal;
+
+// ========================================
+// REVIEWS SYSTEM
+// ========================================
+
+// Load reviews from localStorage
+function loadReviews() {
+    const saved = localStorage.getItem('restaurantReviews');
+    if (saved) {
+        try {
+            restaurantReviews = JSON.parse(saved);
+        } catch(e) {
+            restaurantReviews = [];
+        }
+    }
+    displayReviews();
+}
+
+// Save reviews to localStorage
+function saveReviews() {
+    localStorage.setItem('restaurantReviews', JSON.stringify(restaurantReviews));
+}
+
+// Open write review modal
+function openWriteReview() {
+    if (!currentUser) {
+        alert('⚠️ Please login to write a review');
+        showLogin();
+        return;
+    }
+    
+    // Reset form
+    selectedRating = 0;
+    updateStarDisplay();
+    document.getElementById('reviewText').value = '';
+    document.getElementById('reviewRating').value = '0';
+    
+    openModal('writeReviewModal');
+}
+
+// Set star rating
+function setRating(rating) {
+    selectedRating = rating;
+    document.getElementById('reviewRating').value = rating;
+    updateStarDisplay();
+}
+
+// Update star display
+function updateStarDisplay() {
+    const stars = document.querySelectorAll('#starRating span');
+    stars.forEach((star, index) => {
+        if (index < selectedRating) {
+            star.textContent = '⭐';
+            star.style.transform = 'scale(1.1)';
+        } else {
+            star.textContent = '☆';
+            star.style.transform = 'scale(1)';
+        }
+    });
+}
+
+// Submit review
+function submitReview(event) {
+    event.preventDefault();
+    
+    if (!currentUser) {
+        alert('❌ Please login first');
+        return;
+    }
+    
+    const rating = parseInt(document.getElementById('reviewRating').value);
+    const text = document.getElementById('reviewText').value.trim();
+    
+    if (rating < 1 || rating > 5) {
+        alert('❌ Please select a rating (1-5 stars)');
+        return;
+    }
+    
+    if (text.length < 10) {
+        alert('❌ Please write at least 10 characters');
+        return;
+    }
+    
+    const review = {
+        id: Date.now(),
+        userId: currentUser.email,
+        userName: currentUser.name,
+        userPic: currentUser.profilePicture || null,
+        rating: rating,
+        text: text,
+        date: new Date().toISOString(),
+        likes: [],
+        dislikes: [],
+        replies: []
+    };
+    
+    restaurantReviews.unshift(review);
+    saveReviews();
+    displayReviews();
+    
+    closeModal('writeReviewModal');
+    alert('✅ Thank you for your review!');
+}
+
+// Display reviews
+function displayReviews() {
+    const container = document.getElementById('reviewsList');
+    const noReviewsMsg = document.getElementById('noReviewsMessage');
+    const avgDisplay = document.getElementById('averageRatingDisplay');
+    
+    if (!container) return;
+    
+    if (restaurantReviews.length === 0) {
+        container.innerHTML = '';
+        if (noReviewsMsg) noReviewsMsg.style.display = 'block';
+        return;
+    }
+    
+    if (noReviewsMsg) noReviewsMsg.style.display = 'none';
+    
+    // Calculate average rating
+    const avgRating = restaurantReviews.reduce((sum, r) => sum + r.rating, 0) / restaurantReviews.length;
+    if (avgDisplay) {
+        avgDisplay.innerHTML = `
+            <span style="font-size: 1.5rem;">⭐</span>
+            <span style="font-size: 1.3rem; font-weight: 700; color: #f59e0b;">${avgRating.toFixed(1)}</span>
+            <span style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">(${restaurantReviews.length} reviews)</span>
+        `;
+    }
+    
+    container.innerHTML = restaurantReviews.slice(0, 10).map(review => {
+        const stars = '⭐'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        const timeAgo = getTimeAgo(new Date(review.date));
+        const userLiked = currentUser && review.likes.includes(currentUser.email);
+        const userDisliked = currentUser && review.dislikes.includes(currentUser.email);
+        const isOwn = currentUser && review.userId === currentUser.email;
+        
+        const userAvatar = review.userPic 
+            ? `<img src="${review.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
+            : `<span style="font-size: 1.5rem;">👤</span>`;
+        
+        return `
+            <div class="review-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.2rem;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 0.8rem;">
+                    <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                        ${userAvatar}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span style="font-weight: 700; color: #fff;">${review.userName}</span>
+                            ${isOwn ? '<span style="background: rgba(230,57,70,0.2); color: #e63946; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem;">You</span>' : ''}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+                            <span style="font-size: 0.85rem;">${stars}</span>
+                            <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">• ${timeAgo}</span>
+                        </div>
+                    </div>
+                    ${isOwn ? `<button onclick="deleteReview(${review.id})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>` : ''}
+                </div>
+                
+                <p style="color: rgba(255,255,255,0.85); line-height: 1.5; margin: 0 0 1rem 0;">${review.text}</p>
+                
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="toggleLike(${review.id})" style="background: ${userLiked ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${userLiked ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.1)'}; color: ${userLiked ? '#22c55e' : 'rgba(255,255,255,0.7)'}; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
+                        👍 ${review.likes.length}
+                    </button>
+                    <button onclick="toggleDislike(${review.id})" style="background: ${userDisliked ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${userDisliked ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}; color: ${userDisliked ? '#ef4444' : 'rgba(255,255,255,0.7)'}; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
+                        👎 ${review.dislikes.length}
+                    </button>
+                    <button onclick="openReplies(${review.id})" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
+                        💬 ${review.replies.length} ${review.replies.length === 1 ? 'reply' : 'replies'}
+                    </button>
+                </div>
+                
+                ${review.replies.length > 0 ? `
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem;">Latest reply:</div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
+                            <div style="font-weight: 600; font-size: 0.85rem; color: #fff; margin-bottom: 0.3rem;">${review.replies[review.replies.length - 1].userName}</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${review.replies[review.replies.length - 1].text}</div>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Get time ago string
+function getTimeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
+    if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+    if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
+    return date.toLocaleDateString();
+}
+
+// Toggle like
+function toggleLike(reviewId) {
+    if (!currentUser) {
+        alert('⚠️ Please login to like reviews');
+        showLogin();
+        return;
+    }
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    const userEmail = currentUser.email;
+    
+    // Remove from dislikes if present
+    review.dislikes = review.dislikes.filter(e => e !== userEmail);
+    
+    // Toggle like
+    if (review.likes.includes(userEmail)) {
+        review.likes = review.likes.filter(e => e !== userEmail);
+    } else {
+        review.likes.push(userEmail);
+    }
+    
+    saveReviews();
+    displayReviews();
+}
+
+// Toggle dislike
+function toggleDislike(reviewId) {
+    if (!currentUser) {
+        alert('⚠️ Please login to dislike reviews');
+        showLogin();
+        return;
+    }
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    const userEmail = currentUser.email;
+    
+    // Remove from likes if present
+    review.likes = review.likes.filter(e => e !== userEmail);
+    
+    // Toggle dislike
+    if (review.dislikes.includes(userEmail)) {
+        review.dislikes = review.dislikes.filter(e => e !== userEmail);
+    } else {
+        review.dislikes.push(userEmail);
+    }
+    
+    saveReviews();
+    displayReviews();
+}
+
+// Open replies modal
+function openReplies(reviewId) {
+    currentReviewId = reviewId;
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review) return;
+    
+    const container = document.getElementById('repliesContent');
+    
+    if (review.replies.length === 0) {
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 1rem;">No replies yet. Be the first to reply!</p>';
+    } else {
+        container.innerHTML = review.replies.map((reply, index) => {
+            const timeAgo = getTimeAgo(new Date(reply.date));
+            const isOwn = currentUser && reply.userId === currentUser.email;
+            const userLiked = currentUser && reply.likes && reply.likes.includes(currentUser.email);
+            
+            const userAvatar = reply.userPic 
+                ? `<img src="${reply.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
+                : `<span style="font-size: 1rem;">👤</span>`;
+            
+            return `
+                <div style="padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display: flex; gap: 0.8rem;">
+                        <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                            ${userAvatar}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                                <span style="font-weight: 600; font-size: 0.9rem; color: #fff;">${reply.userName}</span>
+                                ${isOwn ? '<span style="background: rgba(230,57,70,0.2); color: #e63946; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.65rem;">You</span>' : ''}
+                                <span style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">• ${timeAgo}</span>
+                            </div>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin: 0 0 0.5rem 0; line-height: 1.4;">${reply.text}</p>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="toggleReplyLike(${reviewId}, ${index})" style="background: ${userLiked ? 'rgba(34,197,94,0.2)' : 'transparent'}; border: none; color: ${userLiked ? '#22c55e' : 'rgba(255,255,255,0.5)'}; cursor: pointer; font-size: 0.8rem;">
+                                    👍 ${reply.likes ? reply.likes.length : 0}
+                                </button>
+                                ${isOwn ? `<button onclick="deleteReply(${reviewId}, ${index})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;">🗑️ Delete</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    document.getElementById('replyText').value = '';
+    openModal('repliesModal');
+}
+
+// Submit reply
+function submitReply() {
+    if (!currentUser) {
+        alert('⚠️ Please login to reply');
+        showLogin();
+        return;
+    }
+    
+    const text = document.getElementById('replyText').value.trim();
+    if (text.length < 2) {
+        alert('❌ Please write a reply');
+        return;
+    }
+    
+    const review = restaurantReviews.find(r => r.id === currentReviewId);
+    if (!review) return;
+    
+    const reply = {
+        userId: currentUser.email,
+        userName: currentUser.name,
+        userPic: currentUser.profilePicture || null,
+        text: text,
+        date: new Date().toISOString(),
+        likes: []
+    };
+    
+    review.replies.push(reply);
+    saveReviews();
+    
+    // Refresh replies modal
+    openReplies(currentReviewId);
+    displayReviews();
+}
+
+// Toggle reply like
+function toggleReplyLike(reviewId, replyIndex) {
+    if (!currentUser) {
+        alert('⚠️ Please login');
+        return;
+    }
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review || !review.replies[replyIndex]) return;
+    
+    const reply = review.replies[replyIndex];
+    if (!reply.likes) reply.likes = [];
+    
+    const userEmail = currentUser.email;
+    
+    if (reply.likes.includes(userEmail)) {
+        reply.likes = reply.likes.filter(e => e !== userEmail);
+    } else {
+        reply.likes.push(userEmail);
+    }
+    
+    saveReviews();
+    openReplies(reviewId);
+}
+
+// Delete review
+function deleteReview(reviewId) {
+    if (!currentUser) return;
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review || review.userId !== currentUser.email) {
+        alert('❌ You can only delete your own reviews');
+        return;
+    }
+    
+    if (!confirm('Are you sure you want to delete this review?')) return;
+    
+    restaurantReviews = restaurantReviews.filter(r => r.id !== reviewId);
+    saveReviews();
+    displayReviews();
+    alert('✅ Review deleted');
+}
+
+// Delete reply
+function deleteReply(reviewId, replyIndex) {
+    if (!currentUser) return;
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review || !review.replies[replyIndex]) return;
+    
+    if (review.replies[replyIndex].userId !== currentUser.email) {
+        alert('❌ You can only delete your own replies');
+        return;
+    }
+    
+    if (!confirm('Delete this reply?')) return;
+    
+    review.replies.splice(replyIndex, 1);
+    saveReviews();
+    openReplies(reviewId);
+    displayReviews();
+}
+
+// Review system exports
+window.openWriteReview = openWriteReview;
+window.setRating = setRating;
+window.submitReview = submitReview;
+window.toggleLike = toggleLike;
+window.toggleDislike = toggleDislike;
+window.openReplies = openReplies;
+window.submitReply = submitReply;
+window.toggleReplyLike = toggleReplyLike;
+window.deleteReview = deleteReview;
+window.deleteReply = deleteReply;
+window.loadReviews = loadReviews;
+window.openForgotPasswordFromChangePassword = openForgotPasswordFromChangePassword;
