@@ -470,11 +470,11 @@ let currentReviewId = null;
 let selectedRating = 0;
 
 let ownerBankDetails = {
-    bankName: 'First iraq bank',
-    accountNumber: '19127620002',
-    sortCode: '165',
-    iban: 'IQ40 FIQB 0041 1912 7620 002',
-    cardNumber: '4305 6405 2786 7995'
+    bankName: 'Barclays Bank UK',
+    accountNumber: '12345678',
+    sortCode: '20-00-00',
+    iban: 'GB29 NWBK 6016 1331 9268 19',
+    cardNumber: '4532 **** **** 1234'
 };
 
 // ========================================
@@ -903,7 +903,7 @@ function displayMenu(category) {
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                     <div style="width: 110px; height: 110px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
                         ${imageDisplay}
-                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
                             ${isFavorite ? '❤️' : '🤍'}
                         </button>
                     </div>
@@ -927,7 +927,7 @@ function displayMenu(category) {
                 <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                     <div style="width: 120px; height: 120px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
                         ${imageDisplay}
-                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.5); border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
                             ${isFavorite ? '❤️' : '🤍'}
                         </button>
                     </div>
@@ -1714,7 +1714,7 @@ function showAccount() {
             </div>
             <h3 style="margin: 0; color: white; font-size: 1.2rem;">${currentUser.name}</h3>
             <p style="margin: 0.3rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem;">${currentUser.email}</p>
-            ${currentUser.age ? `<p style="margin: 0.2rem 0 0; color: rgba(255,255,255,0.7); font-size: 0.85rem;">Age: ${currentUser.age}</p>` : ''}
+            ${currentUser.dob ? `<p style="margin: 0.2rem 0 0; color: rgba(255,255,255,0.7); font-size: 0.85rem;">DOB: ${new Date(currentUser.dob).toLocaleDateString()}</p>` : ''}
         </div>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem;">
@@ -1777,6 +1777,13 @@ function showAccount() {
         <button onclick="logout()" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 2px solid #ef4444; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; font-size: 0.95rem;">
             🚪 Logout
         </button>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-align: center; margin-bottom: 0.8rem;">Danger Zone</p>
+            <button onclick="confirmDeleteAccount()" style="background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 0.7rem; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; font-size: 0.85rem;">
+                🗑️ Delete My Account
+            </button>
+        </div>
     `;
     
     openModal('accountModal');
@@ -1976,7 +1983,7 @@ function openEditProfile() {
     
     // Pre-fill form with current data
     document.getElementById('editName').value = currentUser.name || '';
-    document.getElementById('editAge').value = currentUser.age || '';
+    document.getElementById('editDOB').value = currentUser.dob || '';
     document.getElementById('editPhone').value = currentUser.phone || '';
     document.getElementById('editAddress').value = currentUser.address || '';
     
@@ -2009,7 +2016,7 @@ function saveProfileChanges(event) {
     event.stopPropagation();
     
     const name = document.getElementById('editName').value.trim();
-    const age = document.getElementById('editAge').value;
+    const dob = document.getElementById('editDOB').value;
     const phone = document.getElementById('editPhone').value.trim();
     const address = document.getElementById('editAddress').value.trim();
     const preview = document.getElementById('profilePicPreview');
@@ -2022,7 +2029,7 @@ function saveProfileChanges(event) {
     
     // Update current user
     currentUser.name = name;
-    currentUser.age = age ? parseInt(age) : null;
+    currentUser.dob = dob || null;
     currentUser.phone = phone;
     currentUser.address = address || (selectedLocation ? selectedLocation.address : currentUser.address);
     
@@ -2446,7 +2453,7 @@ function handleEmailAuth(event) {
     const password = document.getElementById('authPassword').value;
     const name = document.getElementById('authName')?.value.trim();
     const phone = document.getElementById('authPhone')?.value.trim();
-    const age = document.getElementById('authAge')?.value;
+    const dob = document.getElementById('authDOB')?.value;
     
     const emailValidation = isValidEmail(email);
     if (!emailValidation.valid) {
@@ -2507,7 +2514,7 @@ function handleEmailAuth(event) {
             password: password,
             name: name,
             phone: phone,
-            age: age ? parseInt(age) : null,
+            dob: dob || null,
             code: verificationCode,
             type: 'signup'
         };
@@ -2578,7 +2585,7 @@ function verifyCode() {
             email: pendingVerification.email,
             password: pendingVerification.password,
             phone: pendingVerification.phone,
-            age: pendingVerification.age,
+            dob: pendingVerification.dob,
             address: selectedLocation?.address || null,
             location: selectedLocation,
             verified: true,
@@ -2731,7 +2738,7 @@ function showRestaurantDashboard() {
                             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem;">${order.userName}</div>
                             <div style="color: rgba(255,255,255,0.7);">📞 ${order.userPhone || 'N/A'}</div>
                             <div style="color: rgba(255,255,255,0.7);">📍 ${order.address || 'N/A'}</div>
-                            ${user && user.age ? `<div style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Age: ${user.age}</div>` : ''}
+                            ${user && user.dob ? `<div style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">DOB: ${new Date(user.dob).toLocaleDateString()}</div>` : ''}
                         </div>
                     </div>
                     
@@ -3401,8 +3408,17 @@ function handleOwnerLogin() {
         document.getElementById('ownerModal').style.display = 'none';
         document.getElementById('ownerDashboard').style.display = 'block';
         
+        // Show owner access button in header
+        const ownerBtn = document.getElementById('ownerAccessBtn');
+        if (ownerBtn) {
+            ownerBtn.style.display = 'flex';
+        }
+        
         // Update stats
         updateOwnerStats();
+        
+        // Refresh reviews to show owner controls
+        displayReviews();
     } else {
         alert('❌ Invalid credentials!\n\nDemo: admin@antalyashawarma.com / admin2024 / 1234');
     }
@@ -3441,6 +3457,8 @@ function renderMenuManagerList() {
     const container = document.getElementById('menuManagerContent');
     if (!container) return;
     
+    const categoryKeys = Object.keys(categories);
+    
     container.innerHTML = `
         <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
             <button onclick="openAddCategory()" style="background: linear-gradient(45deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
@@ -3451,10 +3469,18 @@ function renderMenuManagerList() {
             </button>
         </div>
         
-        ${Object.entries(categories).map(([catKey, cat]) => `
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 1rem;">💡 Use ⬆️ ⬇️ arrows to reorder categories</p>
+        
+        ${categoryKeys.map((catKey, index) => {
+            const cat = categories[catKey];
+            return `
             <div style="background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 1rem; overflow: hidden;">
                 <div style="background: rgba(139,92,246,0.2); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                            <button onclick="moveCategoryUp('${catKey}')" ${index === 0 ? 'disabled' : ''} style="background: ${index === 0 ? 'rgba(255,255,255,0.05)' : 'rgba(59,130,246,0.2)'}; color: ${index === 0 ? 'rgba(255,255,255,0.3)' : '#3b82f6'}; border: none; padding: 0.2rem 0.4rem; border-radius: 4px; cursor: ${index === 0 ? 'not-allowed' : 'pointer'}; font-size: 0.7rem;">⬆️</button>
+                            <button onclick="moveCategoryDown('${catKey}')" ${index === categoryKeys.length - 1 ? 'disabled' : ''} style="background: ${index === categoryKeys.length - 1 ? 'rgba(255,255,255,0.05)' : 'rgba(59,130,246,0.2)'}; color: ${index === categoryKeys.length - 1 ? 'rgba(255,255,255,0.3)' : '#3b82f6'}; border: none; padding: 0.2rem 0.4rem; border-radius: 4px; cursor: ${index === categoryKeys.length - 1 ? 'not-allowed' : 'pointer'}; font-size: 0.7rem;">⬇️</button>
+                        </div>
                         ${cat.image ? `<img src="${cat.image}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">` : `<span style="font-size: 1.5rem;">${cat.icon}</span>`}
                         <span style="font-weight: 700;">${cat.name}</span>
                         <span style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">(${menuData[catKey]?.length || 0} items)</span>
@@ -3468,7 +3494,7 @@ function renderMenuManagerList() {
                     ${(menuData[catKey] || []).map(item => `
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 0.5rem;">
                             <div style="display: flex; align-items: center; gap: 0.8rem; flex: 1; min-width: 200px;">
-                                ${item.image ? `<img src="${item.image}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : `<span style="font-size: 1.3rem;">${item.icon}</span>`}
+                                ${item.image ? `<img src="${item.image}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">` : (cat.image ? `<img src="${cat.image}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; opacity: 0.7;">` : `<span style="font-size: 1.3rem;">${item.icon || cat.icon}</span>`)}
                                 <div>
                                     <div style="font-weight: 600; ${item.available === false ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${item.name}</div>
                                     <div style="font-size: 0.85rem; color: #10b981;">${formatPrice(item.price)}</div>
@@ -3489,8 +3515,78 @@ function renderMenuManagerList() {
                     `).join('')}
                 </div>
             </div>
-        `).join('')}
+        `}).join('')}
     `;
+}
+
+// Move category up in order
+function moveCategoryUp(catKey) {
+    const keys = Object.keys(categories);
+    const index = keys.indexOf(catKey);
+    if (index <= 0) return;
+    
+    // Swap with previous
+    const newCategories = {};
+    const newMenuData = {};
+    
+    keys.forEach((key, i) => {
+        if (i === index - 1) {
+            newCategories[catKey] = categories[catKey];
+            newMenuData[catKey] = menuData[catKey];
+        } else if (i === index) {
+            newCategories[keys[index - 1]] = categories[keys[index - 1]];
+            newMenuData[keys[index - 1]] = menuData[keys[index - 1]];
+        } else {
+            newCategories[key] = categories[key];
+            newMenuData[key] = menuData[key];
+        }
+    });
+    
+    // Replace global objects
+    Object.keys(categories).forEach(k => delete categories[k]);
+    Object.assign(categories, newCategories);
+    
+    Object.keys(menuData).forEach(k => delete menuData[k]);
+    Object.assign(menuData, newMenuData);
+    
+    saveMenuData();
+    renderMenuManagerList();
+    renderCategories();
+}
+
+// Move category down in order
+function moveCategoryDown(catKey) {
+    const keys = Object.keys(categories);
+    const index = keys.indexOf(catKey);
+    if (index >= keys.length - 1) return;
+    
+    // Swap with next
+    const newCategories = {};
+    const newMenuData = {};
+    
+    keys.forEach((key, i) => {
+        if (i === index) {
+            newCategories[keys[index + 1]] = categories[keys[index + 1]];
+            newMenuData[keys[index + 1]] = menuData[keys[index + 1]];
+        } else if (i === index + 1) {
+            newCategories[catKey] = categories[catKey];
+            newMenuData[catKey] = menuData[catKey];
+        } else {
+            newCategories[key] = categories[key];
+            newMenuData[key] = menuData[key];
+        }
+    });
+    
+    // Replace global objects
+    Object.keys(categories).forEach(k => delete categories[k]);
+    Object.assign(categories, newCategories);
+    
+    Object.keys(menuData).forEach(k => delete menuData[k]);
+    Object.assign(menuData, newMenuData);
+    
+    saveMenuData();
+    renderMenuManagerList();
+    renderCategories();
 }
 
 function toggleFoodAvailability(catKey, foodId) {
@@ -5200,6 +5296,8 @@ window.handleFoodImageUpload = handleFoodImageUpload;
 window.handleCategoryImageUpload = handleCategoryImageUpload;
 window.saveMenuData = saveMenuData;
 window.loadMenuData = loadMenuData;
+window.moveCategoryUp = moveCategoryUp;
+window.moveCategoryDown = moveCategoryDown;
 
 // Modal functions
 window.openModal = openModal;
@@ -5208,6 +5306,8 @@ window.closeModal = closeModal;
 // ========================================
 // REVIEWS SYSTEM
 // ========================================
+
+let showingAllReviews = false;
 
 // Load reviews from localStorage
 function loadReviews() {
@@ -5232,6 +5332,13 @@ function openWriteReview() {
     if (!currentUser) {
         alert('⚠️ Please login to write a review');
         showLogin();
+        return;
+    }
+    
+    // Check if user already has a review
+    const existingReview = restaurantReviews.find(r => r.userId === currentUser.email);
+    if (existingReview) {
+        alert('⚠️ You have already submitted a review. Each customer can only submit one review.');
         return;
     }
     
@@ -5274,6 +5381,14 @@ function submitReview(event) {
         return;
     }
     
+    // Check if user already has a review
+    const existingReview = restaurantReviews.find(r => r.userId === currentUser.email);
+    if (existingReview) {
+        alert('⚠️ You have already submitted a review.');
+        closeModal('writeReviewModal');
+        return;
+    }
+    
     const rating = parseInt(document.getElementById('reviewRating').value);
     const text = document.getElementById('reviewText').value.trim();
     
@@ -5295,8 +5410,6 @@ function submitReview(event) {
         rating: rating,
         text: text,
         date: new Date().toISOString(),
-        likes: [],
-        dislikes: [],
         replies: []
     };
     
@@ -5313,12 +5426,14 @@ function displayReviews() {
     const container = document.getElementById('reviewsList');
     const noReviewsMsg = document.getElementById('noReviewsMessage');
     const avgDisplay = document.getElementById('averageRatingDisplay');
+    const showMoreContainer = document.getElementById('showMoreReviewsContainer');
     
     if (!container) return;
     
     if (restaurantReviews.length === 0) {
         container.innerHTML = '';
         if (noReviewsMsg) noReviewsMsg.style.display = 'block';
+        if (showMoreContainer) showMoreContainer.style.display = 'none';
         return;
     }
     
@@ -5334,21 +5449,35 @@ function displayReviews() {
         `;
     }
     
-    container.innerHTML = restaurantReviews.slice(0, 10).map(review => {
+    // Show more/less logic
+    const reviewsToShow = showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3);
+    
+    if (showMoreContainer) {
+        if (restaurantReviews.length > 3) {
+            showMoreContainer.style.display = 'block';
+            const btn = document.getElementById('showMoreReviewsBtn');
+            if (btn) {
+                btn.textContent = showingAllReviews ? 'Show less ↑' : `Show more reviews (${restaurantReviews.length - 3} more) ↓`;
+            }
+        } else {
+            showMoreContainer.style.display = 'none';
+        }
+    }
+    
+    container.innerHTML = reviewsToShow.map(review => {
         const stars = '⭐'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
         const timeAgo = getTimeAgo(new Date(review.date));
-        const userLiked = currentUser && review.likes.includes(currentUser.email);
-        const userDisliked = currentUser && review.dislikes.includes(currentUser.email);
         const isOwn = currentUser && review.userId === currentUser.email;
+        const canDelete = isOwn || isOwnerLoggedIn;
         
         const userAvatar = review.userPic 
             ? `<img src="${review.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
-            : `<span style="font-size: 1.5rem;">👤</span>`;
+            : `<span style="font-size: 1.5rem;">${review.userName.charAt(0).toUpperCase()}</span>`;
         
         return `
             <div class="review-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.2rem;">
                 <div style="display: flex; gap: 1rem; margin-bottom: 0.8rem;">
-                    <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                    <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; color: white; font-weight: bold;">
                         ${userAvatar}
                     </div>
                     <div style="flex: 1; min-width: 0;">
@@ -5361,35 +5490,44 @@ function displayReviews() {
                             <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">• ${timeAgo}</span>
                         </div>
                     </div>
-                    ${isOwn ? `<button onclick="deleteReview(${review.id})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>` : ''}
+                    ${canDelete ? `<button onclick="deleteReview(${review.id})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>` : ''}
                 </div>
                 
                 <p style="color: rgba(255,255,255,0.85); line-height: 1.5; margin: 0 0 1rem 0;">${review.text}</p>
                 
-                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                    <button onclick="toggleLike(${review.id})" style="background: ${userLiked ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${userLiked ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.1)'}; color: ${userLiked ? '#22c55e' : 'rgba(255,255,255,0.7)'}; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
-                        👍 ${review.likes.length}
-                    </button>
-                    <button onclick="toggleDislike(${review.id})" style="background: ${userDisliked ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)'}; border: 1px solid ${userDisliked ? 'rgba(239,68,68,0.4)' : 'rgba(255,255,255,0.1)'}; color: ${userDisliked ? '#ef4444' : 'rgba(255,255,255,0.7)'}; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
-                        👎 ${review.dislikes.length}
-                    </button>
-                    <button onclick="openReplies(${review.id})" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem;">
-                        💬 ${review.replies.length} ${review.replies.length === 1 ? 'reply' : 'replies'}
-                    </button>
-                </div>
-                
-                ${review.replies.length > 0 ? `
+                ${review.replies && review.replies.length > 0 ? `
+                    <div style="margin-top: 0.5rem;">
+                        <button onclick="openReplies(${review.id})" style="background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #e63946; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
+                            Show replies (${review.replies.length}) ↓
+                        </button>
+                    </div>
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
-                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem;">Latest reply:</div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
-                            <div style="font-weight: 600; font-size: 0.85rem; color: #fff; margin-bottom: 0.3rem;">${review.replies[review.replies.length - 1].userName}</div>
+                        <div style="background: rgba(230,57,70,0.05); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                                <img src="logo.png" alt="Restaurant" style="height: 20px; width: auto;">
+                                <span style="font-weight: 700; font-size: 0.85rem; color: #f59e0b;">RESTAURANT OWNER</span>
+                            </div>
                             <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${review.replies[review.replies.length - 1].text}</div>
                         </div>
                     </div>
-                ` : ''}
+                ` : `
+                    ${isOwnerLoggedIn ? `
+                        <div style="margin-top: 0.5rem;">
+                            <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: #8b5cf6; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
+                                Reply as Owner
+                            </button>
+                        </div>
+                    ` : ''}
+                `}
             </div>
         `;
     }).join('');
+}
+
+// Toggle show more reviews
+function toggleShowMoreReviews() {
+    showingAllReviews = !showingAllReviews;
+    displayReviews();
 }
 
 // Get time ago string
@@ -5400,61 +5538,8 @@ function getTimeAgo(date) {
     if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
     if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
     if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
-    return date.toLocaleDateString();
-}
-
-// Toggle like
-function toggleLike(reviewId) {
-    if (!currentUser) {
-        alert('⚠️ Please login to like reviews');
-        showLogin();
-        return;
-    }
-    
-    const review = restaurantReviews.find(r => r.id === reviewId);
-    if (!review) return;
-    
-    const userEmail = currentUser.email;
-    
-    // Remove from dislikes if present
-    review.dislikes = review.dislikes.filter(e => e !== userEmail);
-    
-    // Toggle like
-    if (review.likes.includes(userEmail)) {
-        review.likes = review.likes.filter(e => e !== userEmail);
-    } else {
-        review.likes.push(userEmail);
-    }
-    
-    saveReviews();
-    displayReviews();
-}
-
-// Toggle dislike
-function toggleDislike(reviewId) {
-    if (!currentUser) {
-        alert('⚠️ Please login to dislike reviews');
-        showLogin();
-        return;
-    }
-    
-    const review = restaurantReviews.find(r => r.id === reviewId);
-    if (!review) return;
-    
-    const userEmail = currentUser.email;
-    
-    // Remove from likes if present
-    review.likes = review.likes.filter(e => e !== userEmail);
-    
-    // Toggle dislike
-    if (review.dislikes.includes(userEmail)) {
-        review.dislikes = review.dislikes.filter(e => e !== userEmail);
-    } else {
-        review.dislikes.push(userEmail);
-    }
-    
-    saveReviews();
-    displayReviews();
+    if (seconds < 2592000) return Math.floor(seconds / 604800) + ' weeks ago';
+    return Math.floor(seconds / 2592000) + ' months ago';
 }
 
 // Open replies modal
@@ -5464,38 +5549,32 @@ function openReplies(reviewId) {
     if (!review) return;
     
     const container = document.getElementById('repliesContent');
+    const ownerReplySection = document.getElementById('ownerReplySection');
     
-    if (review.replies.length === 0) {
-        container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 1rem;">No replies yet. Be the first to reply!</p>';
+    // Show owner reply section only if owner is logged in
+    if (ownerReplySection) {
+        ownerReplySection.style.display = isOwnerLoggedIn ? 'block' : 'none';
+    }
+    
+    if (!review.replies || review.replies.length === 0) {
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 1rem;">No replies from the restaurant yet.</p>';
     } else {
         container.innerHTML = review.replies.map((reply, index) => {
             const timeAgo = getTimeAgo(new Date(reply.date));
-            const isOwn = currentUser && reply.userId === currentUser.email;
-            const userLiked = currentUser && reply.likes && reply.likes.includes(currentUser.email);
-            
-            const userAvatar = reply.userPic 
-                ? `<img src="${reply.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
-                : `<span style="font-size: 1rem;">👤</span>`;
             
             return `
                 <div style="padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
                     <div style="display: flex; gap: 0.8rem;">
-                        <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
-                            ${userAvatar}
+                        <div style="width: 35px; height: 35px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                            <img src="logo.png" alt="Restaurant" style="height: 25px; width: auto;">
                         </div>
                         <div style="flex: 1;">
                             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
-                                <span style="font-weight: 600; font-size: 0.9rem; color: #fff;">${reply.userName}</span>
-                                ${isOwn ? '<span style="background: rgba(230,57,70,0.2); color: #e63946; padding: 0.1rem 0.3rem; border-radius: 3px; font-size: 0.65rem;">You</span>' : ''}
+                                <span style="font-weight: 700; font-size: 0.9rem; color: #f59e0b;">RESTAURANT OWNER</span>
                                 <span style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">• ${timeAgo}</span>
+                                ${isOwnerLoggedIn ? `<button onclick="deleteOwnerReply(${reviewId}, ${index})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.75rem; margin-left: auto;">🗑️</button>` : ''}
                             </div>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin: 0 0 0.5rem 0; line-height: 1.4;">${reply.text}</p>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button onclick="toggleReplyLike(${reviewId}, ${index})" style="background: ${userLiked ? 'rgba(34,197,94,0.2)' : 'transparent'}; border: none; color: ${userLiked ? '#22c55e' : 'rgba(255,255,255,0.5)'}; cursor: pointer; font-size: 0.8rem;">
-                                    👍 ${reply.likes ? reply.likes.length : 0}
-                                </button>
-                                ${isOwn ? `<button onclick="deleteReply(${reviewId}, ${index})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 0.8rem;">🗑️ Delete</button>` : ''}
-                            </div>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem; margin: 0; line-height: 1.4;">${reply.text}</p>
                         </div>
                     </div>
                 </div>
@@ -5507,11 +5586,10 @@ function openReplies(reviewId) {
     openModal('repliesModal');
 }
 
-// Submit reply
-function submitReply() {
-    if (!currentUser) {
-        alert('⚠️ Please login to reply');
-        showLogin();
+// Submit owner reply
+function submitOwnerReply() {
+    if (!isOwnerLoggedIn) {
+        alert('❌ Only restaurant owner can reply to reviews');
         return;
     }
     
@@ -5525,53 +5603,30 @@ function submitReply() {
     if (!review) return;
     
     const reply = {
-        userId: currentUser.email,
-        userName: currentUser.name,
-        userPic: currentUser.profilePicture || null,
+        isOwner: true,
         text: text,
-        date: new Date().toISOString(),
-        likes: []
+        date: new Date().toISOString()
     };
     
+    if (!review.replies) review.replies = [];
     review.replies.push(reply);
     saveReviews();
     
     // Refresh replies modal
     openReplies(currentReviewId);
     displayReviews();
+    
+    alert('✅ Reply posted!');
 }
 
-// Toggle reply like
-function toggleReplyLike(reviewId, replyIndex) {
-    if (!currentUser) {
-        alert('⚠️ Please login');
-        return;
-    }
-    
-    const review = restaurantReviews.find(r => r.id === reviewId);
-    if (!review || !review.replies[replyIndex]) return;
-    
-    const reply = review.replies[replyIndex];
-    if (!reply.likes) reply.likes = [];
-    
-    const userEmail = currentUser.email;
-    
-    if (reply.likes.includes(userEmail)) {
-        reply.likes = reply.likes.filter(e => e !== userEmail);
-    } else {
-        reply.likes.push(userEmail);
-    }
-    
-    saveReviews();
-    openReplies(reviewId);
-}
-
-// Delete review
+// Delete review (owner or own review)
 function deleteReview(reviewId) {
-    if (!currentUser) return;
-    
     const review = restaurantReviews.find(r => r.id === reviewId);
-    if (!review || review.userId !== currentUser.email) {
+    if (!review) return;
+    
+    const isOwn = currentUser && review.userId === currentUser.email;
+    
+    if (!isOwn && !isOwnerLoggedIn) {
         alert('❌ You can only delete your own reviews');
         return;
     }
@@ -5584,17 +5639,15 @@ function deleteReview(reviewId) {
     alert('✅ Review deleted');
 }
 
-// Delete reply
-function deleteReply(reviewId, replyIndex) {
-    if (!currentUser) return;
+// Delete owner reply
+function deleteOwnerReply(reviewId, replyIndex) {
+    if (!isOwnerLoggedIn) {
+        alert('❌ Only owner can delete replies');
+        return;
+    }
     
     const review = restaurantReviews.find(r => r.id === reviewId);
     if (!review || !review.replies[replyIndex]) return;
-    
-    if (review.replies[replyIndex].userId !== currentUser.email) {
-        alert('❌ You can only delete your own replies');
-        return;
-    }
     
     if (!confirm('Delete this reply?')) return;
     
@@ -5604,16 +5657,106 @@ function deleteReply(reviewId, replyIndex) {
     displayReviews();
 }
 
+// Show owner dashboard direct (for owner button)
+function showOwnerDashboardDirect() {
+    if (isOwnerLoggedIn) {
+        document.getElementById('ownerDashboard').style.display = 'block';
+        updateOwnerStats();
+    }
+}
+
+// ========================================
+// DELETE ACCOUNT SYSTEM
+// ========================================
+
+function confirmDeleteAccount() {
+    if (!currentUser) {
+        alert('❌ Please login first');
+        return;
+    }
+    
+    const hasOrders = orderHistory.some(o => o.userId === currentUser.email);
+    const hasPendingOrders = pendingOrders.some(o => o.userId === currentUser.email && (o.status === 'pending' || o.status === 'preparing' || o.status === 'out_for_delivery'));
+    
+    if (hasPendingOrders) {
+        alert('⚠️ You cannot delete your account while you have active orders.\n\nPlease wait for your orders to be completed.');
+        return;
+    }
+    
+    let warningMessage = '⚠️ DELETE ACCOUNT\n\n';
+    warningMessage += 'This action is PERMANENT and cannot be undone.\n\n';
+    warningMessage += 'The following will be deleted:\n';
+    warningMessage += '• Your account and profile data\n';
+    warningMessage += '• Your reviews and feedback\n';
+    warningMessage += '• Your favorites list\n';
+    warningMessage += '• Your notification preferences\n';
+    
+    if (hasOrders) {
+        warningMessage += '\n📋 Your order history will be kept for restaurant records.';
+    }
+    
+    warningMessage += '\n\nType "DELETE" to confirm:';
+    
+    const confirmation = prompt(warningMessage);
+    
+    if (confirmation === 'DELETE') {
+        deleteUserAccount();
+    } else if (confirmation !== null) {
+        alert('❌ Account deletion cancelled.\n\nYou must type "DELETE" exactly to confirm.');
+    }
+}
+
+function deleteUserAccount() {
+    if (!currentUser) return;
+    
+    const userEmail = currentUser.email;
+    
+    // 1. Delete user's reviews
+    restaurantReviews = restaurantReviews.filter(r => r.userId !== userEmail);
+    saveReviews();
+    
+    // 2. Delete user's favorites
+    delete userFavorites[userEmail];
+    localStorage.setItem('userFavorites', JSON.stringify(userFavorites));
+    
+    // 3. Delete user's notifications
+    delete userNotifications[userEmail];
+    localStorage.setItem('userNotifications', JSON.stringify(userNotifications));
+    
+    // 4. Remove user from database
+    userDatabase = userDatabase.filter(u => u.email !== userEmail);
+    localStorage.setItem('restaurantUsers', JSON.stringify(userDatabase));
+    
+    // 5. Clear current user session
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    
+    // 6. Update UI
+    updateHeaderForLoggedInUser();
+    updateFavoritesBadge();
+    updateNotificationBadge();
+    displayReviews();
+    
+    // Close modal and show confirmation
+    closeModal('accountModal');
+    
+    alert('✅ Your account has been permanently deleted.\n\nThank you for being our customer. We hope to see you again!');
+    
+    // Refresh page
+    location.reload();
+}
+
 // Review system exports
 window.openWriteReview = openWriteReview;
 window.setRating = setRating;
 window.submitReview = submitReview;
-window.toggleLike = toggleLike;
-window.toggleDislike = toggleDislike;
 window.openReplies = openReplies;
-window.submitReply = submitReply;
-window.toggleReplyLike = toggleReplyLike;
+window.submitOwnerReply = submitOwnerReply;
 window.deleteReview = deleteReview;
-window.deleteReply = deleteReply;
+window.deleteOwnerReply = deleteOwnerReply;
 window.loadReviews = loadReviews;
+window.toggleShowMoreReviews = toggleShowMoreReviews;
+window.showOwnerDashboardDirect = showOwnerDashboardDirect;
 window.openForgotPasswordFromChangePassword = openForgotPasswordFromChangePassword;
+window.confirmDeleteAccount = confirmDeleteAccount;
+window.deleteUserAccount = deleteUserAccount;

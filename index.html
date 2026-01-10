@@ -13,16 +13,32 @@
     <!-- HEADER -->
     <div class="header">
         <div class="header-content">
-            <div class="logo">🌯 Antalya Shawarma</div>
+            <div class="logo" style="display: flex; align-items: center; gap: 0.5rem;">
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 45px; width: auto;">
+                <span style="font-weight: 700;" class="logo-text">Antalya Shawarma</span>
+            </div>
             
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobileMenuBtn">☰</button>
             
             <div class="nav-buttons" id="navButtons">
-                <button class="icon-btn" onclick="showNotifications()">🔔<span class="badge" id="notificationBadge">0</span></button>
-                <button class="icon-btn" onclick="showFavorites()">❤️<span class="badge" id="favoritesBadge">0</span></button>
-                <button class="icon-btn" onclick="showOrderHistory()">📋<span class="badge" id="ordersBadge">0</span></button>
-                <button class="icon-btn" onclick="showCart()">🛒<span class="badge" id="cartBadge">0</span></button>
-                <button class="icon-btn" onclick="showAccount()">👤</button>
+                <button class="icon-btn owner-access-btn" id="ownerAccessBtn" onclick="showOwnerDashboardDirect()" title="Owner Dashboard" style="display: none; background: linear-gradient(45deg, #8b5cf6, #7c3aed); border: 2px solid #8b5cf6; padding: 0.3rem;">
+                    <img src="logo.png" alt="Owner" style="height: 24px; width: auto;"><span class="nav-label">Owner</span>
+                </button>
+                <button class="icon-btn" onclick="showNotifications()" title="Notifications">
+                    🔔<span class="badge" id="notificationBadge">0</span><span class="nav-label">Notify</span>
+                </button>
+                <button class="icon-btn" onclick="showFavorites()" title="Favorites">
+                    ❤️<span class="badge" id="favoritesBadge">0</span><span class="nav-label">Favorites</span>
+                </button>
+                <button class="icon-btn" onclick="showOrderHistory()" title="Orders">
+                    📋<span class="badge" id="ordersBadge">0</span><span class="nav-label">History</span>
+                </button>
+                <button class="icon-btn" onclick="showCart()" title="Cart">
+                    🛒<span class="badge" id="cartBadge">0</span><span class="nav-label">Cart</span>
+                </button>
+                <button class="icon-btn" onclick="showAccount()" title="Account">
+                    👤<span class="nav-label">Profile</span>
+                </button>
                 <button class="login-btn" onclick="showLogin()">Login</button>
             </div>
         </div>
@@ -37,7 +53,9 @@
             <div class="hero-text">
                 <h1>Antalya Shawarma</h1>
                 <p>Authentic Turkish Shawarma, Kebabs & Grill - Delivered Fresh to Your Door</p>
-                <button class="cta-btn" onclick="scrollToMenu()">🌯 Order Now</button>
+                <button class="cta-btn" onclick="scrollToMenu()" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <img src="logo.png" alt="" style="height: 24px; width: auto;"> Order Now
+                </button>
             </div>
         </div>
     </div>
@@ -59,9 +77,12 @@
     <div class="reviews-section" style="background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%); padding: 2rem 1rem; border-top: 2px solid rgba(230,57,70,0.2);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 style="color: #fff; margin: 0; font-size: 1.5rem;">⭐ Customer Reviews</h2>
-                    <p style="color: rgba(255,255,255,0.6); margin: 0.3rem 0 0 0; font-size: 0.9rem;">See what our customers say about us</p>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <img src="logo.png" alt="Antalya Shawarma" style="height: 40px; width: auto;">
+                    <div>
+                        <h2 style="color: #fff; margin: 0; font-size: 1.5rem;">Customer Reviews</h2>
+                        <p style="color: rgba(255,255,255,0.6); margin: 0.3rem 0 0 0; font-size: 0.9rem;">See what our customers say about us</p>
+                    </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div id="averageRatingDisplay" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px;">
@@ -76,8 +97,13 @@
                 <!-- Reviews will be loaded here -->
             </div>
             <div id="noReviewsMessage" style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
-                <div style="font-size: 3rem; margin-bottom: 0.5rem;">💬</div>
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 60px; width: auto; opacity: 0.5; margin-bottom: 1rem;">
                 <p>No reviews yet. Be the first to share your experience!</p>
+            </div>
+            <div id="showMoreReviewsContainer" style="text-align: center; margin-top: 1.5rem; display: none;">
+                <button onclick="toggleShowMoreReviews()" id="showMoreReviewsBtn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; font-size: 0.95rem;">
+                    Show more reviews ↓
+                </button>
             </div>
         </div>
     </div>
@@ -86,7 +112,10 @@
     <div class="social-footer">
         <div class="social-content">
             <div class="footer-section">
-                <h3>🌯 Antalya Shawarma</h3>
+                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem;">
+                    <img src="logo.png" alt="Antalya Shawarma" style="height: 50px; width: auto;">
+                    <h3 style="margin: 0;">Antalya Shawarma</h3>
+                </div>
                 <p style="color: rgba(255,255,255,0.6);">Hyde's Best Shawarma Restaurant</p>
                 <p style="color: rgba(255,255,255,0.5); margin-top: 0.5rem; font-size: 0.9rem;">Traditional Kurdish, Turkish & Arabic Cuisine</p>
                 <div style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(34,197,94,0.2); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(34,197,94,0.4);">
@@ -249,8 +278,8 @@
                         <input type="tel" id="authPhone" placeholder="+44 7700 900123">
                     </div>
                     <div class="form-group" id="ageGroup" style="display: none;">
-                        <label>Age (Optional)</label>
-                        <input type="number" id="authAge" placeholder="Your age" min="13" max="120">
+                        <label>Date of Birth (Optional)</label>
+                        <input type="date" id="authDOB" placeholder="Your date of birth">
                     </div>
                     <div class="form-group" id="addressGroup" style="display: none;">
                         <label>Delivery Location *</label>
@@ -369,7 +398,7 @@
             <button onclick="document.getElementById('ownerModal').style.display = 'none';" style="position: absolute; top: 1rem; right: 1rem; background: #ff4444; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer;">×</button>
             
             <div style="text-align: center; margin-bottom: 2rem;">
-                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔧</div>
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 60px; width: auto; margin-bottom: 0.5rem;">
                 <h2 style="color: #8b5cf6; margin: 0; font-size: 1.8rem;">Owner Access</h2>
                 <p style="color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Full System Control Panel</p>
             </div>
@@ -410,38 +439,38 @@
             <button onclick="document.getElementById('ownerDashboard').style.display = 'none';" style="position: fixed; top: 2rem; right: 2rem; background: #ff4444; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.8rem; cursor: pointer; z-index: 10001;">×</button>
             
             <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 3rem; border-radius: 20px; text-align: center; color: white; margin-bottom: 2rem;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">🔧</div>
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 80px; width: auto; margin-bottom: 1rem;">
                 <h1 style="margin: 0; font-size: 2.5rem; font-weight: 800;">Owner Console</h1>
                 <p style="margin: 1rem 0 0; font-size: 1.2rem; opacity: 0.95;">Full System Access & Control Panel</p>
             </div>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">💰</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💰</div>
                     <div id="revenueStat" style="font-size: 2rem; font-weight: 700;">£0.00</div>
                     <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Total Revenue</div>
                 </div>
                 
                 <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">📦</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📦</div>
                     <div id="ordersStat" style="font-size: 2rem; font-weight: 700;">0</div>
                     <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Total Orders</div>
                 </div>
                 
                 <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">⏳</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏳</div>
                     <div id="pendingStat" style="font-size: 2rem; font-weight: 700;">0</div>
                     <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Pending</div>
                 </div>
                 
                 <div style="background: linear-gradient(135deg, #ec4899, #db2777); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">👥</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👥</div>
                     <div id="usersStat" style="font-size: 2rem; font-weight: 700;">0</div>
                     <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Users</div>
                 </div>
                 
                 <div style="background: linear-gradient(135deg, #14b8a6, #0d9488); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚗</div>
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚗</div>
                     <div id="driverCountStat" style="font-size: 2rem; font-weight: 700;">3</div>
                     <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Drivers</div>
                 </div>
@@ -449,7 +478,7 @@
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                 <button onclick="openMenuManager()" style="padding: 2.5rem; background: linear-gradient(135deg, #e63946, #c1121f); color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-                    <span style="font-size: 3rem;">🍽️</span>
+                    <img src="logo.png" alt="" style="height: 50px; width: auto;">
                     <span>Menu Management</span>
                     <span style="font-size: 0.85rem; opacity: 0.9; font-weight: 400;">Add/edit food & categories</span>
                 </button>
@@ -743,7 +772,7 @@
         <div class="modal-content" style="max-width: 500px;">
             <button class="close-btn" onclick="closeModal('writeReviewModal')">×</button>
             <div style="text-align: center; margin-bottom: 1.5rem;">
-                <div style="font-size: 3rem; margin-bottom: 0.5rem;">⭐</div>
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 60px; width: auto; margin-bottom: 0.5rem;">
                 <h2 style="color: #f59e0b;">Write a Review</h2>
                 <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Share your experience with others</p>
             </div>
@@ -779,16 +808,22 @@
     <div class="modal" id="repliesModal" style="display: none;">
         <div class="modal-content" style="max-width: 550px; max-height: 80vh; overflow-y: auto;">
             <button class="close-btn" onclick="closeModal('repliesModal')">×</button>
-            <h2 style="color: #e63946;">💬 Replies</h2>
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem;">
+                <img src="logo.png" alt="Antalya Shawarma" style="height: 35px; width: auto;">
+                <h2 style="color: #e63946; margin: 0;">Restaurant Replies</h2>
+            </div>
             <div id="repliesContent"></div>
             
-            <!-- Reply Form -->
-            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                <div class="form-group">
-                    <label>Add a Reply</label>
-                    <textarea id="replyText" rows="2" placeholder="Write your reply..."></textarea>
+            <!-- Owner Reply Form (Only visible to owner) -->
+            <div id="ownerReplySection" style="display: none; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.8rem;">
+                    <img src="logo.png" alt="Antalya Shawarma" style="height: 25px; width: auto;">
+                    <span style="color: #f59e0b; font-weight: 600; font-size: 0.9rem;">Reply as Restaurant Owner</span>
                 </div>
-                <button onclick="submitReply()" style="background: linear-gradient(135deg, #e63946, #c1121f); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                <div class="form-group">
+                    <textarea id="replyText" rows="2" placeholder="Write your reply to this customer..."></textarea>
+                </div>
+                <button onclick="submitOwnerReply()" style="background: linear-gradient(135deg, #e63946, #c1121f); color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
                     Send Reply
                 </button>
             </div>
@@ -847,8 +882,8 @@
                     <input type="text" id="editName" placeholder="Your full name" required>
                 </div>
                 <div class="form-group">
-                    <label>Age</label>
-                    <input type="number" id="editAge" placeholder="Your age" min="13" max="120">
+                    <label>Date of Birth</label>
+                    <input type="date" id="editDOB" placeholder="Your date of birth">
                 </div>
                 <div class="form-group">
                     <label>Phone Number *</label>
