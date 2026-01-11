@@ -78,6 +78,8 @@ html {
         min-width: 55px !important;
         border-radius: 8px !important;
         transition: background 0.2s !important;
+        -webkit-tap-highlight-color: rgba(230, 57, 70, 0.3) !important;
+        touch-action: manipulation !important;
     }
     
     .mobile-nav-item:active {
@@ -87,6 +89,7 @@ html {
     .mobile-nav-icon {
         font-size: 1.4rem !important;
         line-height: 1 !important;
+        pointer-events: none !important;
     }
     
     .mobile-nav-label {
@@ -94,6 +97,7 @@ html {
         color: rgba(255, 255, 255, 0.7) !important;
         margin-top: 3px !important;
         font-weight: 500 !important;
+        pointer-events: none !important;
     }
     
     .mobile-nav-badge {
@@ -111,6 +115,7 @@ html {
         align-items: center !important;
         justify-content: center !important;
         font-weight: 600 !important;
+        pointer-events: none !important;
     }
     
     .mobile-nav-badge:empty,
@@ -145,12 +150,15 @@ html {
     }
     
     .logo {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
     }
     
+    /* SHOW logo text on mobile */
     .logo-text {
-        display: none;
+        display: inline !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
     }
     
     .icon-btn:active {
