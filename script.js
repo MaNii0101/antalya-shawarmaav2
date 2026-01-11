@@ -876,20 +876,12 @@ function displayMenu(category) {
     if (menuTitle) menuTitle.textContent = catInfo.name;
     
     menuGrid.innerHTML = '';
-    menuGrid.className = 'menu-list-container';
+    menuGrid.className = 'menu-grid';
+    menuGrid.style.cssText = '';
     
     const items = menuData[category] || [];
-    const isMobile = window.innerWidth <= 768;
-    
-    // Container styling
-    if (isMobile) {
-        menuGrid.style.cssText = 'display: flex; flex-direction: column; gap: 0; padding: 0 1rem;';
-    } else {
-        menuGrid.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; padding: 1rem;';
-    }
     
     items.forEach(item => {
-        // Show ALL items including unavailable ones
         const isFavorite = currentUser && userFavorites[currentUser.email]?.includes(item.id);
         const unavailable = item.available === false;
         
@@ -897,68 +889,42 @@ function displayMenu(category) {
         const categoryIcon = catInfo.icon || '🍽️';
         const categoryImage = catInfo.image || '';
         
-        // Image display - use item image, then category image, then icon
-        let imageDisplay;
+        // Image display
+        let imageContent;
         if (item.image) {
-            imageDisplay = `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            imageContent = `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                           <div class="emoji-placeholder" style="display:none;">${item.icon || categoryIcon}</div>`;
         } else if (categoryImage) {
-            imageDisplay = `<img src="${categoryImage}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            imageContent = `<img src="${categoryImage}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                           <div class="emoji-placeholder" style="display:none;">${item.icon || categoryIcon}</div>`;
         } else {
-            imageDisplay = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${item.icon || categoryIcon}</div>`;
+            imageContent = `<div class="emoji-placeholder">${item.icon || categoryIcon}</div>`;
         }
         
-        const row = document.createElement('div');
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        if (unavailable) card.style.opacity = '0.6';
         
-        if (isMobile) {
-            // Mobile: Full width list items
-            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid rgba(230, 57, 70, 0.15); ${unavailable ? 'opacity: 0.6;' : ''}`;
-            row.innerHTML = `
-                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'}; ${unavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
-                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-weight: 700; font-size: 1.05rem; color: ${unavailable ? '#888' : '#fff'};">${formatPrice(item.price)}</span>
-                        ${unavailable ? '<span style="color: #ef4444; font-size: 0.7rem; font-weight: 600; background: rgba(239,68,68,0.15); padding: 0.2rem 0.5rem; border-radius: 4px;">NOT AVAILABLE</span>' : ''}
-                    </div>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                    <div style="width: 110px; height: 110px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
-                        ${imageDisplay}
-                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
-                            ${isFavorite ? '❤️' : '🤍'}
-                        </button>
-                    </div>
+        card.innerHTML = `
+            <div class="food-info">
+                <div class="food-name" ${unavailable ? 'style="text-decoration: line-through; color: #888;"' : ''}>${item.name}</div>
+                <div class="food-desc">${item.desc}</div>
+                <div class="food-bottom">
+                    <span class="food-price">${formatPrice(item.price)}</span>
                     ${!unavailable ? `
-                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem;">Add</button>
-                    ` : '<span style="color: #666; font-size: 0.8rem; font-weight: 500;">—</span>'}
+                        <button class="add-btn" onclick="openFoodModal(${item.id})">Add</button>
+                    ` : '<span style="color: #666; font-size: 0.8rem;">Unavailable</span>'}
                 </div>
-            `;
-        } else {
-            // Desktop: Card style but with same list appearance
-            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem; background: rgba(20, 20, 20, 0.8); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); ${unavailable ? 'opacity: 0.6;' : ''}`;
-            row.innerHTML = `
-                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
-                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'}; ${unavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
-                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-weight: 700; font-size: 1.05rem; color: ${unavailable ? '#888' : '#fff'};">${formatPrice(item.price)}</span>
-                        ${unavailable ? '<span style="color: #ef4444; font-size: 0.7rem; font-weight: 600; background: rgba(239,68,68,0.15); padding: 0.2rem 0.5rem; border-radius: 4px;">NOT AVAILABLE</span>' : ''}
-                    </div>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
-                    <div style="width: 120px; height: 120px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
-                        ${imageDisplay}
-                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
-                            ${isFavorite ? '❤️' : '🤍'}
-                        </button>
-                    </div>
-                    ${!unavailable ? `
-                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#e63946'; this.style.color='white';" onmouseout="this.style.background='rgba(255, 220, 220, 0.95)'; this.style.color='#e63946';">Add</button>
-                    ` : '<span style="color: #666; font-size: 0.8rem; font-weight: 500;">—</span>'}
-                </div>
-            `;
-        }
-        menuGrid.appendChild(row);
+            </div>
+            <div class="food-image" ${unavailable ? 'style="filter: grayscale(50%);"' : ''}>
+                ${imageContent}
+                <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">
+                    ${isFavorite ? '❤️' : '🤍'}
+                </button>
+            </div>
+        `;
+        
+        menuGrid.appendChild(card);
     });
 }
 
@@ -973,17 +939,8 @@ window.addEventListener('resize', () => {
     }, 150);
 });
 
-function filterCategory(category) {
-    document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
-    if (event && event.target) {
-        const catItem = event.target.closest('.category-item');
-        if (catItem) catItem.classList.add('active');
-    }
-    displayMenu(category);
-}
-
 function renderCategories() {
-    const categoriesContainer = document.querySelector('.categories');
+    const categoriesContainer = document.querySelector('.categories-scroll') || document.querySelector('.categories');
     if (!categoriesContainer) return;
     
     categoriesContainer.innerHTML = '';
@@ -992,20 +949,35 @@ function renderCategories() {
         // Only show categories that have items
         if (!menuData[key] || menuData[key].length === 0) return;
         
-        // Determine category image display
-        const catImageDisplay = cat.image 
-            ? `<img src="${cat.image}" alt="${cat.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` 
-            : cat.icon;
-        
         const catEl = document.createElement('div');
-        catEl.className = `category-item ${index === 0 ? 'active' : ''}`;
+        catEl.className = `category-pill ${index === 0 ? 'active' : ''}`;
         catEl.onclick = () => filterCategory(key);
-        catEl.innerHTML = `
-            <div class="category-icon">${catImageDisplay}</div>
-            <div class="category-name">${cat.name}</div>
-        `;
+        
+        // Determine category image display
+        if (cat.image) {
+            catEl.innerHTML = `
+                <img src="${cat.image}" alt="${cat.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="cat-icon" style="display:none;">${cat.icon || '🍽️'}</span>
+                <span>${cat.name}</span>
+            `;
+        } else {
+            catEl.innerHTML = `
+                <span class="cat-icon">${cat.icon || '🍽️'}</span>
+                <span>${cat.name}</span>
+            `;
+        }
+        
         categoriesContainer.appendChild(catEl);
     });
+}
+
+function filterCategory(category) {
+    document.querySelectorAll('.category-pill').forEach(item => item.classList.remove('active'));
+    if (event && event.target) {
+        const catItem = event.target.closest('.category-pill');
+        if (catItem) catItem.classList.add('active');
+    }
+    displayMenu(category);
 }
 
 // ========================================
@@ -1844,10 +1816,14 @@ function showOrderHistory() {
             const statusColor = o.status === 'completed' ? '#2a9d8f' : 
                                o.status === 'pending' ? '#f4a261' : 
                                o.status === 'out_for_delivery' ? '#3b82f6' : 
-                               o.status === 'accepted' || o.status === 'waiting_driver' ? '#2a9d8f' : '#ef4444';
+                               o.status === 'accepted' || o.status === 'waiting_driver' ? '#2a9d8f' :
+                               o.status === 'cancelled' ? '#ef4444' : '#ef4444';
             
             const statusText = o.status.replace(/_/g, ' ').toUpperCase();
             const paymentIcon = o.paymentMethod === 'cash' ? '💷' : o.paymentMethod === 'applepay' ? '🍎' : '💳';
+            
+            // Check if order can be cancelled (only pending orders before restaurant accepts)
+            const canCancel = o.status === 'pending';
             
             // Get driver info for active deliveries only
             const driver = o.status === 'out_for_delivery' && o.driverId ? window.driverSystem.get(o.driverId) : null;
@@ -1875,6 +1851,19 @@ function showOrderHistory() {
                     
                     ${o.driverRated ? `<div style="font-size: 0.75rem; color: #f4a261; margin-top: 0.4rem;">⭐ Rated ${o.driverRating}/5 ${o.driverRatingComment ? '- "' + o.driverRatingComment + '"' : ''}</div>` : ''}
                     
+                    ${o.status === 'cancelled' ? `
+                        <div style="margin-top: 0.6rem; padding: 0.6rem; background: rgba(239,68,68,0.1); border-radius: 8px; text-align: center;">
+                            <span style="color: #ef4444; font-size: 0.85rem;">❌ Order Cancelled</span>
+                            ${o.cancelledAt ? `<div style="font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">Cancelled on ${new Date(o.cancelledAt).toLocaleString()}</div>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${canCancel ? `
+                        <button onclick="cancelOrder('${o.id}')" style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 0.6rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.8rem; font-size: 0.85rem; transition: all 0.2s;">
+                            ❌ Cancel Order
+                        </button>
+                    ` : ''}
+                    
                     ${o.status === 'out_for_delivery' && driver ? `
                         <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem; padding: 0.8rem; background: rgba(59,130,246,0.1); border-radius: 8px;">
                             ${driver.profilePic ? `<img src="${driver.profilePic}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">` : '<div style="width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🚗</div>'}
@@ -1894,9 +1883,11 @@ function showOrderHistory() {
                         </button>
                     ` : ''}
                     
-                    <button onclick="reorderFromHistory('${o.id}'); closeModal('orderHistoryModal');" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.5rem; font-size: 0.85rem;">
-                        🔄 Reorder
-                    </button>
+                    ${o.status !== 'cancelled' ? `
+                        <button onclick="reorderFromHistory('${o.id}'); closeModal('orderHistoryModal');" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.5rem; font-size: 0.85rem;">
+                            🔄 Reorder
+                        </button>
+                    ` : ''}
                 </div>
             `;
         }).join('');
@@ -1904,6 +1895,50 @@ function showOrderHistory() {
     
     openModal('orderHistoryModal');
 }
+
+// Cancel Order Function
+function cancelOrder(orderId) {
+    if (!currentUser) return;
+    
+    const order = pendingOrders.find(o => o.id === orderId && o.userId === currentUser.email);
+    
+    if (!order) {
+        alert('❌ Order not found');
+        return;
+    }
+    
+    if (order.status !== 'pending') {
+        alert('❌ This order cannot be cancelled.\n\nOrders can only be cancelled before the restaurant accepts them.');
+        return;
+    }
+    
+    if (!confirm('Are you sure you want to cancel this order?\n\nOrder #' + orderId)) {
+        return;
+    }
+    
+    // Update order status
+    order.status = 'cancelled';
+    order.cancelledAt = new Date().toISOString();
+    order.cancelledBy = 'customer';
+    
+    // Save changes
+    saveData();
+    
+    // Notify user
+    addNotification({
+        type: 'order_cancelled',
+        title: 'Order Cancelled',
+        message: `Your order #${orderId} has been cancelled.`,
+        orderId: orderId
+    });
+    
+    // Refresh order history
+    showOrderHistory();
+    
+    alert('✅ Order #' + orderId + ' has been cancelled successfully.');
+}
+
+window.cancelOrder = cancelOrder;
 
 function updateOrdersBadge() {
     const badge = document.getElementById('ordersBadge');

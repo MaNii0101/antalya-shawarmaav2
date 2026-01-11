@@ -87,20 +87,24 @@
     </div>
 
     <!-- CATEGORIES -->
-    <div class="category-bar">
-        <div class="categories">
-            <!-- Categories will be rendered by JavaScript -->
+    <div class="categories-section">
+        <div class="categories-wrapper">
+            <div class="categories-scroll">
+                <!-- Categories rendered by JS -->
+            </div>
         </div>
     </div>
 
     <!-- MENU -->
-    <div class="main-content" style="padding: 0;">
-        <h2 class="section-title" id="menuTitle" style="padding: 1rem 1rem 0.8rem; margin: 0; font-size: 1.5rem; font-weight: 700; border-bottom: 2px solid rgba(230, 57, 70, 0.3);">Our Menu</h2>
+    <div class="menu-section">
+        <div class="menu-header">
+            <h2 id="menuTitle">Our Menu</h2>
+        </div>
         <div class="menu-grid" id="menuGrid"></div>
     </div>
     
     <!-- REVIEWS SECTION -->
-    <div class="reviews-section" style="background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%); padding: 2rem 1rem; border-top: 2px solid rgba(230,57,70,0.2);">
+    <div class="reviews-section">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
@@ -286,33 +290,33 @@
                 <form onsubmit="handleEmailAuth(event)">
                     <div class="form-group" id="nameGroup" style="display: none;">
                         <label>Full Name *</label>
-                        <input type="text" id="authName" placeholder="Your full name">
+                        <input type="text" id="authName" class="form-input" placeholder="Your full name">
                     </div>
                     <div class="form-group">
                         <label>Email *</label>
-                        <input type="email" id="authEmail" placeholder="your@email.com" required>
+                        <input type="email" id="authEmail" class="form-input" placeholder="your@email.com" required>
                     </div>
                     <div class="form-group">
                         <label>Password *</label>
-                        <input type="password" id="authPassword" placeholder="Min 6 characters" required>
+                        <input type="password" id="authPassword" class="form-input" placeholder="Min 6 characters" required>
                     </div>
                     <div id="forgotPasswordLink" style="text-align: right; margin-bottom: 1rem;">
                         <a href="#" onclick="showForgotPasswordSection(true); return false;" style="color: #6ba3ff; font-size: 0.9rem;">Forgot password?</a>
                     </div>
                     <div class="form-group" id="phoneGroup" style="display: none;">
                         <label>Phone Number *</label>
-                        <input type="tel" id="authPhone" placeholder="+44 7700 900123">
+                        <input type="tel" id="authPhone" class="form-input" placeholder="+44 7700 900123">
                     </div>
                     <div class="form-group" id="ageGroup" style="display: none;">
                         <label>Date of Birth (Optional)</label>
-                        <input type="date" id="authDOB" placeholder="Your date of birth">
+                        <input type="date" id="authDOB" class="form-input">
                     </div>
                     <div class="form-group" id="addressGroup" style="display: none;">
                         <label>Delivery Location *</label>
-                        <input type="text" id="authAddress" placeholder="Click to select on map" readonly>
-                        <button type="button" class="map-btn" onclick="pickLocation()">📍 Pick Location on Map</button>
+                        <input type="text" id="authAddress" class="form-input" placeholder="Click to select on map" readonly>
+                        <button type="button" class="btn-secondary" onclick="pickLocation()" style="margin-top: 0.5rem;">📍 Pick Location on Map</button>
                     </div>
-                    <button type="submit" class="submit-btn" id="authSubmitBtn">Login</button>
+                    <button type="submit" class="btn-primary" id="authSubmitBtn">Login</button>
                 </form>
                 <p style="text-align: center; margin-top: 1rem;">
                     <span id="authToggleText">Don't have an account?</span>
