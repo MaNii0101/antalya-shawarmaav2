@@ -1,159 +1,660 @@
-/* ========================================
-   MOBILE DESIGN V3 - Complete New Look
-   ======================================== */
+/* ═══════════════════════════════════════════════════════════════════
+   ANTALYA SHAWARMA - Mobile & Responsive Styles
+   Crafted for seamless experience across all devices
+   ═══════════════════════════════════════════════════════════════════ */
 
-.mobile-bottom-nav { display: none; }
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE BOTTOM NAVIGATION - Hidden by default
+   ═══════════════════════════════════════════════════════════════════ */
+.mobile-bottom-nav {
+    display: none;
+}
 
+/* ═══════════════════════════════════════════════════════════════════
+   TABLET BREAKPOINT (max-width: 900px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .menu-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--space-md);
+    }
+    
+    .footer-content,
+    .social-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE BREAKPOINT (max-width: 768px)
+   ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    body { padding-bottom: 70px; }
+    /* Add bottom padding for mobile nav */
+    body {
+        padding-bottom: 80px;
+    }
     
-    /* Header */
-    .header { height: 56px; }
-    .header-content { padding: 0 12px; }
-    .logo img { height: 32px; }
-    .logo-text { font-size: 1rem; }
-    .nav-buttons { display: none !important; }
-    .mobile-menu-btn { display: none !important; }
+    /* ─────────────────────────────────────────────
+       Header Adjustments
+       ───────────────────────────────────────────── */
+    .header {
+        height: 60px;
+    }
     
-    /* Mobile Bottom Nav */
+    .header-content {
+        padding: 0 var(--space-md);
+    }
+    
+    .logo img {
+        height: 40px;
+    }
+    
+    .logo-text {
+        font-size: 1.25rem;
+    }
+    
+    /* Hide desktop nav buttons on mobile */
+    .nav-buttons {
+        display: none !important;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Mobile Bottom Navigation - The Main Nav
+       ───────────────────────────────────────────── */
     .mobile-bottom-nav {
         display: flex !important;
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        background: #161616 !important;
-        border-top: 1px solid #2a2a2a !important;
-        padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px)) 6px !important;
+        background: var(--bg-primary) !important;
+        border-top: 1px solid var(--border-subtle) !important;
+        padding: 8px 4px calc(8px + env(safe-area-inset-bottom)) !important;
         justify-content: space-around !important;
         align-items: center !important;
         z-index: 9999 !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
     }
     
     .mobile-nav-item {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        justify-content: center !important;
         background: transparent !important;
         border: none !important;
-        padding: 6px 10px !important;
+        padding: 8px 12px !important;
         cursor: pointer !important;
         position: relative !important;
-        min-width: 54px !important;
-        border-radius: 8px !important;
+        min-width: 60px !important;
         -webkit-tap-highlight-color: transparent !important;
+        transition: all 0.15s ease !important;
+        border-radius: var(--radius-md) !important;
     }
     
-    .mobile-nav-item:active { background: rgba(232,93,4,0.15) !important; }
-    .mobile-nav-icon { font-size: 1.3rem !important; pointer-events: none !important; }
-    .mobile-nav-label { font-size: 0.6rem !important; color: #a0a0a0 !important; margin-top: 3px !important; font-weight: 600 !important; pointer-events: none !important; }
+    .mobile-nav-item:active {
+        background: var(--bg-elevated) !important;
+        transform: scale(0.95) !important;
+    }
+    
+    .mobile-nav-icon {
+        font-size: 1.35rem !important;
+        pointer-events: none !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .mobile-nav-label {
+        font-size: 0.65rem !important;
+        font-weight: 500 !important;
+        color: var(--text-muted) !important;
+        pointer-events: none !important;
+        letter-spacing: 0.02em !important;
+    }
     
     .mobile-nav-badge {
         position: absolute !important;
-        top: 2px !important;
+        top: 4px !important;
         right: 50% !important;
-        transform: translateX(12px) !important;
-        background: #e85d04 !important;
+        transform: translateX(16px) !important;
+        background: var(--accent-primary) !important;
         color: white !important;
         font-size: 0.55rem !important;
-        min-width: 14px !important;
-        height: 14px !important;
-        border-radius: 50% !important;
+        min-width: 16px !important;
+        height: 16px !important;
+        border-radius: var(--radius-full) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         font-weight: 700 !important;
         pointer-events: none !important;
+        box-shadow: 0 2px 6px var(--accent-glow) !important;
     }
     
-    /* Hero */
-    .hero { min-height: 85vh; }
-    .hero-text h1 { font-size: 2.2rem; }
-    .hero-text p { font-size: 0.95rem; }
-    .cta-btn { padding: 12px 26px; font-size: 1rem; }
+    /* ─────────────────────────────────────────────
+       Hero Section Mobile
+       ───────────────────────────────────────────── */
+    .hero {
+        min-height: 85vh;
+        max-height: none;
+    }
     
-    /* Categories */
-    .categories-section { top: 56px; padding: 10px 0; }
-    .categories-wrapper { padding: 0 10px; }
-    .category-pill { padding: 8px 12px; gap: 6px; }
-    .category-pill img { width: 24px; height: 24px; }
-    .category-pill .cat-icon { font-size: 1.1rem; }
-    .category-pill span { font-size: 0.8rem; }
+    .hero-text h1 {
+        font-size: 2.5rem;
+        margin-bottom: var(--space-sm);
+    }
     
-    /* Menu */
-    .menu-section { padding: 16px 10px 80px; }
-    .menu-header h2 { font-size: 1.2rem; }
-    .menu-header h2::before { width: 3px; height: 20px; }
-    .menu-grid { grid-template-columns: 1fr; gap: 12px; }
+    .hero-text p {
+        font-size: 1rem;
+        margin-bottom: var(--space-lg);
+        padding: 0 var(--space-sm);
+    }
     
-    /* Food Cards */
-    .food-card { border-radius: 12px; }
-    .food-info { padding: 12px; }
-    .food-name { font-size: 0.95rem; }
-    .food-desc { font-size: 0.75rem; margin-bottom: 8px; }
-    .food-price { font-size: 1rem; }
-    .add-btn { padding: 7px 16px; font-size: 0.8rem; }
-    .food-image { width: 100px; min-height: 100px; }
-    .food-image .emoji-placeholder { font-size: 2.5rem; }
-    .fav-btn { width: 26px; height: 26px; font-size: 0.75rem; top: 6px; right: 6px; }
+    .cta-btn {
+        padding: 16px 32px;
+        font-size: 1rem;
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
     
-    /* Modals */
-    .modal { padding: 10px !important; z-index: 10000 !important; }
-    .modal-content { max-height: 90vh !important; border-radius: 16px !important; }
-    .close-btn { top: 10px; right: 10px; width: 30px; height: 30px; font-size: 1.1rem; }
+    /* ─────────────────────────────────────────────
+       Categories Section Mobile
+       ───────────────────────────────────────────── */
+    .categories-section {
+        top: 60px;
+        padding: var(--space-sm) 0;
+    }
     
-    /* Forms */
-    .form-group { margin-bottom: 12px; }
-    .form-group label { font-size: 0.75rem; margin-bottom: 5px; }
-    .form-input, input, textarea, select { padding: 10px 12px !important; font-size: 0.9rem !important; }
-    input[type="date"] { min-height: 42px !important; }
-    .btn-primary, .submit-btn { padding: 11px !important; font-size: 0.9rem !important; }
-    .btn-secondary, .map-btn { padding: 10px !important; font-size: 0.85rem !important; }
-    .social-btn { padding: 10px; font-size: 0.85rem; }
-    .divider { margin: 16px 0; }
-    .staff-buttons { gap: 8px; }
-    .staff-btn { padding: 14px; }
-    .staff-btn .icon { font-size: 1.4rem; }
+    .categories-wrapper {
+        padding: 0 var(--space-md);
+    }
     
-    /* Dashboard */
-    .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .stat-card { padding: 12px; }
-    .stat-card .icon { font-size: 1.5rem; }
-    .stat-card .value { font-size: 1.3rem; }
-    .stat-card .label { font-size: 0.7rem; }
+    .category-pill {
+        padding: 10px 16px;
+    }
     
-    /* Reviews */
-    .reviews-section { padding: 24px 12px; }
-    .reviews-header h2 { font-size: 1.2rem; }
-    .review-card { padding: 14px; }
-    .review-avatar { width: 38px; height: 38px; font-size: 1rem; }
+    .category-pill img {
+        width: 22px;
+        height: 22px;
+    }
     
-    /* Footer */
-    .footer { padding: 24px 12px 16px; }
-    .footer-content { grid-template-columns: 1fr; gap: 20px; }
+    .category-pill .cat-icon {
+        font-size: 1rem;
+    }
     
-    /* Fullscreen Modals */
-    #mapModal, #driverTrackingModal { z-index: 10001 !important; }
-    #mapModal #map, #driverTrackingModal #trackingMap { min-height: 40vh !important; }
-    #restaurantDashboard, #ownerDashboard { z-index: 10001 !important; padding: 12px !important; padding-bottom: 80px !important; }
+    .category-pill span {
+        font-size: 0.85rem;
+    }
     
-    .modal button, .modal-content button { position: relative !important; z-index: 5 !important; }
+    /* ─────────────────────────────────────────────
+       Menu Section Mobile
+       ───────────────────────────────────────────── */
+    .menu-section {
+        padding: var(--space-lg) var(--space-md) 100px;
+    }
+    
+    .menu-header {
+        margin-bottom: var(--space-lg);
+    }
+    
+    .menu-header h2 {
+        font-size: 1.35rem;
+        padding-left: var(--space-md);
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+    
+    /* ─────────────────────────────────────────────
+       Food Cards Mobile
+       ───────────────────────────────────────────── */
+    .food-card {
+        border-radius: var(--radius-md);
+    }
+    
+    .food-info {
+        padding: var(--space-md);
+    }
+    
+    .food-name {
+        font-size: 1rem;
+    }
+    
+    .food-desc {
+        font-size: 0.8rem;
+        margin-bottom: var(--space-sm);
+        -webkit-line-clamp: 2;
+    }
+    
+    .food-price {
+        font-size: 1.1rem;
+    }
+    
+    .add-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+    
+    .food-image {
+        width: 110px;
+        min-height: 110px;
+    }
+    
+    .food-image .emoji-placeholder {
+        font-size: 2.5rem;
+    }
+    
+    .fav-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+        opacity: 1;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Modals Mobile
+       ───────────────────────────────────────────── */
+    .modal {
+        padding: var(--space-sm) !important;
+        align-items: flex-end !important;
+    }
+    
+    .modal-content {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+        max-height: 92vh !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        animation: slideUpMobile 0.3s var(--ease-out) !important;
+    }
+    
+    @keyframes slideUpMobile {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .close-btn {
+        top: var(--space-sm);
+        right: var(--space-sm);
+        width: 32px;
+        height: 32px;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Forms Mobile
+       ───────────────────────────────────────────── */
+    .form-group {
+        margin-bottom: var(--space-sm);
+    }
+    
+    .form-group label {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .form-input,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    select {
+        padding: 14px !important;
+        font-size: 16px !important; /* Prevents iOS zoom */
+        border-radius: var(--radius-md) !important;
+    }
+    
+    input[type="date"] {
+        min-height: 48px !important;
+    }
+    
+    .btn-primary,
+    .submit-btn {
+        padding: 16px !important;
+        font-size: 1rem !important;
+    }
+    
+    .btn-secondary,
+    .map-btn {
+        padding: 14px !important;
+    }
+    
+    .social-btn {
+        padding: 14px;
+    }
+    
+    .staff-buttons {
+        gap: var(--space-sm);
+    }
+    
+    .staff-btn {
+        padding: var(--space-md);
+    }
+    
+    .staff-btn .icon {
+        font-size: 1.5rem;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Dashboard Mobile
+       ───────────────────────────────────────────── */
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-sm);
+    }
+    
+    .stat-card {
+        padding: var(--space-md);
+    }
+    
+    .stat-card .icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card .value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card .label {
+        font-size: 0.7rem;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Reviews Mobile
+       ───────────────────────────────────────────── */
+    .reviews-section {
+        padding: var(--space-xl) var(--space-md);
+    }
+    
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+    
+    .review-card {
+        padding: var(--space-md);
+    }
+    
+    .review-avatar {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+    
+    .review-meta h4 {
+        font-size: 0.95rem;
+    }
+    
+    .review-text {
+        font-size: 0.9rem;
+    }
+    
+    /* ─────────────────────────────────────────────
+       Footer Mobile
+       ───────────────────────────────────────────── */
+    .footer,
+    .social-footer {
+        padding: var(--space-xl) var(--space-md) var(--space-lg);
+    }
+    
+    .footer-content,
+    .social-content {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+    
+    .footer-section h3 {
+        font-size: 1rem;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .footer-bottom {
+        margin-top: var(--space-lg);
+        padding-top: var(--space-md);
+    }
+    
+    /* ─────────────────────────────────────────────
+       Dashboard Modals Mobile - Full Screen
+       ───────────────────────────────────────────── */
+    #mapModal,
+    #driverTrackingModal,
+    #restaurantDashboard,
+    #ownerDashboard {
+        z-index: 10001 !important;
+    }
+    
+    #restaurantDashboard,
+    #ownerDashboard {
+        padding: var(--space-md) !important;
+        padding-bottom: 100px !important;
+    }
 }
 
-@media (max-width: 380px) {
-    .mobile-nav-item { min-width: 48px !important; padding: 5px 8px !important; }
-    .mobile-nav-icon { font-size: 1.2rem !important; }
-    .mobile-nav-label { font-size: 0.55rem !important; }
-    .hero-text h1 { font-size: 1.9rem; }
-    .category-pill { padding: 7px 10px; }
-    .category-pill img { width: 22px; height: 22px; }
-    .food-image { width: 90px; min-height: 90px; }
-    .food-info { padding: 10px; }
+/* ═══════════════════════════════════════════════════════════════════
+   SMALL MOBILE BREAKPOINT (max-width: 400px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+    .mobile-nav-item {
+        min-width: 52px !important;
+        padding: 6px 8px !important;
+    }
+    
+    .mobile-nav-icon {
+        font-size: 1.2rem !important;
+    }
+    
+    .mobile-nav-label {
+        font-size: 0.6rem !important;
+    }
+    
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-text p {
+        font-size: 0.9rem;
+    }
+    
+    .cta-btn {
+        padding: 14px 24px;
+        font-size: 0.95rem;
+    }
+    
+    .food-image {
+        width: 100px;
+        min-height: 100px;
+    }
+    
+    .food-info {
+        padding: var(--space-sm) var(--space-md);
+    }
+    
+    .food-name {
+        font-size: 0.95rem;
+    }
+    
+    .food-desc {
+        font-size: 0.75rem;
+    }
+    
+    .food-price {
+        font-size: 1rem;
+    }
+    
+    .add-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .category-pill {
+        padding: 8px 12px;
+    }
+    
+    .category-pill span {
+        font-size: 0.8rem;
+    }
+    
+    .stat-card {
+        padding: var(--space-sm);
+    }
+    
+    .stat-card .icon {
+        font-size: 1.25rem;
+        margin-bottom: 4px;
+    }
+    
+    .stat-card .value {
+        font-size: 1.25rem;
+    }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   LARGE DESKTOP BREAKPOINT (min-width: 1400px)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 1400px) {
+    .header-content,
+    .menu-section,
+    .categories-wrapper {
+        max-width: 1400px;
+    }
+    
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .hero-text h1 {
+        font-size: 5rem;
+    }
+    
+    .hero-text p {
+        font-size: 1.35rem;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   TOUCH DEVICE OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .icon-btn {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .category-pill {
+        padding: 12px 18px;
+    }
+    
+    .add-btn {
+        padding: 12px 20px;
+    }
+    
+    /* Show favorite button always on touch */
+    .fav-btn {
+        opacity: 1;
+    }
+    
+    /* Disable hover effects that don't work well on touch */
+    .food-card:hover {
+        transform: none;
+    }
+    
+    .category-pill:hover {
+        transform: none;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   LANDSCAPE MOBILE
+   ═══════════════════════════════════════════════════════════════════ */
 @media (max-height: 500px) and (orientation: landscape) {
-    .hero { min-height: 100vh; }
-    .hero-text h1 { font-size: 1.8rem; }
-    .modal-content { max-height: 95vh !important; }
-    .mobile-bottom-nav { padding: 5px 6px !important; }
+    .hero {
+        min-height: 100vh;
+    }
+    
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-text p {
+        margin-bottom: var(--space-md);
+    }
+    
+    .mobile-bottom-nav {
+        padding: 6px 4px !important;
+    }
+    
+    .mobile-nav-item {
+        padding: 4px 10px !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DARK MODE MEDIA QUERY (already dark, but for completeness)
+   ═══════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+    /* Our design is already dark, so no changes needed */
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HIGH CONTRAST MODE
+   ═══════════════════════════════════════════════════════════════════ */
+@media (prefers-contrast: high) {
+    :root {
+        --border-subtle: rgba(255, 255, 255, 0.2);
+        --border-light: rgba(255, 255, 255, 0.3);
+        --text-muted: #9a9590;
+    }
+    
+    .food-card,
+    .modal-content,
+    .category-pill {
+        border-width: 2px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+@media print {
+    .header,
+    .mobile-bottom-nav,
+    .cta-btn,
+    .add-btn,
+    .fav-btn,
+    .modal {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+        padding: 0;
+    }
+    
+    .hero {
+        height: auto;
+        min-height: auto;
+    }
+    
+    .food-card {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+    }
 }
