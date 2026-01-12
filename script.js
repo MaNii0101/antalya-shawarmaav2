@@ -876,12 +876,20 @@ function displayMenu(category) {
     if (menuTitle) menuTitle.textContent = catInfo.name;
     
     menuGrid.innerHTML = '';
-    menuGrid.className = 'menu-grid';
-    menuGrid.style.cssText = '';
+    menuGrid.className = 'menu-list-container';
     
     const items = menuData[category] || [];
+    const isMobile = window.innerWidth <= 768;
+    
+    // Container styling
+    if (isMobile) {
+        menuGrid.style.cssText = 'display: flex; flex-direction: column; gap: 0; padding: 0 1rem;';
+    } else {
+        menuGrid.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; padding: 1rem;';
+    }
     
     items.forEach(item => {
+        // Show ALL items including unavailable ones
         const isFavorite = currentUser && userFavorites[currentUser.email]?.includes(item.id);
         const unavailable = item.available === false;
         
@@ -889,42 +897,68 @@ function displayMenu(category) {
         const categoryIcon = catInfo.icon || '🍽️';
         const categoryImage = catInfo.image || '';
         
-        // Image display
-        let imageContent;
+        // Image display - use item image, then category image, then icon
+        let imageDisplay;
         if (item.image) {
-            imageContent = `<img src="${item.image}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                           <div class="emoji-placeholder" style="display:none;">${item.icon || categoryIcon}</div>`;
+            imageDisplay = `<img src="${item.image}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
         } else if (categoryImage) {
-            imageContent = `<img src="${categoryImage}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                           <div class="emoji-placeholder" style="display:none;">${item.icon || categoryIcon}</div>`;
+            imageDisplay = `<img src="${categoryImage}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: cover;">`;
         } else {
-            imageContent = `<div class="emoji-placeholder">${item.icon || categoryIcon}</div>`;
+            imageDisplay = `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${item.icon || categoryIcon}</div>`;
         }
         
-        const card = document.createElement('div');
-        card.className = 'food-card';
-        if (unavailable) card.style.opacity = '0.6';
+        const row = document.createElement('div');
         
-        card.innerHTML = `
-            <div class="food-info">
-                <div class="food-name" ${unavailable ? 'style="text-decoration: line-through; color: #888;"' : ''}>${item.name}</div>
-                <div class="food-desc">${item.desc}</div>
-                <div class="food-bottom">
-                    <span class="food-price">${formatPrice(item.price)}</span>
-                    ${!unavailable ? `
-                        <button class="add-btn" onclick="openFoodModal(${item.id})">Add</button>
-                    ` : '<span style="color: #666; font-size: 0.8rem;">Unavailable</span>'}
+        if (isMobile) {
+            // Mobile: Full width list items
+            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem 0; border-bottom: 1px solid rgba(230, 57, 70, 0.15); ${unavailable ? 'opacity: 0.6;' : ''}`;
+            row.innerHTML = `
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'}; ${unavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; font-size: 1.05rem; color: ${unavailable ? '#888' : '#fff'};">${formatPrice(item.price)}</span>
+                        ${unavailable ? '<span style="color: #ef4444; font-size: 0.7rem; font-weight: 600; background: rgba(239,68,68,0.15); padding: 0.2rem 0.5rem; border-radius: 4px;">NOT AVAILABLE</span>' : ''}
+                    </div>
                 </div>
-            </div>
-            <div class="food-image" ${unavailable ? 'style="filter: grayscale(50%);"' : ''}>
-                ${imageContent}
-                <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">
-                    ${isFavorite ? '❤️' : '🤍'}
-                </button>
-            </div>
-        `;
-        
-        menuGrid.appendChild(card);
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <div style="width: 110px; height: 110px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
+                        ${imageDisplay}
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
+                            ${isFavorite ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                    ${!unavailable ? `
+                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem;">Add</button>
+                    ` : '<span style="color: #666; font-size: 0.8rem; font-weight: 500;">—</span>'}
+                </div>
+            `;
+        } else {
+            // Desktop: Card style but with same list appearance
+            row.style.cssText = `display: flex; gap: 1rem; padding: 1.2rem; background: rgba(20, 20, 20, 0.8); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); ${unavailable ? 'opacity: 0.6;' : ''}`;
+            row.innerHTML = `
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                    <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.4rem; color: ${unavailable ? '#888' : '#fff'}; ${unavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.55); margin-bottom: 0.8rem; line-height: 1.4; flex: 1;">${item.desc}</div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; font-size: 1.05rem; color: ${unavailable ? '#888' : '#fff'};">${formatPrice(item.price)}</span>
+                        ${unavailable ? '<span style="color: #ef4444; font-size: 0.7rem; font-weight: 600; background: rgba(239,68,68,0.15); padding: 0.2rem 0.5rem; border-radius: 4px;">NOT AVAILABLE</span>' : ''}
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <div style="width: 120px; height: 120px; background: #f5f5f5; border-radius: 12px; overflow: hidden; position: relative; ${unavailable ? 'filter: grayscale(50%);' : ''}">
+                        ${imageDisplay}
+                        <button onclick="toggleFavorite(${item.id}, event)" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; width: 30px; height: 30px; min-width: 30px; min-height: 30px; max-width: 30px; max-height: 30px; border-radius: 50%; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; aspect-ratio: 1/1; box-sizing: border-box;">
+                            ${isFavorite ? '❤️' : '🤍'}
+                        </button>
+                    </div>
+                    ${!unavailable ? `
+                        <button onclick="openFoodModal(${item.id})" style="background: rgba(255, 220, 220, 0.95); color: #e63946; border: 2px solid rgba(230, 57, 70, 0.2); padding: 0.5rem 1.8rem; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.2s;" onmouseover="this.style.background='#e63946'; this.style.color='white';" onmouseout="this.style.background='rgba(255, 220, 220, 0.95)'; this.style.color='#e63946';">Add</button>
+                    ` : '<span style="color: #666; font-size: 0.8rem; font-weight: 500;">—</span>'}
+                </div>
+            `;
+        }
+        menuGrid.appendChild(row);
     });
 }
 
@@ -939,8 +973,17 @@ window.addEventListener('resize', () => {
     }, 150);
 });
 
+function filterCategory(category) {
+    document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+    if (event && event.target) {
+        const catItem = event.target.closest('.category-item');
+        if (catItem) catItem.classList.add('active');
+    }
+    displayMenu(category);
+}
+
 function renderCategories() {
-    const categoriesContainer = document.querySelector('.categories-scroll') || document.querySelector('.categories');
+    const categoriesContainer = document.querySelector('.categories');
     if (!categoriesContainer) return;
     
     categoriesContainer.innerHTML = '';
@@ -949,40 +992,20 @@ function renderCategories() {
         // Only show categories that have items
         if (!menuData[key] || menuData[key].length === 0) return;
         
-        const catEl = document.createElement('div');
-        catEl.className = `category-pill ${index === 0 ? 'active' : ''}`;
-        catEl.onclick = () => filterCategory(key);
-        
         // Determine category image display
-        if (cat.image) {
-            catEl.innerHTML = `
-                <img src="${cat.image}" alt="${cat.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <span class="cat-icon" style="display:none;">${cat.icon || '🍽️'}</span>
-                <span>${cat.name}</span>
-            `;
-        } else {
-            catEl.innerHTML = `
-                <span class="cat-icon">${cat.icon || '🍽️'}</span>
-                <span>${cat.name}</span>
-            `;
-        }
+        const catImageDisplay = cat.image 
+            ? `<img src="${cat.image}" alt="${cat.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` 
+            : cat.icon;
         
+        const catEl = document.createElement('div');
+        catEl.className = `category-item ${index === 0 ? 'active' : ''}`;
+        catEl.onclick = () => filterCategory(key);
+        catEl.innerHTML = `
+            <div class="category-icon">${catImageDisplay}</div>
+            <div class="category-name">${cat.name}</div>
+        `;
         categoriesContainer.appendChild(catEl);
     });
-    
-    // Re-initialize category scroll after rendering
-    if (window.utils && window.utils.initCategoryScroll) {
-        window.utils.initCategoryScroll();
-    }
-}
-
-function filterCategory(category) {
-    document.querySelectorAll('.category-pill').forEach(item => item.classList.remove('active'));
-    if (event && event.target) {
-        const catItem = event.target.closest('.category-pill');
-        if (catItem) catItem.classList.add('active');
-    }
-    displayMenu(category);
 }
 
 // ========================================
@@ -1197,7 +1220,6 @@ function showFavorites() {
     
     const modal = document.getElementById('favoritesModal');
     const content = document.getElementById('favoritesContent');
-    const emptyState = document.getElementById('emptyFavoritesState');
     
     if (!modal || !content) return;
     
@@ -1223,31 +1245,38 @@ function showFavorites() {
     }
     
     if (favItems.length === 0) {
-        content.innerHTML = '';
-        content.style.display = 'none';
-        if (emptyState) emptyState.style.display = 'block';
+        content.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                <div style="font-size: 4rem;">💔</div>
+                <p>No favorites yet</p>
+                <p style="font-size: 0.9rem;">Tap ❤️ on items to add them here</p>
+            </div>
+        `;
     } else {
-        if (emptyState) emptyState.style.display = 'none';
-        content.style.display = 'block';
-        content.innerHTML = favItems.map(item => {
-            const isUnavailable = item.available === false;
-            const imageDisplay = item.image 
-                ? `<img src="${item.image}" alt="${item.name}">` 
-                : `<span>${item.icon || '🍽️'}</span>`;
-            
-            return `
-                <div class="favorite-item ${isUnavailable ? 'unavailable' : ''}" onclick="${isUnavailable ? '' : `openFoodModal(${item.id}); closeModal('favoritesModal');`}">
-                    <div class="favorite-item-image">${imageDisplay}</div>
-                    <div class="favorite-item-info">
-                        <div class="favorite-item-name">${item.name}</div>
-                        <div class="favorite-item-desc">${item.description || ''}</div>
-                        <div class="favorite-item-price">${formatPrice(item.price)}</div>
-                        ${isUnavailable ? '<div style="color: #ef4444; font-size: 0.75rem; font-weight: 600;">NOT AVAILABLE</div>' : ''}
+        content.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                ${favItems.map(item => {
+                    const isUnavailable = item.available === false;
+                    const imageDisplay = item.image 
+                        ? `<img src="${item.image}" style="width: 55px; height: 55px; object-fit: cover; border-radius: 10px;">` 
+                        : `<span style="font-size: 2rem;">${item.icon}</span>`;
+                    
+                    return `
+                    <div style="display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); ${isUnavailable ? 'opacity: 0.5;' : ''}">
+                        <div style="width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${imageDisplay}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; font-size: 0.95rem; ${isUnavailable ? 'text-decoration: line-through;' : ''}">${item.name}</div>
+                            <div style="color: #e63946; font-weight: 700; font-size: 1rem;">${formatPrice(item.price)}</div>
+                            ${isUnavailable ? '<div style="color: #ef4444; font-size: 0.7rem; font-weight: 600;">NOT AVAILABLE</div>' : ''}
+                        </div>
+                        ${isUnavailable 
+                            ? '<span style="color: #ef4444; font-size: 0.75rem; padding: 0.4rem 0.8rem;">N/A</span>'
+                            : `<button onclick="openFoodModal(${item.id}); closeModal('favoritesModal');" style="background: linear-gradient(135deg, #e63946, #c1121f); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; white-space: nowrap; flex-shrink: 0;">Add</button>`
+                        }
                     </div>
-                    <button class="favorite-remove" onclick="event.stopPropagation(); toggleFavorite(${item.id}); showFavorites();">❤️</button>
-                </div>
-            `;
-        }).join('');
+                `}).join('')}
+            </div>
+        `;
     }
     
     openModal('favoritesModal');
@@ -1266,51 +1295,41 @@ function showCart() {
     const modal = document.getElementById('cartModal');
     const cartItems = document.getElementById('cartItems');
     const cartTotal = document.getElementById('cartTotal');
-    const cartSubtotal = document.getElementById('cartSubtotal');
-    const cartFooter = document.getElementById('cartFooter');
-    const cartItemCount = document.getElementById('cartItemCount');
-    const emptyCartState = document.getElementById('emptyCartState');
     
     if (!modal || !cartItems) return;
     
     if (cart.length === 0) {
-        cartItems.innerHTML = '';
-        cartItems.style.display = 'none';
-        if (cartFooter) cartFooter.style.display = 'none';
-        if (emptyCartState) emptyCartState.style.display = 'block';
-        if (cartItemCount) cartItemCount.textContent = '0 items';
+        cartItems.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                <div style="font-size: 4rem;">🛒</div>
+                <p>Your cart is empty</p>
+                <p style="font-size: 0.9rem;">Add some delicious items!</p>
+            </div>
+        `;
+        if (cartTotal) cartTotal.textContent = '£0.00';
     } else {
-        if (emptyCartState) emptyCartState.style.display = 'none';
-        cartItems.style.display = 'block';
-        if (cartFooter) cartFooter.style.display = 'block';
-        
         let total = 0;
         cartItems.innerHTML = cart.map((item, index) => {
             const itemTotal = item.finalPrice * item.quantity;
             total += itemTotal;
             return `
                 <div class="cart-item">
-                    <div class="cart-item-image">${item.icon || '🍽️'}</div>
-                    <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
-                        ${item.extras.length > 0 ? `<div class="cart-item-options">+ ${item.extras.join(', ')}</div>` : ''}
-                        <div class="cart-item-price">${formatPrice(itemTotal)}</div>
+                    <div class="cart-item-header">
+                        <span>${item.icon} ${item.name} x${item.quantity}</span>
+                        <span style="color: #ff6b6b;">${formatPrice(itemTotal)}</span>
                     </div>
-                    <div class="cart-item-controls">
-                        <div class="cart-qty-controls">
-                            <button class="cart-qty-btn" onclick="updateCartItem(${index}, -1)">−</button>
-                            <span class="cart-qty">${item.quantity}</span>
-                            <button class="cart-qty-btn" onclick="updateCartItem(${index}, 1)">+</button>
-                        </div>
-                        <button class="cart-remove-btn" onclick="removeCartItem(${index})">🗑️</button>
+                    ${item.extras.length > 0 ? `<div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">+ ${item.extras.join(', ')}</div>` : ''}
+                    ${item.instructions ? `<div style="font-size: 0.85rem; color: rgba(255,255,255,0.5); font-style: italic;">Note: ${item.instructions}</div>` : ''}
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem;">
+                        <button onclick="updateCartItem(${index}, -1)" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer;">-</button>
+                        <button onclick="updateCartItem(${index}, 1)" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer;">+</button>
+                        <button onclick="removeCartItem(${index})" style="background: rgba(239,68,68,0.2); border: none; color: #ef4444; padding: 0.3rem 0.8rem; border-radius: 5px; cursor: pointer; margin-left: auto;">🗑️ Remove</button>
                     </div>
                 </div>
             `;
         }).join('');
         
         if (cartTotal) cartTotal.textContent = formatPrice(total);
-        if (cartSubtotal) cartSubtotal.textContent = formatPrice(total);
-        if (cartItemCount) cartItemCount.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
     }
     
     openModal('cartModal');
@@ -1604,7 +1623,6 @@ function showNotifications() {
     
     const modal = document.getElementById('notificationsModal');
     const content = document.getElementById('notificationsContent');
-    const emptyState = document.getElementById('emptyNotificationsState');
     
     if (!modal || !content) return;
     
@@ -1616,53 +1634,69 @@ function showNotifications() {
     updateNotificationBadge();
     
     if (notifications.length === 0) {
-        content.innerHTML = '';
-        content.style.display = 'none';
-        if (emptyState) emptyState.style.display = 'block';
+        content.innerHTML = `
+            <div style="text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                <div style="font-size: 4rem;">🔔</div>
+                <p>No notifications yet</p>
+            </div>
+        `;
     } else {
-        if (emptyState) emptyState.style.display = 'none';
-        content.style.display = 'block';
         content.innerHTML = notifications.map(n => {
+            // Check if order still exists and its current status
             const order = pendingOrders.find(o => o.id === n.orderId) || orderHistory.find(o => o.id === n.orderId);
             const isStillDelivering = order && order.status === 'out_for_delivery';
             const isAlreadyRated = order && order.driverRated === true;
             
-            // Get notification icon and color based on type
-            let icon = '📬', iconBg = 'var(--accent-soft)';
-            if (n.type === 'driver_on_way') { icon = '🚗'; iconBg = 'rgba(16, 185, 129, 0.15)'; }
-            else if (n.type === 'order_completed') { icon = '✅'; iconBg = 'rgba(59, 130, 246, 0.15)'; }
-            else if (n.type === 'order_accepted') { icon = '👍'; iconBg = 'rgba(16, 185, 129, 0.15)'; }
-            else if (n.type === 'order_rejected') { icon = '❌'; iconBg = 'rgba(239, 68, 68, 0.15)'; }
-            
-            // Driver on way notification
-            if (n.type === 'driver_on_way' && isStillDelivering) {
-                return `
-                    <div class="notification-item unread">
-                        <div class="notification-icon" style="background: ${iconBg};">${icon}</div>
-                        <div class="notification-content">
-                            <div class="notification-title">${n.title}</div>
-                            <div class="notification-message">
-                                🚗 ${n.driverName || 'Driver'} is on the way
-                                ${n.estimatedTime ? `<br>⏱️ ETA: ~${n.estimatedTime} minutes` : ''}
-                            </div>
-                            <button onclick="trackDriver('${n.orderId}'); closeModal('notificationsModal');" class="btn-track-driver" style="margin-top: 8px; background: linear-gradient(135deg, #10b981, #047857); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
-                                📍 Track Driver
-                            </button>
-                            <div class="notification-time">${new Date(n.createdAt).toLocaleString()}</div>
+            // Driver on way notification - only show track if still delivering
+            if (n.type === 'driver_on_way') {
+                if (!isStillDelivering) {
+                    // Order already delivered - show simple completed message
+                    return `
+                        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 0.8rem; border-left: 3px solid #10b981;">
+                            <div style="font-weight: 600; margin-bottom: 0.3rem;">✅ Order Delivered</div>
+                            <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Your order #${n.orderId} has been delivered.</div>
+                            <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
                         </div>
+                    `;
+                }
+                return `
+                    <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.2)); padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem; border: 2px solid rgba(16,185,129,0.4);">
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; color: #10b981;">${n.title}</div>
+                        <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem;">
+                            <div style="margin-bottom: 0.5rem;">🚗 <strong>${n.driverName || 'Driver'}</strong></div>
+                            ${n.driverPhone ? `<div style="margin-bottom: 0.5rem;">📞 <a href="tel:${n.driverPhone}" style="color: #3b82f6;">${n.driverPhone}</a></div>` : ''}
+                            ${n.estimatedTime ? `<div style="color: #f59e0b; font-weight: 600; font-size: 1.1rem;">⏱️ Arriving in ~${n.estimatedTime} minutes</div>` : ''}
+                        </div>
+                        <button onclick="trackDriver('${n.orderId}'); closeModal('notificationsModal');" style="background: linear-gradient(45deg, #10b981, #059669); color: white; border: none; padding: 0.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.5rem;">
+                            📍 Track Driver Live
+                        </button>
+                        <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
                     </div>
                 `;
             }
             
-            // Default notification
-            return `
-                <div class="notification-item">
-                    <div class="notification-icon" style="background: ${iconBg};">${icon}</div>
-                    <div class="notification-content">
-                        <div class="notification-title">${n.title}</div>
-                        <div class="notification-message">${n.message}</div>
-                        <div class="notification-time">${new Date(n.createdAt).toLocaleString()}</div>
+            // Order completed notification - only show rate button if not already rated
+            if (n.type === 'order_completed') {
+                return `
+                    <div style="background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(37,99,235,0.2)); padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem; border: 2px solid rgba(59,130,246,0.4);">
+                        <div style="font-weight: 700; margin-bottom: 0.5rem; font-size: 1.1rem; color: #3b82f6;">${n.title}</div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 0.5rem;">${n.message}</div>
+                        ${isAlreadyRated ? `<div style="color: #f59e0b; font-size: 0.85rem;">⭐ You rated this delivery ${order.driverRating}/5</div>` : ''}
+                        <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
                     </div>
+                `;
+            }
+            
+            // Default notification style
+            const borderColor = n.type === 'order_accepted' ? '#10b981' : 
+                               n.type === 'order_rejected' ? '#ef4444' : 
+                               n.type === 'order_completed' ? '#3b82f6' : '#ff6b6b';
+            
+            return `
+                <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 0.8rem; border-left: 3px solid ${borderColor};">
+                    <div style="font-weight: 600; margin-bottom: 0.3rem;">${n.title}</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; white-space: pre-line;">${n.message}</div>
+                    <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">${new Date(n.createdAt).toLocaleString()}</div>
                 </div>
             `;
         }).join('');
@@ -1682,106 +1716,92 @@ function showAccount() {
     
     const modal = document.getElementById('accountModal');
     const content = document.getElementById('accountContent');
-    const accountAvatar = document.getElementById('accountAvatar');
-    const accountName = document.getElementById('accountName');
-    const accountEmail = document.getElementById('accountEmail');
-    const notLoggedInState = document.getElementById('notLoggedInState');
     
     if (!modal || !content) return;
     
-    // Update header info
-    if (accountName) accountName.textContent = currentUser.name || 'User';
-    if (accountEmail) accountEmail.textContent = currentUser.email;
-    if (accountAvatar) {
-        accountAvatar.innerHTML = currentUser.profilePicture 
-            ? `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;">`
-            : '👤';
-    }
-    
-    if (notLoggedInState) notLoggedInState.style.display = 'none';
-    content.style.display = 'block';
-    
     const userOrders = orderHistory.filter(o => o.userId === currentUser.email);
-    const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
     const activeOrders = pendingOrders.filter(o => o.userId === currentUser.email && o.status === 'out_for_delivery');
+    const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
     
-    // Check if current user is the owner
-    const isOwner = currentUser.email === OWNER_CREDENTIALS?.email;
+    // Profile picture display
+    const profilePic = currentUser.profilePicture 
+        ? `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover;">`
+        : '👤';
     
     content.innerHTML = `
-        <!-- Stats Cards -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 1.8rem; font-weight: 700; color: #10b981; font-family: var(--font-display);">${userOrders.length}</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Orders</div>
+        <div style="background: linear-gradient(135deg, #e63946, #c1121f); padding: 1.5rem; border-radius: 15px; text-align: center; margin-bottom: 1.5rem;">
+            <div style="width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.2); margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; overflow: hidden; border: 3px solid rgba(255,255,255,0.3);">
+                ${profilePic}
             </div>
-            <div style="background: rgba(201, 96, 58, 0.1); border: 1px solid rgba(201, 96, 58, 0.2); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent); font-family: var(--font-display);">${formatPrice(totalSpent)}</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Total Spent</div>
+            <h3 style="margin: 0; color: white; font-size: 1.2rem;">${currentUser.name}</h3>
+            <p style="margin: 0.3rem 0 0; color: rgba(255,255,255,0.8); font-size: 0.9rem;">${currentUser.email}</p>
+            ${currentUser.dob ? `<p style="margin: 0.2rem 0 0; color: rgba(255,255,255,0.7); font-size: 0.85rem;">DOB: ${new Date(currentUser.dob).toLocaleDateString()}</p>` : ''}
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem;">
+            <div style="background: rgba(42,157,143,0.15); padding: 0.8rem; border-radius: 10px; text-align: center; border: 1px solid rgba(42,157,143,0.3);">
+                <div style="font-size: 1.3rem; font-weight: 700; color: #2a9d8f;">${userOrders.length}</div>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Orders</div>
+            </div>
+            <div style="background: rgba(230,57,70,0.15); padding: 0.8rem; border-radius: 10px; text-align: center; border: 1px solid rgba(230,57,70,0.3);">
+                <div style="font-size: 1.3rem; font-weight: 700; color: #e63946;">${formatPrice(totalSpent)}</div>
+                <div style="font-size: 0.8rem; color: rgba(255,255,255,0.6);">Total Spent</div>
             </div>
         </div>
         
         <!-- User Details -->
-        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-faint);">
-                <span style="color: var(--text-muted);">📞 Phone</span>
-                <span style="color: var(--text-primary);">${currentUser.phone || 'Not set'}</span>
+        <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.2rem; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                <span style="color: rgba(255,255,255,0.6);">📞 Phone</span>
+                <span>${currentUser.phone || 'Not set'}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-faint);">
-                <span style="color: var(--text-muted);">📍 Address</span>
-                <span style="color: var(--text-primary); text-align: right; max-width: 60%;">${currentUser.address || 'Not set'}</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                <span style="color: rgba(255,255,255,0.6);">📍 Address</span>
+                <span style="text-align: right; max-width: 60%;">${currentUser.address || 'Not set'}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                <span style="color: var(--text-muted);">📅 Member since</span>
-                <span style="color: var(--text-primary);">${currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : 'N/A'}</span>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                <span style="color: rgba(255,255,255,0.6);">📅 Member</span>
+                <span>${currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : 'N/A'}</span>
             </div>
         </div>
         
+        <!-- Active Deliveries -->
         ${activeOrders.length > 0 ? `
-            <!-- Active Delivery -->
-            <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1)); border: 2px solid rgba(59, 130, 246, 0.3); padding: 16px; border-radius: 12px; margin-bottom: 20px;">
-                <div style="font-weight: 600; color: #3b82f6; margin-bottom: 12px;">🚗 Active Delivery</div>
+            <div style="background: linear-gradient(135deg, rgba(42,157,143,0.2), rgba(42,157,143,0.1)); padding: 1rem; border-radius: 12px; margin-bottom: 1.2rem; border: 2px solid rgba(42,157,143,0.4);">
+                <h4 style="margin: 0 0 0.8rem 0; color: #2a9d8f; font-size: 0.95rem;">🚗 Active Delivery</h4>
                 ${activeOrders.map(o => `
-                    <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;">
-                        <div style="font-weight: 600;">#${o.id}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted);">Driver: ${o.driverName || 'Assigned'}</div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 0.8rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.3rem;">#${o.id}</div>
+                        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7);">Driver: ${o.driverName || 'Assigned'}</div>
+                        ${o.estimatedTime ? `<div style="font-size: 0.85rem; color: #f4a261;">ETA: ~${o.estimatedTime} mins</div>` : ''}
                     </div>
-                    <button onclick="trackDriver('${o.id}'); closeModal('accountModal');" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        📍 Track Driver
+                    <button onclick="trackDriver('${o.id}')" style="background: linear-gradient(45deg, #2a9d8f, #218373); color: white; border: none; padding: 0.8rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; font-size: 0.9rem;">
+                        📍 Track Driver Live
                     </button>
                 `).join('')}
             </div>
         ` : ''}
         
-        ${isOwner ? `
-            <!-- Owner Access Button -->
-            <button onclick="closeModal('accountModal'); document.getElementById('ownerModal').style.display = 'flex';" style="width: 100%; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                👑 Owner Dashboard
-            </button>
-        ` : ''}
-        
         <!-- Action Buttons -->
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="openEditProfile()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;">
+        <div style="display: grid; gap: 0.6rem;">
+            <button onclick="openEditProfile()" style="background: linear-gradient(45deg, #3b82f6, #2563eb); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 ✏️ Edit Profile
             </button>
-            <button onclick="openChangeEmail()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;">
+            <button onclick="openChangeEmail()" style="background: linear-gradient(45deg, #f4a261, #e76f51); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 📧 Change Email
             </button>
-            <button onclick="openChangePassword()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;">
+            <button onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 🔒 Change Password
             </button>
         </div>
         
-        <!-- Logout -->
-        <button onclick="logout()" class="btn-logout" style="margin-top: 20px;">
+        <button onclick="logout()" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 2px solid #ef4444; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 1rem; font-size: 0.95rem;">
             🚪 Logout
         </button>
         
-        <!-- Delete Account -->
-        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-faint);">
-            <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-bottom: 10px;">Danger Zone</p>
-            <button onclick="confirmDeleteAccount()" style="width: 100%; background: transparent; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 0.85rem;">
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; text-align: center; margin-bottom: 0.8rem;">Danger Zone</p>
+            <button onclick="confirmDeleteAccount()" style="background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 0.7rem; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; font-size: 0.85rem;">
                 🗑️ Delete My Account
             </button>
         </div>
@@ -1802,7 +1822,6 @@ function showOrderHistory() {
     
     const modal = document.getElementById('orderHistoryModal');
     const content = document.getElementById('orderHistoryContent');
-    const emptyState = document.getElementById('emptyOrdersState');
     
     if (!modal || !content) return;
     
@@ -1813,46 +1832,71 @@ function showOrderHistory() {
     );
     
     if (allOrders.length === 0) {
-        content.innerHTML = '';
-        content.style.display = 'none';
-        if (emptyState) emptyState.style.display = 'block';
+        content.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                <p>No orders yet</p>
+                <p style="font-size: 0.85rem; margin-top: 0.5rem;">Your order history will appear here</p>
+            </div>
+        `;
     } else {
-        if (emptyState) emptyState.style.display = 'none';
-        content.style.display = 'block';
         content.innerHTML = allOrders.map(o => {
-            const statusColor = o.status === 'completed' ? '#10b981' : 
-                               o.status === 'pending' ? '#f59e0b' : 
+            const statusColor = o.status === 'completed' ? '#2a9d8f' : 
+                               o.status === 'pending' ? '#f4a261' : 
                                o.status === 'out_for_delivery' ? '#3b82f6' : 
-                               o.status === 'accepted' || o.status === 'waiting_driver' ? '#10b981' :
-                               o.status === 'cancelled' ? '#ef4444' : '#ef4444';
+                               o.status === 'accepted' || o.status === 'waiting_driver' ? '#2a9d8f' : '#ef4444';
             
             const statusText = o.status.replace(/_/g, ' ').toUpperCase();
             const paymentIcon = o.paymentMethod === 'cash' ? '💷' : o.paymentMethod === 'applepay' ? '🍎' : '💳';
-            const canCancel = o.status === 'pending';
+            
+            // Get driver info for active deliveries only
+            const driver = o.status === 'out_for_delivery' && o.driverId ? window.driverSystem.get(o.driverId) : null;
             
             return `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div class="order-id">#${o.id}</div>
-                        <span class="order-status" style="background: ${statusColor}20; color: ${statusColor};">${statusText}</span>
+                <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; border-left: 3px solid ${statusColor};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                        <span style="font-weight: 700; font-size: 0.95rem;">#${o.id}</span>
+                        <span style="color: ${statusColor}; font-size: 0.75rem; font-weight: 600; background: ${statusColor}20; padding: 0.2rem 0.6rem; border-radius: 10px;">${statusText}</span>
                     </div>
-                    <div class="order-body">
-                        <div class="order-items-preview">${o.items.map(i => i.name).join(', ')}</div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-muted);">
-                            <span>${o.items.length} items • ${paymentIcon} ${o.paymentMethod || 'N/A'}</span>
-                            <span>${new Date(o.createdAt).toLocaleDateString()}</span>
+                    
+                    <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 0.5rem;">
+                        ${o.items.map(i => `${i.name}`).join(', ')}
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">${o.items.length} items</span>
+                        <span style="font-weight: 700; color: #2a9d8f;">${formatPrice(o.total)}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">${new Date(o.createdAt).toLocaleString()}</span>
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">${paymentIcon} ${o.paymentMethod || 'N/A'}</span>
+                    </div>
+                    
+                    ${o.driverRated ? `<div style="font-size: 0.75rem; color: #f4a261; margin-top: 0.4rem;">⭐ Rated ${o.driverRating}/5 ${o.driverRatingComment ? '- "' + o.driverRatingComment + '"' : ''}</div>` : ''}
+                    
+                    ${o.status === 'out_for_delivery' && driver ? `
+                        <div style="display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem; padding: 0.8rem; background: rgba(59,130,246,0.1); border-radius: 8px;">
+                            ${driver.profilePic ? `<img src="${driver.profilePic}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">` : '<div style="width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🚗</div>'}
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.9rem;">${driver.name || o.driverName || 'Driver'}</div>
+                                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6);">On the way to you</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="order-footer">
-                        <div class="order-total">${formatPrice(o.total)}</div>
-                        ${o.status === 'out_for_delivery' ? `
-                            <button onclick="trackDriver('${o.id}'); closeModal('orderHistoryModal');" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">📍 Track</button>
-                        ` : canCancel ? `
-                            <button onclick="cancelOrder('${o.id}')" style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Cancel</button>
-                        ` : o.status !== 'cancelled' ? `
-                            <button class="order-reorder" onclick="reorderFromHistory('${o.id}'); closeModal('orderHistoryModal');">Reorder</button>
-                        ` : ''}
-                    </div>
+                        <button onclick="trackDriver('${o.id}'); closeModal('orderHistoryModal');" style="background: linear-gradient(45deg, #2a9d8f, #218373); color: white; border: none; padding: 0.7rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.5rem; font-size: 0.9rem;">
+                            📍 Track Driver Live
+                        </button>
+                    ` : ''}
+                    
+                    ${o.status === 'completed' && o.driverId && !o.driverRated ? `
+                        <button onclick="openDriverRating('${o.id}', '${o.driverId}', '${o.driverName || 'Driver'}'); closeModal('orderHistoryModal');" style="background: linear-gradient(45deg, #f4a261, #e76f51); color: white; border: none; padding: 0.7rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.8rem; font-size: 0.9rem;">
+                            ⭐ Rate Driver
+                        </button>
+                    ` : ''}
+                    
+                    <button onclick="reorderFromHistory('${o.id}'); closeModal('orderHistoryModal');" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem; border-radius: 8px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 0.5rem; font-size: 0.85rem;">
+                        🔄 Reorder
+                    </button>
                 </div>
             `;
         }).join('');
@@ -1860,50 +1904,6 @@ function showOrderHistory() {
     
     openModal('orderHistoryModal');
 }
-
-// Cancel Order Function
-function cancelOrder(orderId) {
-    if (!currentUser) return;
-    
-    const order = pendingOrders.find(o => o.id === orderId && o.userId === currentUser.email);
-    
-    if (!order) {
-        alert('❌ Order not found');
-        return;
-    }
-    
-    if (order.status !== 'pending') {
-        alert('❌ This order cannot be cancelled.\n\nOrders can only be cancelled before the restaurant accepts them.');
-        return;
-    }
-    
-    if (!confirm('Are you sure you want to cancel this order?\n\nOrder #' + orderId)) {
-        return;
-    }
-    
-    // Update order status
-    order.status = 'cancelled';
-    order.cancelledAt = new Date().toISOString();
-    order.cancelledBy = 'customer';
-    
-    // Save changes
-    saveData();
-    
-    // Notify user
-    addNotification({
-        type: 'order_cancelled',
-        title: 'Order Cancelled',
-        message: `Your order #${orderId} has been cancelled.`,
-        orderId: orderId
-    });
-    
-    // Refresh order history
-    showOrderHistory();
-    
-    alert('✅ Order #' + orderId + ' has been cancelled successfully.');
-}
-
-window.cancelOrder = cancelOrder;
 
 function updateOrdersBadge() {
     const badge = document.getElementById('ordersBadge');
@@ -5101,8 +5101,18 @@ function openModal(modalId) {
     }
 }
 
+// Add this function anywhere in your script.js
 function scrollToMenu() {
-    document.querySelector('.main-content')?.scrollIntoView({ behavior: 'smooth' });
+    const menuSection = document.querySelector('.menu-section');
+    if (menuSection) {
+        const headerHeight = 80;
+        const categoriesHeight = 60;
+        const targetPosition = menuSection.offsetTop - headerHeight - categoriesHeight;
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
+    }
 }
 
 function toggleMobileMenu() {

@@ -1587,17 +1587,20 @@
             if (originalOpenAddFood) originalOpenAddFood();
         };
         
-                const originalOpenEditFood = window.openEditFood;
-                window.openEditFood = function(catKey, foodId) {
-                    const select = document.getElementById('foodEditCategory');
-                    if (select && typeof categories !== 'undefined') {
-                        select.innerHTML = '<option value="">Select category</option>' + 
-                            Object.entries(categories).map(([key, cat]) => 
-                                `<option value="${key}">${cat.name}</option>`
-                            ).join('');
-                    }
-                    if (originalOpenEditFood) originalOpenEditFood(catKey, foodId);
-                };
-            </script>
-        </body>
-        </html>
+        const originalOpenEditFood = window.openEditFood;
+        window.openEditFood = function(catKey, foodId) {
+            const select = document.getElementById('foodEditCategory');
+            if (select && typeof categories !== 'undefined') {
+                select.innerHTML = '<option value="">Select category</option>' + 
+                    Object.entries(categories).map(([key, cat]) => 
+                        `<option value="${key}">${cat.name}</option>`
+                    ).join('');
+            }
+            if (originalOpenEditFood) originalOpenEditFood(catKey, foodId);
+        };
+    </script>
+            </form>
+        </div>
+    </div>      
+</body>
+</html>
