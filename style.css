@@ -314,23 +314,18 @@ input, textarea, select { font-family: var(--font-body); }
     filter: brightness(0.5) saturate(1.2) contrast(1.1);
 }
 
-/* Dramatic multi-layer overlay */
+/* Dramatic multi-layer overlay - LIGHTER VERSION */
 .hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background: 
-        radial-gradient(ellipse 60% 80% at 50% 30%, transparent 0%, var(--bg-deepest) 100%),
+        radial-gradient(ellipse 60% 80% at 50% 30%, transparent 0%, rgba(10, 9, 8, 0.7) 100%),
         linear-gradient(180deg, 
-            rgba(10, 9, 8, 0.4) 0%, 
-            rgba(10, 9, 8, 0.1) 40%,
-            rgba(10, 9, 8, 0.3) 70%, 
-            var(--bg-deepest) 100%),
-        linear-gradient(90deg,
-            rgba(10, 9, 8, 0.5) 0%,
-            transparent 30%,
-            transparent 70%,
-            rgba(10, 9, 8, 0.5) 100%);
+            rgba(10, 9, 8, 0.2) 0%, 
+            rgba(10, 9, 8, 0.05) 40%,
+            rgba(10, 9, 8, 0.1) 70%, 
+            var(--bg-deepest) 100%);
     z-index: 1;
 }
 
@@ -481,14 +476,46 @@ input, textarea, select { font-family: var(--font-body); }
 }
 
 .categories-wrapper::before {
-    left: 0;
+    left: 48px;
     background: linear-gradient(90deg, var(--bg-deep) 0%, transparent 100%);
 }
 
 .categories-wrapper::after {
-    right: 0;
+    right: 48px;
     background: linear-gradient(-90deg, var(--bg-deep) 0%, transparent 100%);
 }
+
+/* Scroll Arrow Buttons */
+.cat-scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 300;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-fast) var(--ease-out);
+    box-shadow: var(--shadow-subtle);
+}
+
+.cat-scroll-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: var(--shadow-glow);
+}
+
+.cat-scroll-left { left: 4px; }
+.cat-scroll-right { right: 4px; }
 
 .categories-scroll, .categories {
     display: flex;

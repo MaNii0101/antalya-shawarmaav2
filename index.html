@@ -89,9 +89,11 @@
     <!-- CATEGORIES -->
     <div class="categories-section">
         <div class="categories-wrapper">
+            <button class="cat-scroll-btn cat-scroll-left" onclick="scrollCategories(-200)" aria-label="Scroll left">‹</button>
             <div class="categories-scroll">
                 <!-- Categories rendered by JS -->
             </div>
+            <button class="cat-scroll-btn cat-scroll-right" onclick="scrollCategories(200)" aria-label="Scroll right">›</button>
         </div>
     </div>
 
@@ -773,24 +775,77 @@
 
     <!-- CART MODAL -->
     <div class="modal" id="cartModal">
-        <div class="modal-content">
+        <div class="modal-content modal-cart">
             <button class="close-btn" onclick="closeModal('cartModal')">×</button>
-            <h2>🛒 Your Cart</h2>
-            <div id="cartItems"></div>
-            <div class="cart-total">
-                <span>Subtotal:</span>
-                <span id="cartTotal">£0.00</span>
+            
+            <!-- Cart Header -->
+            <div class="modal-header-fancy">
+                <div class="modal-icon-circle cart-icon">
+                    <span>🛒</span>
+                </div>
+                <h2>Your Cart</h2>
+                <p class="modal-subtitle" id="cartItemCount">0 items</p>
             </div>
-            <button class="submit-btn" onclick="proceedToCheckout()" style="background: linear-gradient(45deg, #10b981, #059669);">Proceed to Checkout</button>
+            
+            <!-- Cart Items -->
+            <div id="cartItems" class="cart-items-container"></div>
+            
+            <!-- Empty Cart State -->
+            <div id="emptyCartState" class="empty-state" style="display: none;">
+                <div class="empty-icon">🛒</div>
+                <h3>Your cart is empty</h3>
+                <p>Add some delicious items to get started!</p>
+                <button class="btn-browse" onclick="closeModal('cartModal'); scrollToMenu();">Browse Menu</button>
+            </div>
+            
+            <!-- Cart Footer -->
+            <div id="cartFooter" class="cart-footer">
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal">£0.00</span>
+                    </div>
+                    <div class="summary-row delivery-row" id="deliveryFeeRow">
+                        <span>Delivery</span>
+                        <span id="cartDeliveryFee">Calculated at checkout</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total</span>
+                        <span id="cartTotal">£0.00</span>
+                    </div>
+                </div>
+                <button class="btn-checkout" onclick="proceedToCheckout()">
+                    <span>Proceed to Checkout</span>
+                    <span class="checkout-arrow">→</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- FAVORITES MODAL -->
     <div class="modal" id="favoritesModal">
-        <div class="modal-content">
+        <div class="modal-content modal-favorites">
             <button class="close-btn" onclick="closeModal('favoritesModal')">×</button>
-            <h2>❤️ Your Favorites</h2>
-            <div id="favoritesContent"></div>
+            
+            <!-- Favorites Header -->
+            <div class="modal-header-fancy">
+                <div class="modal-icon-circle favorites-icon">
+                    <span>❤️</span>
+                </div>
+                <h2>Your Favorites</h2>
+                <p class="modal-subtitle">Items you love</p>
+            </div>
+            
+            <!-- Favorites Content -->
+            <div id="favoritesContent" class="favorites-container"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyFavoritesState" class="empty-state" style="display: none;">
+                <div class="empty-icon">💔</div>
+                <h3>No favorites yet</h3>
+                <p>Tap the heart icon on items you love!</p>
+                <button class="btn-browse" onclick="closeModal('favoritesModal'); scrollToMenu();">Explore Menu</button>
+            </div>
         </div>
     </div>
 
@@ -859,28 +914,82 @@
 
     <!-- NOTIFICATIONS MODAL -->
     <div class="modal" id="notificationsModal">
-        <div class="modal-content">
+        <div class="modal-content modal-notifications">
             <button class="close-btn" onclick="closeModal('notificationsModal')">×</button>
-            <h2>🔔 Notifications</h2>
-            <div id="notificationsContent"></div>
+            
+            <!-- Notifications Header -->
+            <div class="modal-header-fancy">
+                <div class="modal-icon-circle notifications-icon">
+                    <span>🔔</span>
+                </div>
+                <h2>Notifications</h2>
+                <p class="modal-subtitle">Stay updated</p>
+            </div>
+            
+            <!-- Notifications Content -->
+            <div id="notificationsContent" class="notifications-container"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyNotificationsState" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔕</div>
+                <h3>All caught up!</h3>
+                <p>No new notifications</p>
+            </div>
         </div>
     </div>
 
     <!-- ORDER HISTORY MODAL -->
     <div class="modal" id="orderHistoryModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content modal-orders" style="max-width: 600px;">
             <button class="close-btn" onclick="closeModal('orderHistoryModal')">×</button>
-            <h2>📋 Order History</h2>
-            <div id="orderHistoryContent"></div>
+            
+            <!-- Order History Header -->
+            <div class="modal-header-fancy">
+                <div class="modal-icon-circle orders-icon">
+                    <span>📋</span>
+                </div>
+                <h2>Order History</h2>
+                <p class="modal-subtitle">Your past orders</p>
+            </div>
+            
+            <!-- Orders Content -->
+            <div id="orderHistoryContent" class="orders-container"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyOrdersState" class="empty-state" style="display: none;">
+                <div class="empty-icon">📦</div>
+                <h3>No orders yet</h3>
+                <p>Your order history will appear here</p>
+                <button class="btn-browse" onclick="closeModal('orderHistoryModal'); scrollToMenu();">Order Now</button>
+            </div>
         </div>
     </div>
 
     <!-- ACCOUNT MODAL - FULL PROFILE EDITING -->
     <div class="modal" id="accountModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content modal-account" style="max-width: 500px;">
             <button class="close-btn" onclick="closeModal('accountModal')">×</button>
-            <div id="accountContent">
+            
+            <!-- Account Header -->
+            <div class="modal-header-fancy profile-header">
+                <div class="modal-icon-circle profile-icon" id="accountAvatar">
+                    <span>👤</span>
+                </div>
+                <h2 id="accountName">My Account</h2>
+                <p class="modal-subtitle" id="accountEmail">Sign in to view profile</p>
+            </div>
+            
+            <!-- Account Content -->
+            <div id="accountContent" class="account-container">
                 <!-- Will be rendered by JavaScript -->
+            </div>
+            
+            <!-- Not Logged In State -->
+            <div id="notLoggedInState" class="empty-state" style="display: none;">
+                <div class="empty-icon">🔐</div>
+                <h3>Not signed in</h3>
+                <p>Sign in to view your profile and orders</p>
+                <button class="btn-browse" onclick="closeModal('accountModal'); showLogin();">Sign In</button>
             </div>
         </div>
     </div>
@@ -1105,28 +1214,72 @@
 
     <!-- CHECKOUT MODAL -->
     <div class="modal" id="checkoutModal">
-        <div class="modal-content">
+        <div class="modal-content modal-checkout" style="max-width: 500px;">
             <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
-            <h2>💳 Checkout</h2>
-            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                <h3>📍 Delivery Address</h3>
-                <p id="checkoutAddress" style="color: rgba(255,255,255,0.7);"></p>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
-                <h3>📦 Order Summary</h3>
-                <div id="checkoutItems"></div>
-            </div>
-            <form onsubmit="handlePayment(event)">
-                <div class="form-group">
-                    <label>Payment Method *</label>
-                    <select id="paymentMethod" required onchange="toggleCardFields()">
-                        <option value="">Choose payment method</option>
-                        <option value="cash">💷 Cash on Delivery</option>
-                        <option value="card">💳 Card Payment</option>
-                        <option value="applepay">🍎 Apple Pay</option>
-                    </select>
+            
+            <!-- Checkout Header -->
+            <div class="modal-header-fancy">
+                <div class="modal-icon-circle checkout-icon">
+                    <span>💳</span>
                 </div>
-                <div id="cardFieldsSection" style="display: none;">
+                <h2>Checkout</h2>
+                <p class="modal-subtitle">Complete your order</p>
+            </div>
+            
+            <!-- Delivery Address Section -->
+            <div class="checkout-section">
+                <div class="section-header">
+                    <span class="section-icon">📍</span>
+                    <h3>Delivery Address</h3>
+                </div>
+                <p id="checkoutAddress" class="checkout-address">No address selected</p>
+                <button type="button" class="btn-change-address" onclick="pickLocation()">Change Address</button>
+            </div>
+            
+            <!-- Order Summary Section -->
+            <div class="checkout-section">
+                <div class="section-header">
+                    <span class="section-icon">📦</span>
+                    <h3>Order Summary</h3>
+                </div>
+                <div id="checkoutItems" class="checkout-items"></div>
+            </div>
+            
+            <!-- Payment Form -->
+            <form onsubmit="handlePayment(event)" class="checkout-form">
+                <div class="checkout-section">
+                    <div class="section-header">
+                        <span class="section-icon">💰</span>
+                        <h3>Payment Method</h3>
+                    </div>
+                    
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="cash" onchange="toggleCardFields()" checked>
+                            <span class="payment-card">
+                                <span class="payment-icon">💷</span>
+                                <span>Cash on Delivery</span>
+                            </span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="card" onchange="toggleCardFields()">
+                            <span class="payment-card">
+                                <span class="payment-icon">💳</span>
+                                <span>Card Payment</span>
+                            </span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="applepay" onchange="toggleCardFields()">
+                            <span class="payment-card">
+                                <span class="payment-icon">🍎</span>
+                                <span>Apple Pay</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Card Fields (hidden by default) -->
+                <div id="cardFieldsSection" class="card-fields" style="display: none;">
                     <div class="form-group">
                         <label>Card Number</label>
                         <input type="text" id="paymentCardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
@@ -1135,7 +1288,7 @@
                         <label>Name on Card</label>
                         <input type="text" id="paymentCardName" placeholder="JOHN SMITH">
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-row">
                         <div class="form-group">
                             <label>Expiry</label>
                             <input type="text" id="paymentExpiry" placeholder="MM/YY" maxlength="5">
@@ -1146,7 +1299,19 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="submit-btn" style="background: linear-gradient(45deg, #10b981, #059669);">💳 Pay <span id="paymentTotal">£0.00</span></button>
+                
+                <!-- Order Total & Pay Button -->
+                <div class="checkout-total">
+                    <div class="total-breakdown">
+                        <div class="total-row"><span>Subtotal</span><span id="checkoutSubtotal">£0.00</span></div>
+                        <div class="total-row"><span>Delivery</span><span id="checkoutDelivery">£0.00</span></div>
+                        <div class="total-row grand-total"><span>Total</span><span id="paymentTotal">£0.00</span></div>
+                    </div>
+                    <button type="submit" class="btn-pay">
+                        <span>Place Order</span>
+                        <span id="payButtonTotal">£0.00</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -1422,6 +1587,17 @@
             if (originalOpenAddFood) originalOpenAddFood();
         };
         
-        const originalOpenEditFood = window.openEditFood;
-        window.openEditFood = function(catKey, foodId) {
-            const select = 
+                const originalOpenEditFood = window.openEditFood;
+                window.openEditFood = function(catKey, foodId) {
+                    const select = document.getElementById('foodEditCategory');
+                    if (select && typeof categories !== 'undefined') {
+                        select.innerHTML = '<option value="">Select category</option>' + 
+                            Object.entries(categories).map(([key, cat]) => 
+                                `<option value="${key}">${cat.name}</option>`
+                            ).join('');
+                    }
+                    if (originalOpenEditFood) originalOpenEditFood(catKey, foodId);
+                };
+            </script>
+        </body>
+        </html>

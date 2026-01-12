@@ -273,7 +273,12 @@
     
     .categories-wrapper::before,
     .categories-wrapper::after {
-        width: 30px;
+        display: none;
+    }
+    
+    /* Hide scroll buttons on mobile - use swipe instead */
+    .cat-scroll-btn {
+        display: none !important;
     }
     
     .categories-scroll, .categories {
