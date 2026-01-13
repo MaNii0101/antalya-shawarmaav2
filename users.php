@@ -1,338 +1,341 @@
 <?php
 /**
  * ANTALYA SHAWARMA - Users API
- * Handles user registration, login, profile management
+ * Endpoints: /api/users.php
  */
 
-require_once 'config.php';
+require_once __DIR__ . '/helpers.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
+$action = getParam('action', 'list');
 
 switch ($method) {
-    case 'POST':
-        switch ($action) {
-            case 'register':
-                registerUser();
-                break;
-            case 'login':
-                loginUser();
-                break;
-            case 'verify':
-                verifyCode();
-                break;
-            case 'update':
-                updateProfile();
-                break;
-            case 'change-email':
-                changeEmail();
-                break;
-            case 'change-password':
-                changePassword();
-                break;
-            default:
-                jsonResponse(['error' => 'Invalid action'], 400);
-        }
-        break;
     case 'GET':
-        switch ($action) {
-            case 'profile':
-                getProfile();
-                break;
-            case 'all':
-                getAllUsers();
-                break;
-            default:
-                jsonResponse(['error' => 'Invalid action'], 400);
-        }
+        handleGet($action);
+        break;
+    case 'POST':
+        handlePost($action);
+        break;
+    case 'PUT':
+        handlePut($action);
+        break;
+    case 'DELETE':
+        handleDelete($action);
         break;
     default:
-        jsonResponse(['error' => 'Method not allowed'], 405);
+        errorResponse('Method not allowed', 405);
 }
 
-// Register new user
-function registerUser() {
-    $data = getPostData();
-    $required = ['email', 'password', 'name'];
-    $missing = validateRequired($data, $required);
+// ========================================
+// GET HANDLERS
+// ========================================
+function handleGet($action) {
+    $db = db();
     
-    if (!empty($missing)) {
-        jsonResponse(['error' => 'Missing required fields: ' . implode(', ', $missing)], 400);
-    }
-    
-    $db = getDB();
-    
-    // Check if email exists
-    $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['email'])]);
-    
-    if ($stmt->fetch()) {
-        jsonResponse(['error' => 'Email already registered'], 400);
-    }
-    
-    // Generate verification code
-    $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-    
-    // Store verification code
-    $stmt = $db->prepare("INSERT INTO verification_codes (email, code, type, expires_at) VALUES (?, ?, 'signup', DATE_ADD(NOW(), INTERVAL 10 MINUTE))");
-    $stmt->execute([sanitize($data['email']), $code]);
-    
-    // Return code (in production, send via email)
-    jsonResponse([
-        'success' => true,
-        'message' => 'Verification code sent',
-        'code' => $code, // Remove in production!
-        'email' => $data['email']
-    ]);
-}
-
-// Verify registration/login code
-function verifyCode() {
-    $data = getPostData();
-    $required = ['email', 'code', 'type'];
-    $missing = validateRequired($data, $required);
-    
-    if (!empty($missing)) {
-        jsonResponse(['error' => 'Missing required fields'], 400);
-    }
-    
-    $db = getDB();
-    
-    // Verify code
-    $stmt = $db->prepare("SELECT * FROM verification_codes WHERE email = ? AND code = ? AND type = ? AND expires_at > NOW() AND is_used = FALSE ORDER BY created_at DESC LIMIT 1");
-    $stmt->execute([sanitize($data['email']), sanitize($data['code']), sanitize($data['type'])]);
-    $verification = $stmt->fetch();
-    
-    if (!$verification) {
-        jsonResponse(['error' => 'Invalid or expired code'], 400);
-    }
-    
-    // Mark code as used
-    $stmt = $db->prepare("UPDATE verification_codes SET is_used = TRUE WHERE id = ?");
-    $stmt->execute([$verification['id']]);
-    
-    if ($data['type'] === 'signup') {
-        // Create user account
-        $stmt = $db->prepare("INSERT INTO users (email, password, name, phone, age, is_verified) VALUES (?, ?, ?, ?, ?, TRUE)");
-        $stmt->execute([
-            sanitize($data['email']),
-            password_hash($data['password'], PASSWORD_DEFAULT),
-            sanitize($data['name']),
-            sanitize($data['phone'] ?? ''),
-            intval($data['age'] ?? 0)
-        ]);
-        
-        $userId = $db->lastInsertId();
-        
-        // Get created user
-        $stmt = $db->prepare("SELECT id, email, name, phone, age, profile_picture, created_at FROM users WHERE id = ?");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch();
-        
-        jsonResponse([
-            'success' => true,
-            'message' => 'Account created successfully',
-            'user' => $user
-        ]);
-    } else {
-        // Login verification
-        $stmt = $db->prepare("SELECT id, email, name, phone, age, address, profile_picture, created_at FROM users WHERE email = ?");
-        $stmt->execute([sanitize($data['email'])]);
-        $user = $stmt->fetch();
-        
-        jsonResponse([
-            'success' => true,
-            'message' => 'Login successful',
-            'user' => $user
-        ]);
+    switch ($action) {
+        case 'profile':
+            $user = requireAuth();
+            unset($user['password']);
+            successResponse($user);
+            break;
+            
+        case 'list':
+            requireOwner();
+            $users = $db->fetchAll("SELECT id, name, email, phone, role, verified, created_at FROM users ORDER BY created_at DESC");
+            successResponse($users);
+            break;
+            
+        case 'get':
+            requireOwner();
+            $id = getParam('id');
+            if (!$id) errorResponse('User ID required');
+            $user = $db->fetch("SELECT id, name, email, phone, dob, address, role, verified, created_at FROM users WHERE id = ?", [$id]);
+            if (!$user) errorResponse('User not found', 404);
+            successResponse($user);
+            break;
+            
+        default:
+            errorResponse('Invalid action');
     }
 }
 
-// Login user
-function loginUser() {
-    $data = getPostData();
-    $required = ['email', 'password'];
-    $missing = validateRequired($data, $required);
+// ========================================
+// POST HANDLERS
+// ========================================
+function handlePost($action) {
+    $db = db();
+    $input = getInput();
     
-    if (!empty($missing)) {
-        jsonResponse(['error' => 'Missing required fields'], 400);
+    switch ($action) {
+        case 'register':
+            requireParams(['name', 'email', 'password'], $input);
+            
+            $name = trim($input['name']);
+            $email = strtolower(trim($input['email']));
+            $password = $input['password'];
+            $phone = $input['phone'] ?? null;
+            $dob = $input['dob'] ?? null;
+            
+            // Validate
+            if (strlen($name) < 2) errorResponse('Name must be at least 2 characters');
+            if (!isValidEmail($email)) errorResponse('Invalid email address');
+            if (strlen($password) < 6) errorResponse('Password must be at least 6 characters');
+            if ($phone && !isValidPhone($phone)) errorResponse('Invalid phone number');
+            
+            // Check if email exists
+            $existing = $db->fetch("SELECT id FROM users WHERE email = ?", [$email]);
+            if ($existing) errorResponse('Email already registered');
+            
+            // Generate verification code
+            $verificationCode = generateCode();
+            
+            // Insert user
+            $userId = $db->insert(
+                "INSERT INTO users (name, email, password, phone, dob, verification_code, verified) VALUES (?, ?, ?, ?, ?, ?, 0)",
+                [$name, $email, hashPassword($password), $phone, $dob, $verificationCode]
+            );
+            
+            // In production, send verification email here
+            // sendVerificationEmail($email, $verificationCode);
+            
+            successResponse([
+                'user_id' => $userId,
+                'verification_code' => $verificationCode, // Remove in production
+                'message' => 'Verification code sent to email'
+            ], 'Registration successful');
+            break;
+            
+        case 'login':
+            requireParams(['email', 'password'], $input);
+            
+            $email = strtolower(trim($input['email']));
+            $password = $input['password'];
+            
+            // Check for owner login
+            if ($email === OWNER_EMAIL) {
+                $user = $db->fetch("SELECT * FROM users WHERE email = ?", [$email]);
+                if ($user && verifyPassword($password, $user['password'])) {
+                    $token = generateToken($user['id'], 'owner');
+                    unset($user['password'], $user['verification_code'], $user['reset_code']);
+                    successResponse([
+                        'token' => $token,
+                        'user' => $user,
+                        'is_owner' => true,
+                        'require_pin' => true
+                    ]);
+                }
+            }
+            
+            // Regular user login
+            $user = $db->fetch("SELECT * FROM users WHERE email = ?", [$email]);
+            if (!$user) errorResponse('Account not found');
+            if (!verifyPassword($password, $user['password'])) errorResponse('Incorrect password');
+            
+            // Generate verification code for 2FA
+            $verificationCode = generateCode();
+            $db->update("UPDATE users SET verification_code = ? WHERE id = ?", [$verificationCode, $user['id']]);
+            
+            // In production, send 2FA code via email
+            // sendVerificationEmail($email, $verificationCode);
+            
+            successResponse([
+                'user_id' => $user['id'],
+                'verification_code' => $verificationCode, // Remove in production
+                'message' => 'Verification code sent to email'
+            ], 'Verification required');
+            break;
+            
+        case 'verify':
+            requireParams(['user_id', 'code'], $input);
+            
+            $userId = $input['user_id'];
+            $code = $input['code'];
+            
+            $user = $db->fetch("SELECT * FROM users WHERE id = ? AND verification_code = ?", [$userId, $code]);
+            if (!$user) errorResponse('Invalid verification code');
+            
+            // Mark as verified and clear code
+            $db->update("UPDATE users SET verified = 1, verification_code = NULL WHERE id = ?", [$userId]);
+            
+            // Generate token
+            $token = generateToken($userId, $user['role']);
+            unset($user['password'], $user['verification_code'], $user['reset_code']);
+            
+            successResponse([
+                'token' => $token,
+                'user' => $user
+            ], 'Login successful');
+            break;
+            
+        case 'verify-pin':
+            requireParams(['pin'], $input);
+            $user = requireAuth();
+            
+            if ($user['role'] !== 'owner') errorResponse('Owner access required', 403);
+            
+            $settings = $db->fetch("SELECT setting_value FROM settings WHERE setting_key = 'owner_pin'");
+            if (!$settings || $input['pin'] !== $settings['setting_value']) {
+                errorResponse('Invalid PIN');
+            }
+            
+            successResponse(['verified' => true], 'PIN verified');
+            break;
+            
+        case 'forgot-password':
+            requireParams(['email'], $input);
+            
+            $email = strtolower(trim($input['email']));
+            $user = $db->fetch("SELECT id FROM users WHERE email = ?", [$email]);
+            if (!$user) errorResponse('Email not found');
+            
+            $resetCode = generateCode();
+            $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            
+            $db->update("UPDATE users SET reset_code = ?, reset_code_expires = ? WHERE id = ?", 
+                [$resetCode, $expires, $user['id']]);
+            
+            // In production, send reset email
+            // sendPasswordResetEmail($email, $resetCode);
+            
+            successResponse([
+                'reset_code' => $resetCode // Remove in production
+            ], 'Reset code sent to email');
+            break;
+            
+        case 'reset-password':
+            requireParams(['email', 'code', 'new_password'], $input);
+            
+            $email = strtolower(trim($input['email']));
+            $code = $input['code'];
+            $newPassword = $input['new_password'];
+            
+            if (strlen($newPassword) < 6) errorResponse('Password must be at least 6 characters');
+            
+            $user = $db->fetch(
+                "SELECT id FROM users WHERE email = ? AND reset_code = ? AND reset_code_expires > NOW()",
+                [$email, $code]
+            );
+            if (!$user) errorResponse('Invalid or expired reset code');
+            
+            $db->update(
+                "UPDATE users SET password = ?, reset_code = NULL, reset_code_expires = NULL WHERE id = ?",
+                [hashPassword($newPassword), $user['id']]
+            );
+            
+            successResponse(null, 'Password reset successful');
+            break;
+            
+        default:
+            errorResponse('Invalid action');
     }
-    
-    $db = getDB();
-    
-    // Check credentials
-    $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['email'])]);
-    $user = $stmt->fetch();
-    
-    if (!$user || !password_verify($data['password'], $user['password'])) {
-        jsonResponse(['error' => 'Invalid email or password'], 401);
-    }
-    
-    // Generate verification code for 2FA
-    $code = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-    
-    $stmt = $db->prepare("INSERT INTO verification_codes (email, code, type, expires_at) VALUES (?, ?, 'login', DATE_ADD(NOW(), INTERVAL 10 MINUTE))");
-    $stmt->execute([sanitize($data['email']), $code]);
-    
-    jsonResponse([
-        'success' => true,
-        'message' => 'Verification code sent',
-        'code' => $code, // Remove in production!
-        'email' => $data['email']
-    ]);
 }
 
-// Get user profile
-function getProfile() {
-    $email = $_GET['email'] ?? '';
+// ========================================
+// PUT HANDLERS
+// ========================================
+function handlePut($action) {
+    $db = db();
+    $input = getInput();
+    $user = requireAuth();
     
-    if (empty($email)) {
-        jsonResponse(['error' => 'Email required'], 400);
+    switch ($action) {
+        case 'profile':
+            $updates = [];
+            $params = [];
+            
+            if (isset($input['name']) && trim($input['name'])) {
+                $updates[] = 'name = ?';
+                $params[] = trim($input['name']);
+            }
+            if (isset($input['phone'])) {
+                if ($input['phone'] && !isValidPhone($input['phone'])) errorResponse('Invalid phone number');
+                $updates[] = 'phone = ?';
+                $params[] = $input['phone'] ?: null;
+            }
+            if (isset($input['dob'])) {
+                $updates[] = 'dob = ?';
+                $params[] = $input['dob'] ?: null;
+            }
+            if (isset($input['address'])) {
+                $updates[] = 'address = ?';
+                $params[] = $input['address'];
+            }
+            if (isset($input['location_lat']) && isset($input['location_lng'])) {
+                $updates[] = 'location_lat = ?, location_lng = ?';
+                $params[] = $input['location_lat'];
+                $params[] = $input['location_lng'];
+            }
+            
+            if (empty($updates)) errorResponse('No fields to update');
+            
+            $params[] = $user['id'];
+            $db->update("UPDATE users SET " . implode(', ', $updates) . " WHERE id = ?", $params);
+            
+            $updatedUser = $db->fetch("SELECT id, name, email, phone, dob, address, location_lat, location_lng, role FROM users WHERE id = ?", [$user['id']]);
+            successResponse($updatedUser, 'Profile updated');
+            break;
+            
+        case 'password':
+            requireParams(['current_password', 'new_password'], $input);
+            
+            if (!verifyPassword($input['current_password'], $user['password'])) {
+                errorResponse('Current password is incorrect');
+            }
+            if (strlen($input['new_password']) < 6) {
+                errorResponse('New password must be at least 6 characters');
+            }
+            
+            $db->update("UPDATE users SET password = ? WHERE id = ?", [hashPassword($input['new_password']), $user['id']]);
+            successResponse(null, 'Password changed');
+            break;
+            
+        default:
+            errorResponse('Invalid action');
     }
-    
-    $db = getDB();
-    $stmt = $db->prepare("SELECT id, email, name, phone, age, address, profile_picture, created_at FROM users WHERE email = ?");
-    $stmt->execute([sanitize($email)]);
-    $user = $stmt->fetch();
-    
-    if (!$user) {
-        jsonResponse(['error' => 'User not found'], 404);
-    }
-    
-    jsonResponse(['success' => true, 'user' => $user]);
 }
 
-// Update user profile
-function updateProfile() {
-    $data = getPostData();
+// ========================================
+// DELETE HANDLERS
+// ========================================
+function handleDelete($action) {
+    $db = db();
+    $user = requireAuth();
     
-    if (empty($data['email'])) {
-        jsonResponse(['error' => 'Email required'], 400);
+    switch ($action) {
+        case 'account':
+            // Check for active orders
+            $activeOrders = $db->fetch(
+                "SELECT COUNT(*) as count FROM orders WHERE user_id = ? AND status IN ('pending', 'preparing', 'out_for_delivery')",
+                [$user['id']]
+            );
+            if ($activeOrders['count'] > 0) {
+                errorResponse('Cannot delete account with active orders');
+            }
+            
+            // Delete user (triggers will handle reviews, favorites, notifications)
+            $db->delete("DELETE FROM users WHERE id = ?", [$user['id']]);
+            
+            successResponse(null, 'Account deleted successfully');
+            break;
+            
+        case 'user':
+            requireOwner();
+            $id = getParam('id');
+            if (!$id) errorResponse('User ID required');
+            if ($id == $user['id']) errorResponse('Cannot delete your own account');
+            
+            $db->delete("DELETE FROM users WHERE id = ?", [$id]);
+            successResponse(null, 'User deleted');
+            break;
+            
+        case 'all-users':
+            requireOwner();
+            // Delete all non-owner users (triggers will handle their data)
+            $db->delete("DELETE FROM users WHERE role != 'owner'");
+            successResponse(null, 'All users deleted');
+            break;
+            
+        default:
+            errorResponse('Invalid action');
     }
-    
-    $db = getDB();
-    
-    // Build update query
-    $updates = [];
-    $params = [];
-    
-    if (isset($data['name'])) {
-        $updates[] = "name = ?";
-        $params[] = sanitize($data['name']);
-    }
-    if (isset($data['phone'])) {
-        $updates[] = "phone = ?";
-        $params[] = sanitize($data['phone']);
-    }
-    if (isset($data['age'])) {
-        $updates[] = "age = ?";
-        $params[] = intval($data['age']);
-    }
-    if (isset($data['address'])) {
-        $updates[] = "address = ?";
-        $params[] = sanitize($data['address']);
-    }
-    if (isset($data['profile_picture'])) {
-        $updates[] = "profile_picture = ?";
-        $params[] = $data['profile_picture'];
-    }
-    
-    if (empty($updates)) {
-        jsonResponse(['error' => 'No fields to update'], 400);
-    }
-    
-    $params[] = sanitize($data['email']);
-    
-    $sql = "UPDATE users SET " . implode(', ', $updates) . " WHERE email = ?";
-    $stmt = $db->prepare($sql);
-    $stmt->execute($params);
-    
-    // Return updated user
-    $stmt = $db->prepare("SELECT id, email, name, phone, age, address, profile_picture, created_at FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['email'])]);
-    $user = $stmt->fetch();
-    
-    jsonResponse(['success' => true, 'message' => 'Profile updated', 'user' => $user]);
-}
-
-// Change email with security verification
-function changeEmail() {
-    $data = getPostData();
-    $required = ['current_email', 'current_password', 'new_email'];
-    $missing = validateRequired($data, $required);
-    
-    if (!empty($missing)) {
-        jsonResponse(['error' => 'Missing required fields'], 400);
-    }
-    
-    $db = getDB();
-    
-    // Verify current password
-    $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['current_email'])]);
-    $user = $stmt->fetch();
-    
-    if (!$user || !password_verify($data['current_password'], $user['password'])) {
-        jsonResponse(['error' => 'Current password is incorrect'], 401);
-    }
-    
-    // Check if new email already exists
-    $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['new_email'])]);
-    
-    if ($stmt->fetch()) {
-        jsonResponse(['error' => 'New email already registered'], 400);
-    }
-    
-    // Update email
-    $stmt = $db->prepare("UPDATE users SET email = ? WHERE email = ?");
-    $stmt->execute([sanitize($data['new_email']), sanitize($data['current_email'])]);
-    
-    // Update related records (orders, favorites, notifications)
-    $stmt = $db->prepare("UPDATE orders SET user_email = ? WHERE user_email = ?");
-    $stmt->execute([sanitize($data['new_email']), sanitize($data['current_email'])]);
-    
-    jsonResponse(['success' => true, 'message' => 'Email changed successfully']);
-}
-
-// Change password with security verification
-function changePassword() {
-    $data = getPostData();
-    $required = ['email', 'current_password', 'new_password'];
-    $missing = validateRequired($data, $required);
-    
-    if (!empty($missing)) {
-        jsonResponse(['error' => 'Missing required fields'], 400);
-    }
-    
-    if (strlen($data['new_password']) < 6) {
-        jsonResponse(['error' => 'Password must be at least 6 characters'], 400);
-    }
-    
-    $db = getDB();
-    
-    // Verify current password
-    $stmt = $db->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([sanitize($data['email'])]);
-    $user = $stmt->fetch();
-    
-    if (!$user || !password_verify($data['current_password'], $user['password'])) {
-        jsonResponse(['error' => 'Current password is incorrect'], 401);
-    }
-    
-    // Update password
-    $stmt = $db->prepare("UPDATE users SET password = ? WHERE email = ?");
-    $stmt->execute([password_hash($data['new_password'], PASSWORD_DEFAULT), sanitize($data['email'])]);
-    
-    jsonResponse(['success' => true, 'message' => 'Password changed successfully']);
-}
-
-// Get all users (for owner dashboard)
-function getAllUsers() {
-    $db = getDB();
-    $stmt = $db->query("SELECT id, email, name, phone, age, profile_picture, created_at FROM users ORDER BY created_at DESC");
-    $users = $stmt->fetchAll();
-    
-    jsonResponse(['success' => true, 'users' => $users]);
 }
