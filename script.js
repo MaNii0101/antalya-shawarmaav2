@@ -83,7 +83,7 @@ function resetSelectedData() {
     }
     
     let message = 'This will reset:\n';
-    if (resetUsers) message += '• All user accounts\n';
+    if (resetUsers) message += '• All user accounts & reviews\n';
     if (resetOrders) message += '• All order history\n';
     if (resetDrivers) message += '• All driver data\n';
     if (resetFavorites) message += '• All favorites & notifications\n';
@@ -98,6 +98,10 @@ function resetSelectedData() {
         localStorage.removeItem('currentUser');
         userDatabase = [];
         currentUser = null;
+        
+        // Also delete all reviews since users are deleted
+        localStorage.removeItem('restaurantReviews');
+        restaurantReviews = [];
     }
     
     if (resetOrders) {

@@ -46,6 +46,10 @@
     
     <!-- MOBILE BOTTOM NAVIGATION (separate element for mobile) -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <button type="button" class="mobile-nav-item mobile-owner-btn" id="mobileOwnerBtn" onclick="window.showOwnerDashboardDirect()" style="display: none;">
+            <span class="mobile-nav-icon">👔</span>
+            <span class="mobile-nav-label">Owner</span>
+        </button>
         <button type="button" class="mobile-nav-item" onclick="window.showNotifications()">
             <span class="mobile-nav-icon">🔔</span>
             <span class="mobile-nav-badge" id="mobileNotifyBadge">0</span>
@@ -311,9 +315,9 @@
                     <div class="form-group" id="addressGroup" style="display: none;">
                         <label>Delivery Location *</label>
                         <input type="text" id="authAddress" class="form-input" placeholder="Click to select on map" readonly>
-                        <button type="button" class="btn-secondary" onclick="pickLocation()" style="margin-top: 0.5rem;">📍 Pick Location on Map</button>
+                        <button type="button" class="submit-btn" onclick="pickLocation()" style="margin-top: 0.5rem; background: linear-gradient(45deg, #3b82f6, #2563eb);">📍 Pick Location on Map</button>
                     </div>
-                    <button type="submit" class="btn-primary" id="authSubmitBtn">Login</button>
+                    <button type="submit" class="submit-btn" id="authSubmitBtn" style="background: linear-gradient(45deg, #ff6b6b, #ee5a6f);">Login</button>
                 </form>
                 <p style="text-align: center; margin-top: 1rem;">
                     <span id="authToggleText">Don't have an account?</span>

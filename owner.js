@@ -771,10 +771,16 @@ function handleOwnerLogin() {
         document.getElementById('ownerModal').style.display = 'none';
         document.getElementById('ownerDashboard').style.display = 'block';
         
-        // Show owner access button in header
+        // Show owner access button in header (desktop)
         const ownerBtn = document.getElementById('ownerAccessBtn');
         if (ownerBtn) {
             ownerBtn.style.display = 'flex';
+        }
+        
+        // Show owner access button in mobile nav
+        const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+        if (mobileOwnerBtn) {
+            mobileOwnerBtn.style.display = 'flex';
         }
         
         // Update stats
