@@ -5101,18 +5101,8 @@ function openModal(modalId) {
     }
 }
 
-// Add this function anywhere in your script.js
 function scrollToMenu() {
-    const menuSection = document.querySelector('.menu-section');
-    if (menuSection) {
-        const headerHeight = 80;
-        const categoriesHeight = 60;
-        const targetPosition = menuSection.offsetTop - headerHeight - categoriesHeight;
-        window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-        });
-    }
+    document.querySelector('.main-content')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 function toggleMobileMenu() {
