@@ -87,26 +87,21 @@
     </div>
 
     <!-- CATEGORIES -->
-    <div class="categories-section">
-        <div class="categories-wrapper">
-            <button class="cat-scroll-btn cat-scroll-left" onclick="scrollCategories(-200)" aria-label="Scroll left">‹</button>
-            <div class="categories-scroll">
-                <!-- Categories rendered by JS -->
-            </div>
-            <button class="cat-scroll-btn cat-scroll-right" onclick="scrollCategories(200)" aria-label="Scroll right">›</button>
+    <div class="category-bar">
+        <div class="categories">
+            <!-- Categories will be rendered by JavaScript -->
         </div>
     </div>
+<div id="categoryContainer" class="category-container"></div>
 
     <!-- MENU -->
-    <div class="menu-section">
-        <div class="menu-header">
-            <h2 id="menuTitle">Our Menu</h2>
-        </div>
+    <div class="main-content" style="padding: 0;">
+        <h2 class="section-title" id="menuTitle" style="padding: 1rem 1rem 0.8rem; margin: 0; font-size: 1.5rem; font-weight: 700; border-bottom: 2px solid rgba(230, 57, 70, 0.3);">Our Menu</h2>
         <div class="menu-grid" id="menuGrid"></div>
     </div>
     
     <!-- REVIEWS SECTION -->
-    <div class="reviews-section">
+    <div class="reviews-section" style="background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%); padding: 2rem 1rem; border-top: 2px solid rgba(230,57,70,0.2);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
@@ -165,7 +160,7 @@
             <div class="footer-section">
                 <h3>📞 Contact</h3>
                 <div style="color: rgba(255,255,255,0.7);">📞 +44 161 536 1862</div>
-                <div style="color: rgba(255,255,255,0.7); margin-top: 0.5rem;">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e777078715e7f706a7f72677f6d767f697f6c737f307d7173">[email&#160;protected]</a></div>
+                <div style="color: rgba(255,255,255,0.7); margin-top: 0.5rem;">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4dddad2dbf4d5dac0d5d8cdd5c7dcd5c3d5c6d9d59ad7dbd9">[email&#160;protected]</a></div>
                 <a href="https://instagram.com/antalyashawarma_" target="_blank" style="color: #e1306c; font-size: 0.9rem; margin-top: 0.5rem; display: inline-block;">📸 @antalyashawarma_</a>
             </div>
             <div class="footer-section">
@@ -219,15 +214,15 @@
             </div>
             
             <!-- Bottom Action Bar -->
-            <div style="padding: 16px; background: #151515; border-top: 1px solid #252525; display: flex; align-items: center; gap: 12px;">
-                <div style="display: flex; align-items: center; background: #222; border-radius: 6px; overflow: hidden;">
-                    <button onclick="changeQuantity(-1)" style="background: transparent; border: none; color: #c75000; width: 42px; height: 42px; font-size: 1.4rem; cursor: pointer; font-weight: 600;">−</button>
-                    <span id="quantity" style="min-width: 28px; text-align: center; font-size: 1rem; font-weight: 600; color: white;">1</span>
-                    <button onclick="changeQuantity(1)" style="background: transparent; border: none; color: #c75000; width: 42px; height: 42px; font-size: 1.4rem; cursor: pointer; font-weight: 600;">+</button>
+            <div style="padding: 1rem 1.5rem; background: rgba(15,15,15,1); border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 1rem;">
+                <div style="display: flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden;">
+                    <button onclick="changeQuantity(-1)" style="background: transparent; border: none; color: #e63946; width: 44px; height: 44px; font-size: 1.5rem; cursor: pointer; font-weight: 700;">−</button>
+                    <span id="quantity" style="min-width: 30px; text-align: center; font-size: 1.1rem; font-weight: 600; color: white;">1</span>
+                    <button onclick="changeQuantity(1)" style="background: transparent; border: none; color: #e63946; width: 44px; height: 44px; font-size: 1.5rem; cursor: pointer; font-weight: 700;">+</button>
                 </div>
-                <button class="btn-primary" onclick="addToCart()" style="flex: 1; margin: 0; padding: 12px; display: flex; justify-content: center; gap: 8px;">
+                <button class="submit-btn" onclick="addToCart()" style="flex: 1; margin: 0; padding: 0.9rem; background: linear-gradient(135deg, #e63946, #c1121f); border-radius: 8px; font-size: 1rem; font-weight: 700; display: flex; justify-content: center; gap: 0.5rem;">
                     <span>Add Item</span>
-                    <span id="totalPrice" style="opacity: 0.85;">£0.00</span>
+                    <span id="totalPrice" style="opacity: 0.9;">£0.00</span>
                 </button>
             </div>
             
@@ -238,9 +233,9 @@
 
     <!-- LOGIN MODAL -->
     <div class="modal" id="loginModal">
-        <div class="modal-content" style="padding: 24px;">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeModal('loginModal')">×</button>
-            <h2 style="font-size: 1.3rem; font-weight: 600; margin-bottom: 20px;">Login</h2>
+            <h2 id="authTitle">🔐 Login</h2>
             
             <!-- Email Verification Section -->
             <div id="emailVerificationSection" style="display: none;">
@@ -276,65 +271,68 @@
 
             <!-- Auth Form Section -->
             <div id="authFormSection">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0;">
-                    <button class="social-btn google" onclick="loginWithGoogle()">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px;">
-                        Google
+                <div class="auth-options">
+                    <button class="auth-btn google-btn" onclick="loginWithGoogle()">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px; margin-right: 8px;">
+                        Continue with Google
                     </button>
-                    <button class="social-btn apple" onclick="loginWithApple()">
-                        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: white;">
+                    <button class="auth-btn" onclick="loginWithApple()" style="background: #000; color: #fff; border: 1px solid #333;">
+                        <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 8px; fill: white;">
                             <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                         </svg>
-                        Apple
+                        Continue with Apple
                     </button>
                 </div>
                 <div class="divider">or use email</div>
                 <form onsubmit="handleEmailAuth(event)">
                     <div class="form-group" id="nameGroup" style="display: none;">
                         <label>Full Name *</label>
-                        <input type="text" id="authName" placeholder="Your full name">
+                        <input type="text" id="authName" class="form-input" placeholder="Your full name">
                     </div>
                     <div class="form-group">
                         <label>Email *</label>
-                        <input type="email" id="authEmail" placeholder="your@email.com" required>
+                        <input type="email" id="authEmail" class="form-input" placeholder="your@email.com" required>
                     </div>
                     <div class="form-group">
                         <label>Password *</label>
-                        <input type="password" id="authPassword" placeholder="Min 6 characters" required>
+                        <input type="password" id="authPassword" class="form-input" placeholder="Min 6 characters" required>
                     </div>
-                    <div id="forgotPasswordLink" style="text-align: right; margin-bottom: 16px;">
-                        <a href="#" onclick="showForgotPasswordSection(true); return false;" style="color: var(--accent, #c9603a); font-size: 0.9rem; text-decoration: none;">Forgot password?</a>
+                    <div id="forgotPasswordLink" style="text-align: right; margin-bottom: 1rem;">
+                        <a href="#" onclick="showForgotPasswordSection(true); return false;" style="color: #6ba3ff; font-size: 0.9rem;">Forgot password?</a>
                     </div>
                     <div class="form-group" id="phoneGroup" style="display: none;">
                         <label>Phone Number *</label>
-                        <input type="tel" id="authPhone" placeholder="+44 7700 900123">
+                        <input type="tel" id="authPhone" class="form-input" placeholder="+44 7700 900123">
                     </div>
                     <div class="form-group" id="ageGroup" style="display: none;">
                         <label>Date of Birth (Optional)</label>
-                        <input type="date" id="authDOB">
+                        <input type="date" id="authDOB" class="form-input">
                     </div>
                     <div class="form-group" id="addressGroup" style="display: none;">
                         <label>Delivery Location *</label>
-                        <input type="text" id="authAddress" placeholder="Click to select on map" readonly>
-                        <button type="button" class="btn-secondary" onclick="pickLocation()">📍 Pick Location on Map</button>
+                        <input type="text" id="authAddress" class="form-input" placeholder="Click to select on map" readonly>
+                        <button type="button" class="btn-secondary" onclick="pickLocation()" style="margin-top: 0.5rem;">📍 Pick Location on Map</button>
                     </div>
                     <button type="submit" class="btn-primary" id="authSubmitBtn">Login</button>
                 </form>
-                <p style="text-align: center; margin-top: 16px; color: #888;">
+                <p style="text-align: center; margin-top: 1rem;">
                     <span id="authToggleText">Don't have an account?</span>
-                    <a href="#" onclick="toggleAuthMode(); return false;" style="color: #c75000; font-weight: 600; text-decoration: none;"> Sign Up</a>
+                    <a href="#" onclick="toggleAuthMode(); return false;" style="color: #ff6b6b;"> Sign Up</a>
                 </p>
                 
                 <!-- Staff & Driver Buttons -->
-                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #333;">
-                    <p style="text-align: center; color: #666; margin-bottom: 12px; font-size: 0.85rem;">Staff Access:</p>
-                    <div class="staff-buttons">
-                        <button class="staff-btn employer" onclick="showRestaurantLogin()">
-                            <span class="icon">👔</span>
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="text-align: center; color: rgba(255,255,255,0.6); margin-bottom: 1rem; font-size: 0.9rem;">Staff Access:</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <!-- EMPLOYER BUTTON - FIXED: Now opens Restaurant Dashboard -->
+                        <button onclick="showRestaurantLogin()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(102,126,234,0.3);">
+                            <span style="font-size: 1.8rem;">👔</span>
                             <span>I'm Employer</span>
                         </button>
-                        <button class="staff-btn driver" onclick="showDriverLogin()">
-                            <span class="icon">🚗</span>
+                        
+                        <!-- Driver Button -->
+                        <button onclick="showDriverLogin()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                            <span style="font-size: 1.8rem;">🚗</span>
                             <span>I'm Driver</span>
                         </button>
                     </div>
@@ -366,7 +364,7 @@
             <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(102,126,234,0.1); border-radius: 10px; border: 1px solid rgba(102,126,234,0.3);">
                 <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0;">
                     <strong>Demo Credentials:</strong><br>
-                    Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e79493868181a7868993868b9e86948f869086958a86c984888a">[email&#160;protected]</a><br>
+                    Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="33404752555573525d47525f4a52405b524452415e521d505c5e">[email&#160;protected]</a><br>
                     Password: staff2024
                 </p>
             </div>
@@ -454,7 +452,7 @@
             <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(139,92,246,0.1); border-radius: 10px; border: 1px solid rgba(139,92,246,0.3);">
                 <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin: 0;">
                     <strong>Demo Credentials:</strong><br>
-                    Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="741510191d1a34151a0015180d15071c1503150619155a171b19">[email&#160;protected]</a><br>
+                    Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0d6c696064634d6c63796c61746c7e656c7a6c7f606c236e6260">[email&#160;protected]</a><br>
                     Password: admin2024<br>
                     PIN: 1234
                 </p>
@@ -775,77 +773,24 @@
 
     <!-- CART MODAL -->
     <div class="modal" id="cartModal">
-        <div class="modal-content modal-cart">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeModal('cartModal')">×</button>
-            
-            <!-- Cart Header -->
-            <div class="modal-header-fancy">
-                <div class="modal-icon-circle cart-icon">
-                    <span>🛒</span>
-                </div>
-                <h2>Your Cart</h2>
-                <p class="modal-subtitle" id="cartItemCount">0 items</p>
+            <h2>🛒 Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="cart-total">
+                <span>Subtotal:</span>
+                <span id="cartTotal">£0.00</span>
             </div>
-            
-            <!-- Cart Items -->
-            <div id="cartItems" class="cart-items-container"></div>
-            
-            <!-- Empty Cart State -->
-            <div id="emptyCartState" class="empty-state" style="display: none;">
-                <div class="empty-icon">🛒</div>
-                <h3>Your cart is empty</h3>
-                <p>Add some delicious items to get started!</p>
-                <button class="btn-browse" onclick="closeModal('cartModal'); scrollToMenu();">Browse Menu</button>
-            </div>
-            
-            <!-- Cart Footer -->
-            <div id="cartFooter" class="cart-footer">
-                <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span id="cartSubtotal">£0.00</span>
-                    </div>
-                    <div class="summary-row delivery-row" id="deliveryFeeRow">
-                        <span>Delivery</span>
-                        <span id="cartDeliveryFee">Calculated at checkout</span>
-                    </div>
-                    <div class="summary-row total-row">
-                        <span>Total</span>
-                        <span id="cartTotal">£0.00</span>
-                    </div>
-                </div>
-                <button class="btn-checkout" onclick="proceedToCheckout()">
-                    <span>Proceed to Checkout</span>
-                    <span class="checkout-arrow">→</span>
-                </button>
-            </div>
+            <button class="submit-btn" onclick="proceedToCheckout()" style="background: linear-gradient(45deg, #10b981, #059669);">Proceed to Checkout</button>
         </div>
     </div>
 
     <!-- FAVORITES MODAL -->
     <div class="modal" id="favoritesModal">
-        <div class="modal-content modal-favorites">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeModal('favoritesModal')">×</button>
-            
-            <!-- Favorites Header -->
-            <div class="modal-header-fancy">
-                <div class="modal-icon-circle favorites-icon">
-                    <span>❤️</span>
-                </div>
-                <h2>Your Favorites</h2>
-                <p class="modal-subtitle">Items you love</p>
-            </div>
-            
-            <!-- Favorites Content -->
-            <div id="favoritesContent" class="favorites-container"></div>
-            
-            <!-- Empty State -->
-            <div id="emptyFavoritesState" class="empty-state" style="display: none;">
-                <div class="empty-icon">💔</div>
-                <h3>No favorites yet</h3>
-                <p>Tap the heart icon on items you love!</p>
-                <button class="btn-browse" onclick="closeModal('favoritesModal'); scrollToMenu();">Explore Menu</button>
-            </div>
+            <h2>❤️ Your Favorites</h2>
+            <div id="favoritesContent"></div>
         </div>
     </div>
 
@@ -914,82 +859,28 @@
 
     <!-- NOTIFICATIONS MODAL -->
     <div class="modal" id="notificationsModal">
-        <div class="modal-content modal-notifications">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeModal('notificationsModal')">×</button>
-            
-            <!-- Notifications Header -->
-            <div class="modal-header-fancy">
-                <div class="modal-icon-circle notifications-icon">
-                    <span>🔔</span>
-                </div>
-                <h2>Notifications</h2>
-                <p class="modal-subtitle">Stay updated</p>
-            </div>
-            
-            <!-- Notifications Content -->
-            <div id="notificationsContent" class="notifications-container"></div>
-            
-            <!-- Empty State -->
-            <div id="emptyNotificationsState" class="empty-state" style="display: none;">
-                <div class="empty-icon">🔕</div>
-                <h3>All caught up!</h3>
-                <p>No new notifications</p>
-            </div>
+            <h2>🔔 Notifications</h2>
+            <div id="notificationsContent"></div>
         </div>
     </div>
 
     <!-- ORDER HISTORY MODAL -->
     <div class="modal" id="orderHistoryModal">
-        <div class="modal-content modal-orders" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 600px;">
             <button class="close-btn" onclick="closeModal('orderHistoryModal')">×</button>
-            
-            <!-- Order History Header -->
-            <div class="modal-header-fancy">
-                <div class="modal-icon-circle orders-icon">
-                    <span>📋</span>
-                </div>
-                <h2>Order History</h2>
-                <p class="modal-subtitle">Your past orders</p>
-            </div>
-            
-            <!-- Orders Content -->
-            <div id="orderHistoryContent" class="orders-container"></div>
-            
-            <!-- Empty State -->
-            <div id="emptyOrdersState" class="empty-state" style="display: none;">
-                <div class="empty-icon">📦</div>
-                <h3>No orders yet</h3>
-                <p>Your order history will appear here</p>
-                <button class="btn-browse" onclick="closeModal('orderHistoryModal'); scrollToMenu();">Order Now</button>
-            </div>
+            <h2>📋 Order History</h2>
+            <div id="orderHistoryContent"></div>
         </div>
     </div>
 
     <!-- ACCOUNT MODAL - FULL PROFILE EDITING -->
     <div class="modal" id="accountModal">
-        <div class="modal-content modal-account" style="max-width: 500px;">
+        <div class="modal-content" style="max-width: 600px;">
             <button class="close-btn" onclick="closeModal('accountModal')">×</button>
-            
-            <!-- Account Header -->
-            <div class="modal-header-fancy profile-header">
-                <div class="modal-icon-circle profile-icon" id="accountAvatar">
-                    <span>👤</span>
-                </div>
-                <h2 id="accountName">My Account</h2>
-                <p class="modal-subtitle" id="accountEmail">Sign in to view profile</p>
-            </div>
-            
-            <!-- Account Content -->
-            <div id="accountContent" class="account-container">
+            <div id="accountContent">
                 <!-- Will be rendered by JavaScript -->
-            </div>
-            
-            <!-- Not Logged In State -->
-            <div id="notLoggedInState" class="empty-state" style="display: none;">
-                <div class="empty-icon">🔐</div>
-                <h3>Not signed in</h3>
-                <p>Sign in to view your profile and orders</p>
-                <button class="btn-browse" onclick="closeModal('accountModal'); showLogin();">Sign In</button>
             </div>
         </div>
     </div>
@@ -1214,72 +1105,28 @@
 
     <!-- CHECKOUT MODAL -->
     <div class="modal" id="checkoutModal">
-        <div class="modal-content modal-checkout" style="max-width: 500px;">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
-            
-            <!-- Checkout Header -->
-            <div class="modal-header-fancy">
-                <div class="modal-icon-circle checkout-icon">
-                    <span>💳</span>
-                </div>
-                <h2>Checkout</h2>
-                <p class="modal-subtitle">Complete your order</p>
+            <h2>💳 Checkout</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                <h3>📍 Delivery Address</h3>
+                <p id="checkoutAddress" style="color: rgba(255,255,255,0.7);"></p>
             </div>
-            
-            <!-- Delivery Address Section -->
-            <div class="checkout-section">
-                <div class="section-header">
-                    <span class="section-icon">📍</span>
-                    <h3>Delivery Address</h3>
-                </div>
-                <p id="checkoutAddress" class="checkout-address">No address selected</p>
-                <button type="button" class="btn-change-address" onclick="pickLocation()">Change Address</button>
+            <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                <h3>📦 Order Summary</h3>
+                <div id="checkoutItems"></div>
             </div>
-            
-            <!-- Order Summary Section -->
-            <div class="checkout-section">
-                <div class="section-header">
-                    <span class="section-icon">📦</span>
-                    <h3>Order Summary</h3>
+            <form onsubmit="handlePayment(event)">
+                <div class="form-group">
+                    <label>Payment Method *</label>
+                    <select id="paymentMethod" required onchange="toggleCardFields()">
+                        <option value="">Choose payment method</option>
+                        <option value="cash">💷 Cash on Delivery</option>
+                        <option value="card">💳 Card Payment</option>
+                        <option value="applepay">🍎 Apple Pay</option>
+                    </select>
                 </div>
-                <div id="checkoutItems" class="checkout-items"></div>
-            </div>
-            
-            <!-- Payment Form -->
-            <form onsubmit="handlePayment(event)" class="checkout-form">
-                <div class="checkout-section">
-                    <div class="section-header">
-                        <span class="section-icon">💰</span>
-                        <h3>Payment Method</h3>
-                    </div>
-                    
-                    <div class="payment-options">
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="cash" onchange="toggleCardFields()" checked>
-                            <span class="payment-card">
-                                <span class="payment-icon">💷</span>
-                                <span>Cash on Delivery</span>
-                            </span>
-                        </label>
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="card" onchange="toggleCardFields()">
-                            <span class="payment-card">
-                                <span class="payment-icon">💳</span>
-                                <span>Card Payment</span>
-                            </span>
-                        </label>
-                        <label class="payment-option">
-                            <input type="radio" name="paymentMethod" value="applepay" onchange="toggleCardFields()">
-                            <span class="payment-card">
-                                <span class="payment-icon">🍎</span>
-                                <span>Apple Pay</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-                
-                <!-- Card Fields (hidden by default) -->
-                <div id="cardFieldsSection" class="card-fields" style="display: none;">
+                <div id="cardFieldsSection" style="display: none;">
                     <div class="form-group">
                         <label>Card Number</label>
                         <input type="text" id="paymentCardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
@@ -1288,7 +1135,7 @@
                         <label>Name on Card</label>
                         <input type="text" id="paymentCardName" placeholder="JOHN SMITH">
                     </div>
-                    <div class="form-row">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
                             <label>Expiry</label>
                             <input type="text" id="paymentExpiry" placeholder="MM/YY" maxlength="5">
@@ -1299,19 +1146,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Order Total & Pay Button -->
-                <div class="checkout-total">
-                    <div class="total-breakdown">
-                        <div class="total-row"><span>Subtotal</span><span id="checkoutSubtotal">£0.00</span></div>
-                        <div class="total-row"><span>Delivery</span><span id="checkoutDelivery">£0.00</span></div>
-                        <div class="total-row grand-total"><span>Total</span><span id="paymentTotal">£0.00</span></div>
-                    </div>
-                    <button type="submit" class="btn-pay">
-                        <span>Place Order</span>
-                        <span id="payButtonTotal">£0.00</span>
-                    </button>
-                </div>
+                <button type="submit" class="submit-btn" style="background: linear-gradient(45deg, #10b981, #059669);">💳 Pay <span id="paymentTotal">£0.00</span></button>
             </form>
         </div>
     </div>
@@ -1430,7 +1265,10 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js?v=3.0"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="script.js?v=3.0"></script>
+    <script src="owner.js?v=3.0"></script>
+    <script src="driver.js?v=3.0"></script>
     <script src="utils.js?v=3.0"></script>
     <script>
         // Card field toggle
@@ -1595,12 +1433,10 @@
                     Object.entries(categories).map(([key, cat]) => 
                         `<option value="${key}">${cat.name}</option>`
                     ).join('');
+                select.value = catKey;
             }
             if (originalOpenEditFood) originalOpenEditFood(catKey, foodId);
         };
     </script>
-            </form>
-        </div>
-    </div>      
 </body>
-</html>
+</html> 

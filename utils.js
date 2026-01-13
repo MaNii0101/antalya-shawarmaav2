@@ -270,72 +270,6 @@ function measurePerformance() {
 
 window.addEventListener('load', measurePerformance);
 
-// ========================================
-// CATEGORY SCROLL - Drag to Scroll
-// ========================================
-function initCategoryScroll() {
-    const scrollContainer = document.querySelector('.categories-scroll') || document.querySelector('.categories');
-    if (!scrollContainer) return;
-    
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    
-    scrollContainer.addEventListener('mousedown', (e) => {
-        isDown = true;
-        scrollContainer.style.cursor = 'grabbing';
-        startX = e.pageX - scrollContainer.offsetLeft;
-        scrollLeft = scrollContainer.scrollLeft;
-    });
-    
-    scrollContainer.addEventListener('mouseleave', () => {
-        isDown = false;
-        scrollContainer.style.cursor = 'grab';
-    });
-    
-    scrollContainer.addEventListener('mouseup', () => {
-        isDown = false;
-        scrollContainer.style.cursor = 'grab';
-    });
-    
-    scrollContainer.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - scrollContainer.offsetLeft;
-        const walk = (x - startX) * 2;
-        scrollContainer.scrollLeft = scrollLeft - walk;
-    });
-    
-    // Touch support for mobile
-    let touchStartX = 0;
-    let touchScrollLeft = 0;
-    
-    scrollContainer.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].pageX;
-        touchScrollLeft = scrollContainer.scrollLeft;
-    }, { passive: true });
-    
-    scrollContainer.addEventListener('touchmove', (e) => {
-        const x = e.touches[0].pageX;
-        const walk = (touchStartX - x) * 1.5;
-        scrollContainer.scrollLeft = touchScrollLeft + walk;
-    }, { passive: true });
-}
-
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', initCategoryScroll);
-
-// Re-initialize after dynamic content loads (wait for categories to render)
-setTimeout(initCategoryScroll, 1000);
-
-// Scroll categories with arrow buttons
-function scrollCategories(amount) {
-    const scrollContainer = document.querySelector('.categories-scroll') || document.querySelector('.categories');
-    if (scrollContainer) {
-        scrollContainer.scrollBy({ left: amount, behavior: 'smooth' });
-    }
-}
-
 // Export functions for use in main script
 window.utils = {
     isMobile,
@@ -351,12 +285,7 @@ window.utils = {
     copyToClipboard,
     formatDate,
     markFormDirty,
-    markFormClean,
-    initCategoryScroll,
-    scrollCategories
+    markFormClean
 };
-
-// Make scrollCategories globally available
-window.scrollCategories = scrollCategories;
 
 console.log('✅ Utilities loaded successfully');
