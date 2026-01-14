@@ -98,35 +98,25 @@ function handlePost($action) {
             // In production, send verification email here
             // sendVerificationEmail($email, $verificationCode);
             async function sendVerificationEmail(email, code) {
+
+ async function sendVerificationEmail(email, code) {
     try {
-        await fetch('https://api.sendgrid.com/v3/mail/send', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer YOUR_SENDGRID_API_KEY',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                personalizations: [{
-                    to: [{ email: email }],
-                    subject: 'Verify your Antalya Shawarma account'
-                }],
-                from: { email: 'noreply@antalyashawarma.com' },
-                content: [{
-                    type: 'text/html',
-                    value: `
-                        <h2>Verify Your Account</h2>
-                        <p>Your verification code is: <strong>${code}</strong></p>
-                        <p>This code will expire in 10 minutes.</p>
-                    `
-                }]
-            })
-        });
+        await emailjs.send(
+            "service_33hew7v",
+            "template_ca0ft4s",
+            {
+                to_email: email,
+                code: code
+            }
+        );
+
         alert('📧 Verification code sent to your email!');
     } catch (error) {
-        console.error('Email error:', error);
+        console.error('EmailJS error:', error);
         alert('❌ Failed to send email. Please try again.');
     }
 }
+
             successResponse([
                 'user_id' => $userId,
                 'verification_code' => $verificationCode, // Remove in production

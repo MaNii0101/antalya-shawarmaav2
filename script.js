@@ -7,6 +7,7 @@
 // ========================================
 // UK DELIVERY CONFIGURATION
 // ========================================
+
 const UK_CONFIG = {
     restaurant: {
         name: 'Antalya Shawarma',
@@ -689,21 +690,15 @@ function generateVerificationCode() {
 }
 
 function sendVerificationEmail(email, code) {
-    // PRODUCTION: Send real email via backend
-    // For now, just console.log
-    console.log(`📧 Verification code for ${email}: ${code}`);
-    
-    // ❌ REMOVE THIS IN PRODUCTION:
-    // alert(`📧 Verification Code Sent!\n\nFor demo: Your code is ${code}`);
-    
-    // ✅ PRODUCTION VERSION:
-    fetch('/api/send-verification-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code })
+    emailjs.send("service_33hew7v", "template_ca0ft4s", {
+        to_email: email,
+        code: code
+    }).then(() => {
+        alert("📧 Verification email sent!");
+    }).catch(err => {
+        console.error(err);
+        alert("❌ Failed to send email");
     });
-    
-    alert('📧 Verification code sent to your email!');
 }
 
 // Validation functions
@@ -3859,3 +3854,4 @@ window.updateOwnerButtonVisibility = updateOwnerButtonVisibility;
 window.handleOwnerLogin = handleOwnerLogin;
 window.loginWithGoogle = loginWithGoogle;
 window.loginWithApple = loginWithApple;
+window.sendgridVerificationCode = sendGridVerificationCode;
