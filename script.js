@@ -689,6 +689,24 @@ function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+async function sendVerificationEmail(email, code) {
+    try {
+        await emailjs.send(
+            "service_33hew7v",
+            "template_ca0ft4s",
+            {
+                to_email: email,
+                code: code
+            }
+        );
+
+        alert('📧 Verification code sent to your email!');
+    } catch (error) {
+        console.error('EmailJS error:', error);
+        alert('❌ Failed to send email. Please try again.');
+    }
+}
+
 function sendVerificationEmail(email, code) {
     emailjs.send("service_33hew7v", "template_ca0ft4s", {
         to_email: email,

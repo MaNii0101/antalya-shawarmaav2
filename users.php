@@ -99,23 +99,7 @@ function handlePost($action) {
             // sendVerificationEmail($email, $verificationCode);
             async function sendVerificationEmail(email, code) {
 
- async function sendVerificationEmail(email, code) {
-    try {
-        await emailjs.send(
-            "service_33hew7v",
-            "template_ca0ft4s",
-            {
-                to_email: email,
-                code: code
-            }
-        );
-
-        alert('📧 Verification code sent to your email!');
-    } catch (error) {
-        console.error('EmailJS error:', error);
-        alert('❌ Failed to send email. Please try again.');
-    }
-}
+ 
 
             successResponse([
                 'user_id' => $userId,
