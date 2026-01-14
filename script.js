@@ -691,32 +691,42 @@ function generateVerificationCode() {
 
 async function sendVerificationEmail(email, code) {
     try {
+        var templateParams = {
+            // 1. Matches {{to_email}} in your "To Email" box
+            to_email: email,
+
+            // 2. Matches {{code}} in your email body
+            code: code,
+
+            // 3. Matches {{Antalya ShawarmaHyde}} in "From Name"
+            "Antalya ShawarmaHyde": "Antalya Shawarma Team",
+
+            // 4. Matches {{Antalya Shawarma}} in the header
+            "Antalya Shawarma": "Shawarma Verification",
+
+            // 5. Matches {{title}} in the Subject line
+            title: "Your Verification Code",
+
+            // 6. Matches {{name}} in the top sentence
+            name: "Customer",
+            
+            // 7. Matches {{user}} in "Reply To"
+            user: email
+        };
+
         await emailjs.send(
-            "service_33hew7v",
-            "template_ca0ft4s",
-            {
-                to_email: email,
-                code: code
-            }
+            "service_33hew7v",  // Service ID
+            "template_ca0ft4s", // Template ID
+            templateParams
         );
 
-        alert('📧 Verification code sent to your email!');
+        alert('📧 Verification code sent!');
+        console.log('Success!', email, code);
+
     } catch (error) {
         console.error('EmailJS error:', error);
-        alert('❌ Failed to send email. Please try again.');
+        alert('❌ Failed to send email.');
     }
-}
-
-function sendVerificationEmail(email, code) {
-    emailjs.send("service_33hew7v", "template_ca0ft4s", {
-        to_email: email,
-        code: code
-    }).then(() => {
-        alert("📧 Verification email sent!");
-    }).catch(err => {
-        console.error(err);
-        alert("❌ Failed to send email");
-    });
 }
 
 // Validation functions
