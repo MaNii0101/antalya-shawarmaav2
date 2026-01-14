@@ -480,7 +480,6 @@ if (savedCategories) {
     // Ensure we have valid data - if menuData is empty, reload page without cache
     const totalItems = Object.values(menuData).flat().length;
     if (totalItems === 0) {
-        console.log('Menu data empty, clearing localStorage...');
         localStorage.removeItem('menuData');
         localStorage.removeItem('categories');
     }
@@ -690,8 +689,21 @@ function generateVerificationCode() {
 }
 
 function sendVerificationEmail(email, code) {
+    // PRODUCTION: Send real email via backend
+    // For now, just console.log
     console.log(`📧 Verification code for ${email}: ${code}`);
-    alert(`📧 Verification Code Sent!\n\nA 6-digit code has been sent to:\n${email}\n\n(Demo: Code is ${code})`);
+    
+    // ❌ REMOVE THIS IN PRODUCTION:
+    // alert(`📧 Verification Code Sent!\n\nFor demo: Your code is ${code}`);
+    
+    // ✅ PRODUCTION VERSION:
+    fetch('/api/send-verification-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code })
+    });
+    
+    alert('📧 Verification code sent to your email!');
 }
 
 // Validation functions
@@ -769,7 +781,7 @@ function playNotificationSound() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
     } catch(e) {
-        console.log('Audio not supported');
+      
     }
 }
 
@@ -2454,8 +2466,7 @@ function sendPasswordResetCode() {
     };
     
     // Show code in console and alert (in real app, send email)
-    console.log('Password Reset Code for', email, ':', resetCode);
-    alert(`📧 Password reset code sent!\n\nFor demo: Your code is ${resetCode}\n\n(In production, this would be sent to your email)`);
+    alert(`📧 Password reset Verification code sent to your email!`);
     
     // Show code entry
     document.getElementById('forgotPasswordSection').innerHTML = `
@@ -2516,6 +2527,20 @@ function resetPassword() {
         
         alert('✅ Password reset successfully!\n\nYou can now login with your new password.');
         location.reload();
+    }
+}
+
+function handleEmailAuth(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    
+    // Check for OWNER credentials first
+    if (email === OWNER_CREDENTIALS.email && password === OWNER_CREDENTIALS.password) {
+        closeModal('loginModal');
+        showOwnerPinEntry();
+        return;
     }
 }
 
@@ -2706,7 +2731,67 @@ function resendCode() {
 }
 
 function loginWithGoogle() {
-    alert(`🔵 Google Sign-In\n\nGoogle authentication would be configured here.\n\nFor demo, use email signup with Gmail.`);
+    // Initialize Google Sign-In
+    google.accounts.id.initialize({
+        client_id: '888032224287-20qgalf8pvpg7s7589il4f025cva4944.apps.googleusercontent.com',
+        callback: handleGoogleCallback
+    });
+    
+    // Prompt the Google Sign-In popup
+    google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // Try alternative method
+            google.accounts.id.renderButton(
+                document.getElementById('google-signin-button'),
+                { theme: 'outline', size: 'large' }
+            );
+        }
+    });
+}
+
+function handleGoogleCallback(response) {
+    // Decode the JWT token
+    const credential = response.credential;
+    const payload = JSON.parse(atob(credential.split('.')[1]));
+    
+    const googleUser = {
+        email: payload.email,
+        name: payload.name,
+        profilePicture: payload.picture,
+        emailVerified: payload.email_verified,
+        provider: 'google'
+    };
+    
+    // Check if user exists in database
+    let existingUser = userDatabase.find(u => u.email === googleUser.email);
+    
+    if (!existingUser) {
+        // Create new user
+        const newUser = {
+            name: googleUser.name,
+            email: googleUser.email,
+            password: 'GOOGLE_AUTH_' + Date.now(), // OAuth users don't need password
+            phone: '',
+            profilePicture: googleUser.profilePicture,
+            provider: 'google',
+            verified: true,
+            createdAt: new Date().toISOString()
+        };
+        
+        userDatabase.push(newUser);
+        currentUser = newUser;
+    } else {
+        // Login existing user
+        currentUser = existingUser;
+    }
+    
+    // Save and update UI
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    localStorage.setItem('restaurantUsers', JSON.stringify(userDatabase));
+    updateHeaderForLoggedInUser();
+    closeModal('loginModal');
+    
+    alert(`✅ Welcome${currentUser.name ? ', ' + currentUser.name : ''}!\n\nYou are now logged in with Google.`);
 }
 
 function loginWithApple() {
@@ -3018,8 +3103,64 @@ function toggleMobileMenu() {
 // ========================================
 // INITIALIZATION
 // ========================================
+// ========================================
+// MOBILE OWNER BUTTON FIX
+// ========================================
+
+// Add this function to script.js to show/hide owner button on mobile
+
+function updateOwnerButtonVisibility() {
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    
+    if (isOwnerLoggedIn) {
+        // Show owner button on both desktop and mobile
+        if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'flex';
+        if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'flex';
+    } else {
+        // Hide owner button on both desktop and mobile
+        if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'none';
+        if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'none';
+    }
+}
+
+// Call this after successful owner login
+function handleOwnerLogin() {
+    const email = document.getElementById('devEmail').value.trim();
+    const password = document.getElementById('devPassword').value;
+    const pin = document.getElementById('devPin').value;
+    
+    if (email !== OWNER_CREDENTIALS.email || 
+        password !== OWNER_CREDENTIALS.password || 
+        pin !== OWNER_CREDENTIALS.pin) {
+        alert('❌ Invalid credentials');
+        return;
+    }
+    
+    isOwnerLoggedIn = true;
+    
+    // Show owner button on ALL devices (desktop + mobile)
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    
+    if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'flex';
+    if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'flex';
+    
+    closeModal('ownerModal');
+    document.getElementById('ownerDashboard').style.display = 'block';
+    updateOwnerStats();
+    
+    alert('✅ Owner access granted!');
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🌯 Antalya Shawarma v3.0.0 Loading...');
+    
+       // Hide owner buttons by default
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'none';
+    if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'none';
     
     // Load data
     loadData();
@@ -3073,10 +3214,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.value = value;
         });
     }
-    
-    console.log('✅ Antalya Shawarma Ready!');
-    console.log(`📦 ${Object.keys(menuData).length} categories loaded`);
-    console.log(`🍽️ ${Object.values(menuData).flat().length} menu items available`);
+ 
 });
 
 // Setup mobile bottom navigation with proper event listeners
@@ -3103,7 +3241,7 @@ function setupMobileNavigation() {
         }
     });
     
-    console.log('📱 Mobile navigation initialized');
+
 }
 
 // Make functions globally available
@@ -3717,3 +3855,7 @@ window.showOwnerDashboardDirect = showOwnerDashboardDirect;
 window.openForgotPasswordFromChangePassword = openForgotPasswordFromChangePassword;
 window.confirmDeleteAccount = confirmDeleteAccount;
 window.deleteUserAccount = deleteUserAccount;
+window.updateOwnerButtonVisibility = updateOwnerButtonVisibility;
+window.handleOwnerLogin = handleOwnerLogin;
+window.loginWithGoogle = loginWithGoogle;
+window.loginWithApple = loginWithApple;
