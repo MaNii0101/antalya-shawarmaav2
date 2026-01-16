@@ -723,6 +723,16 @@ async function sendVerificationEmail(email, code) {
     }
 }
 
+function canSendCode() {
+    const last = localStorage.getItem("lastCodeTime");
+    if (!last) return true;
+
+    const diff = Date.now() - Number(last);
+    return diff > 60 * 1000; // 1 minute
+}
+
+
+localStorage.setItem("lastCodeTime", Date.now());
 async function sendVerificationEmail(email, code) {
     try {
         await emailjs.send(
@@ -738,6 +748,12 @@ async function sendVerificationEmail(email, code) {
     } catch (error) {
         console.error('EmailJS error:', error);
         alert('❌ Failed to send email. Please try again.');
+        
+        if (!canSendCode()) {
+    alert("⏱️ Please wait 1 minute before resending.");
+    return;
+}
+localStorage.setItem("lastCodeTime", Date.now());
     }
 }
 
@@ -2503,6 +2519,7 @@ function sendPasswordResetCode() {
         alert('❌ No account found with this email');
         return;
     }
+    
     
     // Generate reset code
     const resetCode = generateVerificationCode();
