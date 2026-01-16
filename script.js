@@ -745,10 +745,10 @@ async function sendVerificationEmail(email, code, type = 'verification') {
             name: "Customer"
         };
         
-        await emailjs.send(
-            "service_33hew7v",
-            "template_ca0ft4s",
-            templateParams
+           await emailjs.send(
+              "service_33hew7v",
+             "template_ca0ft4s",
+             templateParams
         );
         
         otpTimers[email] = {
@@ -759,6 +759,7 @@ async function sendVerificationEmail(email, code, type = 'verification') {
         
         startOTPCountdown(email);
         console.log('✅ Verification email sent successfully');
+        alert('📧 Code sent! Check your email.\n\n⏰ May take 1-3 minutes to arrive.\n\nCheck spam folder if needed.'); // ADD THIS
         return true;
     } catch (error) {
         console.error('❌ EmailJS Error:', error);
@@ -3055,29 +3056,56 @@ function resendCode() {
 }
 
 function loginWithGoogle() {
+    // Check if on mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
     // Initialize Google Sign-In
     google.accounts.id.initialize({
         client_id: '888032224287-20qgalf8pvpg7s7589il4f025cva4944.apps.googleusercontent.com',
-        callback: handleGoogleCallback
+        callback: handleGoogleCallback,
+        ux_mode: isMobile ? 'redirect' : 'popup', // ADD THIS - use redirect on mobile
+        redirect_uri: window.location.origin // ADD THIS - for mobile redirect
     });
     
-    // Prompt the Google Sign-In popup
-    google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // Try alternative method
-            google.accounts.id.renderButton(
-                document.getElementById('google-signin-button'),
-                { theme: 'outline', size: 'large' }
-            );
-        }
-    });
+    if (isMobile) {
+        // Mobile: Use redirect method (more reliable)
+        google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                // Fallback: Create temporary button and click it
+                const tempDiv = document.createElement('div');
+                tempDiv.style.display = 'none';
+                document.body.appendChild(tempDiv);
+                
+                google.accounts.id.renderButton(tempDiv, {
+                    type: 'standard',
+                    theme: 'filled_blue',
+                    size: 'large'
+                });
+                
+                setTimeout(() => {
+                    const btn = tempDiv.querySelector('div[role="button"]');
+                    if (btn) btn.click();
+                }, 100);
+            }
+        });
+    } else {
+        // Desktop: Use popup method
+        google.accounts.id.prompt();
+    }
 }
 
 function handleGoogleCallback(response) {
+
+        if (!response || !response.credential) {
+        console.error('Google login failed:', response);
+        alert('❌ Google login failed. Please try again or use email login.');
+        return;
+    }
+
     // Decode the JWT token
-    const credential = response.credential;
-    const payload = JSON.parse(atob(credential.split('.')[1]));
-    
+     const credential = response.credential;
+        const payload = JSON.parse(atob(credential.split('.')[1]));
+        
     const googleUser = {
         email: payload.email,
         name: payload.name,
@@ -3108,6 +3136,7 @@ function handleGoogleCallback(response) {
         // Login existing user
         currentUser = existingUser;
     }
+    
     
     // Save and update UI
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -3439,10 +3468,6 @@ function toggleMobileMenu() {
 // MOBILE OWNER BUTTON FIX
 // ========================================
 
-// Add this function to script.js to show/hide owner button on mobile
-
-
-
 
 
 // Call this after successful owner login
@@ -3459,14 +3484,7 @@ function handleOwnerLogin() {
     }
     
     isOwnerLoggedIn = true;
-    
-    // Show owner button on ALL devices (desktop + mobile)
-    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
-    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
-    
-    if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'flex';
-    if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'flex';
-    
+
     closeModal('ownerModal');
     document.getElementById('ownerDashboard').style.display = 'block';
     updateOwnerStats();
@@ -3477,12 +3495,7 @@ function handleOwnerLogin() {
 
 document.addEventListener('DOMContentLoaded', function() {
     
-       // Hide owner buttons by default
-    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
-    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
-    if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'none';
-    if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'none';
-    
+
     // Load data
     loadData();
     loadBankDetails();
