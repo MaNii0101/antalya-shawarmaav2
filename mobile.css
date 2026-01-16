@@ -145,6 +145,8 @@ html {
    }
 }
 
+
+
 /* ==================== MOBILE SPECIFIC ==================== */
 @media (max-width: 768px) {
     
@@ -346,9 +348,11 @@ html {
     }
     
     /* MODAL - ALWAYS CENTERED WITH BOTTOM PADDING */
- .modal {
+.modal {
        padding: 1rem !important;
-       padding-bottom: calc(1rem + 80px) !important; /* Extra space for bottom nav */
+       padding-bottom: calc(1rem + 100px) !important; /* Extra space for bottom nav */
+       align-items: center !important;
+       justify-content: center !important;
        overflow-y: auto !important;
    }
     
@@ -358,8 +362,21 @@ html {
     }
     
 .modal-content {
-       margin-bottom: 80px !important; /* Space above bottom nav */
-       max-height: calc(88vh - 80px) !important; /* Account for bottom nav */
+       width: 94% !important;
+       max-width: 500px !important;
+       margin: auto !important;
+       margin-bottom: 100px !important; /* Space above bottom nav */
+       border-radius: 16px !important;
+       max-height: calc(85vh - 100px) !important; /* Account for bottom nav */
+       min-height: auto !important;
+       padding: 1.5rem 1.2rem 2.5rem 1.2rem !important; /* Extra bottom padding */
+       animation: modalFadeIn 0.25s ease !important;
+       position: relative !important;
+       top: auto !important;
+       bottom: auto !important;
+       left: auto !important;
+       right: auto !important;
+       transform: none !important;
    }
     
 @keyframes modalFadeIn {
@@ -415,8 +432,15 @@ html {
     }
     
     /* Buttons */
-     .submit-btn {
-       margin-bottom: 20px !important; /* Extra bottom margin for safety */
+  .submit-btn {
+       width: 100% !important;
+       padding: 1rem !important;
+       font-size: 1rem !important;
+       font-weight: 700 !important;
+       border-radius: var(--radius-md) !important;
+       margin-top: 0.5rem !important;
+       margin-bottom: 30px !important; /* Extra bottom margin for safety */
+       min-height: 50px !important;
    }
     
     .submit-btn:active {
@@ -494,17 +518,16 @@ html {
 /* Landscape */
 @media (max-width: 896px) and (orientation: landscape) {
     .modal-content {
-        max-height: 100vh;
+        max-height: calc(100vh - 100px) !important;
         border-radius: 0;
+        overflow-y: auto !important;
     }
-
     
     .hero {
         height: 100vh;
         min-height: 400px;
     }
 }
-
 /* Tablet */
 @media (min-width: 769px) and (max-width: 1024px) {
     .menu-grid {
@@ -544,8 +567,8 @@ html {
         padding-right: max(1rem, env(safe-area-inset-right));
     }
     
-    .modal-content {
-        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px))
+     .modal-content {
+        padding-bottom: max(2.5rem, calc(2.5rem + env(safe-area-inset-bottom, 0px))) !important;
     }
 }
 
@@ -560,5 +583,36 @@ html {
 @media (max-width: 640px) {
     #restaurantDashboard > div:first-child > div:nth-child(3) {
         grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* FORCE BOTTOM SPACING FOR ALL MODALS ON MOBILE */
+@media (max-width: 768px) {
+    /* Override inline styles on food modal */
+    #foodModal .modal-content {
+        padding-bottom: 120px !important;
+        margin-bottom: 100px !important;
+    }
+    
+    /* Force button visibility */
+    #foodModal .submit-btn,
+    .modal .submit-btn {
+        margin-bottom: 40px !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Map modal specific */
+    #mapModal .modal-content {
+        padding-bottom: 140px !important;
+        min-height: auto !important;
+    }
+    
+    /* All modals - force scrollable area above bottom nav */
+    .modal[style*="display: flex"] .modal-content,
+    .modal.active .modal-content {
+        max-height: calc(90vh - 120px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 }

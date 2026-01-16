@@ -478,7 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadData();
 
     renderCategories();      // 🔥 THIS WAS MISSING
-    displayMenu(currentCategory); // Default category
+       displayMenu(currentCategory); // Default category
+    updateOwnerButtonVisibility(); // Hide owner button by default
 });
 
 
@@ -3056,41 +3057,33 @@ function resendCode() {
 }
 
 function loginWithGoogle() {
-    // Check if on mobile
+    // Detect mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
-    // Initialize Google Sign-In
-    google.accounts.id.initialize({
-        client_id: '888032224287-20qgalf8pvpg7s7589il4f025cva4944.apps.googleusercontent.com',
-        callback: handleGoogleCallback,
-        ux_mode: isMobile ? 'redirect' : 'popup', // ADD THIS - use redirect on mobile
-        redirect_uri: window.location.origin // ADD THIS - for mobile redirect
-    });
-    
-    if (isMobile) {
-        // Mobile: Use redirect method (more reliable)
-        google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                // Fallback: Create temporary button and click it
-                const tempDiv = document.createElement('div');
-                tempDiv.style.display = 'none';
-                document.body.appendChild(tempDiv);
-                
-                google.accounts.id.renderButton(tempDiv, {
-                    type: 'standard',
-                    theme: 'filled_blue',
-                    size: 'large'
-                });
-                
-                setTimeout(() => {
-                    const btn = tempDiv.querySelector('div[role="button"]');
-                    if (btn) btn.click();
-                }, 100);
-            }
+    try {
+        google.accounts.id.initialize({
+            client_id: '888032224287-20qgalf8pvpg7s7589il4f025cva4944.apps.googleusercontent.com',
+            callback: handleGoogleCallback,
+            ux_mode: isMobile ? 'redirect' : 'popup',
+            redirect_uri: window.location.origin
         });
-    } else {
-        // Desktop: Use popup method
-        google.accounts.id.prompt();
+        
+        if (isMobile) {
+            // Mobile: Show login prompt (more reliable than popup)
+            google.accounts.id.prompt((notification) => {
+                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                    // Fallback: Use One Tap
+                    console.log('Google One Tap not displayed, trying alternative...');
+                    alert('Please use email login or try again.');
+                }
+            });
+        } else {
+            // Desktop: Use popup
+            google.accounts.id.prompt();
+        }
+    } catch (error) {
+        console.error('Google Sign-In Error:', error);
+        alert('❌ Google login unavailable. Please use email login.');
     }
 }
 
@@ -3494,7 +3487,7 @@ function handleOwnerLogin() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    
+    updateOwnerButtonVisibility(); // Ensure owner button is hidden on load    
 
     // Load data
     loadData();
