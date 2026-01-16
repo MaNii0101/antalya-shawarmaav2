@@ -13,8 +13,8 @@ const UK_CONFIG = {
         name: 'Antalya Shawarma',
         address: '181 Market St, Hyde SK14 1HF',
         phone: '+44 161 536 1862',
-        lat: 53.4514,
-        lng: -2.0839,
+        lat: 53.447830,
+        lng: -2.076047,
         openTime: 11, // 11:00 AM
         closeTime: 23, // 11:00 PM
         lastOrderTime: 22.5 // 10:30 PM (22:30)
@@ -27,6 +27,16 @@ const UK_CONFIG = {
     maxDeliveryDistance: 6,
     currency: '£'
 };
+
+
+// Security: Input Sanitization
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+\s*=/gi, '')
+                .trim();
+}
 
 // Get UK time (handles BST/GMT automatically)
 function getUKTime() {
@@ -156,6 +166,31 @@ const RESTAURANT_CREDENTIALS = {
     email: 'staff@antalyashawarma.com',
     password: 'staff2024'
 };
+
+// Security: Input Sanitization
+function sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+\s*=/gi, '')
+                .trim();
+}
+
+// Session Protection
+// Generate session token
+const SESSION_TOKEN = 'ast_' + Math.random().toString(36).substr(2, 16) + Date.now().toString(36);
+localStorage.setItem('sessionToken', SESSION_TOKEN);
+
+// Validate session before sensitive operations
+function validateSession() {
+    return localStorage.getItem('sessionToken') === SESSION_TOKEN;
+}
+
+// Password Strength Validation
+function isStrongPassword(password) {
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    return strongRegex.test(password);
+}
 
 // ========================================
 // REAL ANTALYA SHAWARMA MENU DATA
@@ -688,39 +723,84 @@ function formatPrice(amount) {
 function generateVerificationCode() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
-async function sendVerificationEmail(email, code) {
+let otpTimers = {}; // Track OTP timers per email
+
+async function sendVerificationEmail(email, code, type = 'verification') {
+    const now = Date.now();
+    const lastSent = otpTimers[email]?.lastSent || 0;
+    const timeSinceLastSend = now - lastSent;
+    
+    if (timeSinceLastSend < 90000) {
+        const waitTime = Math.ceil((90000 - timeSinceLastSend) / 1000);
+        alert(`⏱️ Please wait ${waitTime} seconds before requesting a new code.`);
+        return false;
+    }
+    
     try {
-        var templateParams = {
-            // 1. Matches {{to_email}} in your "To Email" box
+        let templateParams = {
             to_email: email,
-
-            // 2. Matches {{code}} in your email body
             code: code,
-
-            // 3. Matches {{Antalya ShawarmaHyde}} in "From Name"
-            "Antalya ShawarmaHyde": "Antalya Shawarma Team",
-
-            // 4. Matches {{Antalya Shawarma}} in the header
-            "Antalya Shawarma": "Shawarma Verification",
-
-            // 5. Matches {{title}} in the Subject line
-            title: "Your Verification Code",
-
-            // 6. Matches {{name}} in the top sentence
-            name: "Customer",
-            
-            // 7. Matches {{user}} in "Reply To"
-            user: email
+            from_name: "Antalya Shawarma Hyde",
+            title: type === 'password_reset' ? "Password Reset Code" : "Email Verification",
+            name: "Customer"
         };
-
+        
         await emailjs.send(
-            "service_33hew7v",  // Service ID
-            "template_ca0ft4s", // Template ID
+            "service_33hew7v",
+            "template_ca0ft4s",
             templateParams
         );
+        
+        otpTimers[email] = {
+            lastSent: now,
+            expiresAt: now + 600000,
+            canResendAt: now + 90000
+        };
+        
+        startOTPCountdown(email);
+        console.log('✅ Verification email sent successfully');
+        return true;
     } catch (error) {
-        console.error('❌ Error sending verification email:', error);
+        console.error('❌ EmailJS Error:', error);
+        alert('❌ Failed to send verification email. Please try again.');
+        return false;
     }
+}
+
+function startOTPCountdown(email) {
+    const timer = otpTimers[email];
+    if (!timer) return;
+    
+    const countdownElement = document.getElementById('otpCountdown');
+    const resendBtn = document.getElementById('resendCodeBtn');
+    
+    if (!countdownElement) return;
+    
+    const updateCountdown = () => {
+        const now = Date.now();
+        const timeLeft = Math.max(0, Math.ceil((timer.canResendAt - now) / 1000));
+        
+        if (timeLeft > 0) {
+            countdownElement.textContent = `Resend code in ${timeLeft}s`;
+            if (resendBtn) resendBtn.disabled = true;
+        } else {
+            countdownElement.textContent = 'You can now request a new code';
+            if (resendBtn) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = '📧 Resend Code';
+            }
+            clearInterval(timer.interval);
+        }
+    };
+    
+    updateCountdown();
+    timer.interval = setInterval(updateCountdown, 1000);
+}
+
+function canResendOTP(email) {
+    const timer = otpTimers[email];
+    if (!timer) return true;
+    return Date.now() >= timer.canResendAt;
 }
 
 function canSendCode() {
@@ -732,42 +812,8 @@ function canSendCode() {
 }
 
 
-localStorage.setItem("lastCodeTime", Date.now());
-async function sendVerificationEmail(email, code) {
-    try {
-        await emailjs.send(
-            "service_33hew7v",
-            "template_ca0ft4s",
-            {
-                to_email: email,
-                code: code
-            }
-        );
 
-        alert('📧 Verification code sent to your email!');
-    } catch (error) {
-        console.error('EmailJS error:', error);
-        alert('❌ Failed to send email. Please try again.');
-        
-        if (!canSendCode()) {
-    alert("⏱️ Please wait 1 minute before resending.");
-    return;
-}
-localStorage.setItem("lastCodeTime", Date.now());
-    }
-}
 
-function sendVerificationEmail(email, code) {
-    emailjs.send("service_33hew7v", "template_ca0ft4s", {
-        to_email: email,
-        code: code
-    }).then(() => {
-        alert("📧 Verification email sent!");
-    }).catch(err => {
-        console.error(err);
-        alert("❌ Failed to send email");
-    });
-}
 
 // Validation functions
 function isValidEmail(email) {
@@ -2608,31 +2654,44 @@ function handleEmailAuth(event) {
     }
 }
 
-function handleEmailAuth(event) {
+async function handleEmailAuth(event) {
     event.preventDefault();
     
-    const email = document.getElementById('authEmail').value.trim();
+    const email = document.getElementById('authEmail').value.trim().toLowerCase();
     const password = document.getElementById('authPassword').value;
     const name = document.getElementById('authName')?.value.trim();
     const phone = document.getElementById('authPhone')?.value.trim();
     const dob = document.getElementById('authDOB')?.value;
     
+    // Validate email
     const emailValidation = isValidEmail(email);
     if (!emailValidation.valid) {
         alert(emailValidation.message);
         return;
     }
     
-    if (password.length < 6) {
-        alert('❌ Password must be at least 6 characters');
+    // Strong password validation
+    if (password.length < 8) {
+        alert('❌ Password must be at least 8 characters');
         return;
     }
     
-    // Check for OWNER credentials - hidden access via login form
-    if (email === OWNER_CREDENTIALS.email && password === OWNER_CREDENTIALS.password) {
-        closeModal('loginModal');
-        showOwnerPinEntry();
+    // Check password strength for new accounts
+    if (isSignUpMode && !isStrongPassword(password)) {
+        alert('❌ Password must contain:\n• Uppercase letter\n• Lowercase letter\n• Number\n• Special character (@$!%*?&#)');
         return;
+    }
+    
+    // Check for OWNER credentials - ONLY show if correct email
+    if (email === OWNER_CREDENTIALS.email) {
+        if (password === OWNER_CREDENTIALS.password) {
+            closeModal('loginModal');
+            showOwnerPinEntry();
+            return;
+        } else {
+            alert('❌ Invalid credentials');
+            return;
+        }
     }
     
     // Check for RESTAURANT STAFF credentials
@@ -2648,71 +2707,272 @@ function handleEmailAuth(event) {
     if (driver && driver.password === password) {
         closeModal('loginModal');
         window.driverSystem.currentDriver = driver;
-        showDriverDashboard();
+        window.driverSystem.showDriverDashboard(driver);
         return;
     }
     
     if (isSignUpMode) {
-        const existingUser = userDatabase.find(u => u.email === email);
-        if (existingUser) {
-            alert('❌ Email already registered!');
-            return;
-        }
-        
+        // SIGN UP MODE
         if (!name || name.length < 2) {
-            alert('❌ Name must be at least 2 characters');
+            alert('❌ Please enter your full name');
             return;
         }
         
         if (phone && !isValidPhone(phone)) {
-            alert('❌ Invalid phone number');
+            alert('❌ Invalid UK phone number');
+            return;
+        }
+        
+        // Check if user exists
+        const existingUser = userDatabase.find(u => u.email === email);
+        if (existingUser) {
+            alert('❌ An account with this email already exists');
             return;
         }
         
         // Generate verification code
         const verificationCode = generateVerificationCode();
+        
+        // Send verification email
+        const emailSent = await sendVerificationEmail(email, verificationCode, 'verification');
+        
+        if (!emailSent) {
+            return; // Error already shown
+        }
+        
+        // Store pending registration
         pendingVerification = {
             email: email,
             password: password,
             name: name,
-            phone: phone,
+            phone: phone || null,
             dob: dob || null,
             code: verificationCode,
-            type: 'signup'
+            type: 'registration',
+            expiresAt: Date.now() + 600000 // 10 minutes
         };
         
-        sendVerificationEmail(email, verificationCode);
-        
-        document.getElementById('authFormSection').style.display = 'none';
-        document.getElementById('emailVerificationSection').style.display = 'block';
-        document.getElementById('verifyEmailDisplay').textContent = email;
+        // Show verification modal
+        showVerificationModal(email, 'registration');
         
     } else {
-        // Login
-        const existingUser = userDatabase.find(u => u.email === email);
-        if (!existingUser) {
-            alert('❌ Account not found!');
+        // LOGIN MODE
+        const user = userDatabase.find(u => u.email === email);
+        
+        if (!user) {
+            alert('❌ No account found with this email');
             return;
         }
         
-        if (existingUser.password !== password) {
-            alert('❌ Incorrect password!');
+        if (user.password !== password) {
+            alert('❌ Incorrect password');
             return;
         }
         
-        // Send verification code for login
+        // Generate 2FA code
         const verificationCode = generateVerificationCode();
+        
+        // Send 2FA email
+        const emailSent = await sendVerificationEmail(email, verificationCode, '2fa');
+        
+        if (!emailSent) {
+            return;
+        }
+        
+        // Store pending login
         pendingVerification = {
-            user: existingUser,
+            email: email,
             code: verificationCode,
-            type: 'login'
+            type: 'login',
+            user: user,
+            expiresAt: Date.now() + 600000
         };
         
-        sendVerificationEmail(email, verificationCode);
+        // Show verification modal
+        showVerificationModal(email, 'login');
+    }
+}
+
+// New helper function for password strength
+function isStrongPassword(password) {
+    // At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    return strongRegex.test(password);
+}
+
+// New function to show verification modal
+function showVerificationModal(email, type) {
+    closeModal('loginModal');
+    
+    const modal = document.createElement('div');
+    modal.id = 'verificationModal';
+    modal.className = 'modal';
+    modal.style.display = 'flex';
+    
+    const typeText = type === 'registration' ? 'Registration' : 'Login';
+    const messageText = type === 'registration' ? 'Complete your registration' : 'Complete your login';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('verificationModal')">&times;</button>
+            <h2>🔐 Email Verification</h2>
+            <div style="background: rgba(230,57,70,0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                <p style="color: rgba(255,255,255,0.9);">📧 Verification code sent to:</p>
+                <p style="color: #ff6b6b; font-weight: 600; margin-top: 0.5rem;">${email}</p>
+                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 1rem;">${messageText}</p>
+            </div>
+            <div class="form-group">
+                <label>Enter 6-Digit Code *</label>
+                <input type="text" id="verificationCodeInput" placeholder="000000" maxlength="6" 
+                    style="text-align: center; font-size: 1.8rem; letter-spacing: 0.5rem; font-weight: 600;"
+                    autocomplete="off">
+            </div>
+            <div style="text-align: center; margin: 1rem 0; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                <div id="otpCountdown">Initializing...</div>
+            </div>
+            <button class="submit-btn" onclick="verifyEmailCode()">✅ Verify Code</button>
+            <button class="submit-btn" id="resendCodeBtn" onclick="resendVerificationCode()" 
+                style="background: rgba(255,255,255,0.1); margin-top: 0.5rem;">
+                📧 Resend Code
+            </button>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                Code expires in 10 minutes
+            </p>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Start countdown
+    setTimeout(() => startOTPCountdown(email), 100);
+    
+    // Auto-focus input
+    setTimeout(() => {
+        const input = document.getElementById('verificationCodeInput');
+        if (input) input.focus();
+    }, 300);
+}
+
+// Verify email code
+function verifyEmailCode() {
+    const codeInput = document.getElementById('verificationCodeInput');
+    const enteredCode = codeInput.value.trim();
+    
+    if (!pendingVerification) {
+        alert('❌ No verification session found. Please try again.');
+        closeModal('verificationModal');
+        return;
+    }
+    
+    // Check expiration
+    if (Date.now() > pendingVerification.expiresAt) {
+        alert('❌ Verification code expired. Please request a new one.');
+        closeModal('verificationModal');
+        pendingVerification = null;
+        return;
+    }
+    
+    if (enteredCode !== pendingVerification.code) {
+        alert('❌ Invalid code. Please check and try again.');
+        codeInput.value = '';
+        codeInput.focus();
+        return;
+    }
+    
+    // Code is correct!
+    if (pendingVerification.type === 'registration') {
+        // Complete registration
+        const newUser = {
+            id: Date.now(),
+            email: pendingVerification.email,
+            password: pendingVerification.password,
+            name: pendingVerification.name,
+            phone: pendingVerification.phone,
+            dob: pendingVerification.dob,
+            address: null,
+            joinedDate: new Date().toLocaleDateString('en-GB'),
+            orders: [],
+            verified: true
+        };
         
-        document.getElementById('authFormSection').style.display = 'none';
-        document.getElementById('emailVerificationSection').style.display = 'block';
-        document.getElementById('verifyEmailDisplay').textContent = email;
+        userDatabase.push(newUser);
+        currentUser = newUser;
+        saveData();
+        
+        closeModal('verificationModal');
+        alert('✅ Account created successfully!\n\nWelcome to Antalya Shawarma! 🎉');
+        updateAuthUI();
+        
+    } else if (pendingVerification.type === 'login') {
+        // Complete login
+        currentUser = pendingVerification.user;
+        saveData();
+        
+        closeModal('verificationModal');
+        alert('✅ Login successful!\n\nWelcome back! 👋');
+        updateAuthUI();
+
+function updateAuthUI() {
+
+
+   function updateOwnerButtonVisibility() {
+    // Desktop owner button
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    // Mobile owner button
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    
+    // Only show if user is logged in AND is the owner
+    const shouldShow = currentUser && currentUser.email === OWNER_CREDENTIALS.email;
+    
+    if (desktopOwnerBtn) {
+        desktopOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
+    }
+    if (mobileOwnerBtn) {
+        mobileOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
+    }
+    
+}
+  updateOwnerButtonVisibility();
+}
+
+}
+
+
+    }
+    
+    pendingVerification = null;
+
+
+
+// Resend verification code
+async function resendVerificationCode() {
+    if (!pendingVerification) {
+        alert('❌ No active verification session');
+        return;
+    }
+    
+    const email = pendingVerification.email;
+    
+    if (!canResendOTP(email)) {
+        const timer = otpTimers[email];
+        const waitTime = Math.ceil((timer.canResendAt - Date.now()) / 1000);
+        alert(`⏱️ Please wait ${waitTime} seconds before resending`);
+        return;
+    }
+    
+    // Generate new code
+    const newCode = generateVerificationCode();
+    const type = pendingVerification.type === 'registration' ? 'verification' : '2fa';
+    
+    // Send email
+    const sent = await sendVerificationEmail(email, newCode, type);
+    
+    if (sent) {
+        // Update pending verification
+        pendingVerification.code = newCode;
+        pendingVerification.expiresAt = Date.now() + 600000;
+        
+        alert('📧 New verification code sent!');
     }
 }
 
@@ -2879,9 +3139,15 @@ function initMap() {
     
     const center = { lat: UK_CONFIG.restaurant.lat, lng: UK_CONFIG.restaurant.lng };
     
-    googleMap = new google.maps.Map(mapContainer, {
-        center: center,
-        zoom: 14,
+        const restaurantLocation = {
+        lat: 53.447830,  // UPDATED
+        lng: -2.076047   // UPDATED
+        };
+
+        googleMap = new google.maps.Map(mapContainer, {
+        center: restaurantLocation,
+        zoom: 15,
+
         mapTypeId: 'hybrid', // Satellite with labels
         mapTypeControl: true,
         mapTypeControlOptions: {
@@ -2892,6 +3158,8 @@ function initMap() {
         zoomControl: true,
         fullscreenControl: false,
         streetViewControl: false
+
+        
     });
     
     // Restaurant marker
@@ -3173,20 +3441,9 @@ function toggleMobileMenu() {
 
 // Add this function to script.js to show/hide owner button on mobile
 
-function updateOwnerButtonVisibility() {
-    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
-    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
-    
-    if (isOwnerLoggedIn) {
-        // Show owner button on both desktop and mobile
-        if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'flex';
-        if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'flex';
-    } else {
-        // Hide owner button on both desktop and mobile
-        if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'none';
-        if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'none';
-    }
-}
+
+
+
 
 // Call this after successful owner login
 function handleOwnerLogin() {
@@ -3923,4 +4180,3 @@ window.updateOwnerButtonVisibility = updateOwnerButtonVisibility;
 window.handleOwnerLogin = handleOwnerLogin;
 window.loginWithGoogle = loginWithGoogle;
 window.loginWithApple = loginWithApple;
-window.sendgridVerificationCode = sendGridVerificationCode;

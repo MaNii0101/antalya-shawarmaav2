@@ -54,7 +54,7 @@ html {
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        height: auto !important;
+        height: 70px !important;
         background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%) !important;
         border-top: 1px solid rgba(230, 57, 70, 0.3) !important;
         padding: 8px 5px calc(8px + env(safe-area-inset-bottom, 0px)) 5px !important;
@@ -79,11 +79,11 @@ html {
         border-radius: 8px !important;
         transition: background 0.2s !important;
         -webkit-tap-highlight-color: rgba(230, 57, 70, 0.3) !important;
-        touch-action: manipulation !important;
+        touch-action: manipulation;
     }
     
     .mobile-nav-item:active {
-        background: rgba(230, 57, 70, 0.2) !important;
+       background: rgba(230, 57, 70, 0.2) !important;
     }
     
     .mobile-nav-icon {
@@ -134,9 +134,15 @@ html {
     }
     
     /* Add padding to body for bottom nav */
-    body {
-        padding-bottom: 85px !important;
-    }
+   body {
+       padding-bottom: 90px !important; /* Increased from 85px */
+   }
+   
+   .menu-grid,
+   .menu-list,
+   #menuSection {
+       padding-bottom: 20px !important;
+   }
 }
 
 /* ==================== MOBILE SPECIFIC ==================== */
@@ -339,46 +345,33 @@ html {
         justify-content: center;
     }
     
-    /* MODAL - ALWAYS CENTERED */
-    .modal {
-        padding: 1rem !important;
-        align-items: center !important;
-        justify-content: center !important;
-        display: none;
-    }
+    /* MODAL - ALWAYS CENTERED WITH BOTTOM PADDING */
+ .modal {
+       padding: 1rem !important;
+       padding-bottom: calc(1rem + 80px) !important; /* Extra space for bottom nav */
+       overflow-y: auto !important;
+   }
     
     .modal[style*="display: flex"],
     .modal.active {
         display: flex !important;
     }
     
-    .modal-content {
-        width: 94% !important;
-        max-width: 500px !important;
-        margin: auto !important;
-        border-radius: 16px !important;
-        max-height: 88vh !important;
-        min-height: auto !important;
-        padding: 1.5rem 1.2rem 2rem 1.2rem !important;
-        animation: modalFadeIn 0.25s ease !important;
-        position: relative !important;
-        top: auto !important;
-        bottom: auto !important;
-        left: auto !important;
-        right: auto !important;
-        transform: none !important;
-    }
+.modal-content {
+       margin-bottom: 80px !important; /* Space above bottom nav */
+       max-height: calc(88vh - 80px) !important; /* Account for bottom nav */
+   }
     
-    @keyframes modalFadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.92);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
     }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
     
     /* Remove the handle bar for centered modals */
     .modal-content::before {
@@ -422,15 +415,9 @@ html {
     }
     
     /* Buttons */
-    .submit-btn {
-        width: 100%;
-        padding: 1rem;
-        font-size: 1rem;
-        font-weight: 700;
-        border-radius: var(--radius-md);
-        margin-top: 0.5rem;
-        min-height: 50px;
-    }
+     .submit-btn {
+       margin-bottom: 20px !important; /* Extra bottom margin for safety */
+   }
     
     .submit-btn:active {
         transform: scale(0.98);
@@ -510,6 +497,7 @@ html {
         max-height: 100vh;
         border-radius: 0;
     }
+
     
     .hero {
         height: 100vh;
@@ -557,7 +545,7 @@ html {
     }
     
     .modal-content {
-        padding-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 1rem));
+        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px))
     }
 }
 
