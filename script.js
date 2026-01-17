@@ -148,24 +148,32 @@ function resetSelectedData() {
     location.reload();
 }
 
-// Reset all website data (legacy function)
 function resetAllData() {
-    showResetOptions();
+    // Deprecated - use showResetOptions() directly
+    console.warn('resetAllData() is deprecated. Use showResetOptions() instead.');
 }
 
 // ========================================
 // CREDENTIALS
 // ========================================
+let googleMap = null;
+let deliveryMarker = null;
+let selectedLocation = null;
+
 const OWNER_CREDENTIALS = {
     email: 'admin@antalyashawarma.com',
     password: 'admin2024',
     pin: '1234'
 };
 
+
+
 const RESTAURANT_CREDENTIALS = {
     email: 'staff@antalyashawarma.com',
     password: 'staff2024'
 };
+
+
 
 // Security: Input Sanitization
 function sanitizeInput(input) {
@@ -513,8 +521,6 @@ let userDatabase = [];
 let orderHistory = [];
 let userFavorites = {};
 let userNotifications = {};
-let selectedLocation = null;
-let googleMap = null;
 let mapMarker = null;
 let isEditingLocation = false;
 let pendingOrders = [];
@@ -3526,17 +3532,16 @@ function setupMobileNavigation() {
     const buttons = mobileNav.querySelectorAll('.mobile-nav-item');
     const actions = [showNotifications, showFavorites, showOrderHistory, showCart, showAccount];
     
-    buttons.forEach((btn, index) => {
+     buttons.forEach((btn, index) => {
         if (actions[index]) {
-            btn.addEventListener('click', function(e) {
+            // Remove any existing listeners to prevent duplicates
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            // Add single click listener (works on both desktop and mobile)
+            newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                actions[index]();
-            });
-            
-            // Also add touch event for mobile
-            btn.addEventListener('touchend', function(e) {
-                e.preventDefault();
                 actions[index]();
             });
         }
@@ -4173,11 +4178,10 @@ window.handleOwnerLogin = handleOwnerLogin;
 window.loginWithGoogle = loginWithGoogle;
 window.loginWithApple = loginWithApple;
 
-// Update UI when auth state changes
+// Update UI when login state changes
 function updateAuthUI() {
     const isLoggedIn = currentUser !== null;
     
-    // Show/hide based on login state
     document.querySelectorAll('[data-logged-in]').forEach(el => {
         el.style.display = isLoggedIn ? 'flex' : 'none';
     });
@@ -4186,11 +4190,10 @@ function updateAuthUI() {
         el.style.display = isLoggedIn ? 'none' : 'flex';
     });
     
-    // Update owner button visibility
     updateOwnerButtonVisibility();
 }
 
-// Show/hide owner button based on user
+// Show/hide owner button
 function updateOwnerButtonVisibility() {
     const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
     const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
