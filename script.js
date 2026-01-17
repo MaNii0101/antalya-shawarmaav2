@@ -445,39 +445,11 @@ let categories = {
     drinks: { name: 'Drinks', icon: '🥤', image: '' }
 };
 
-function renderCategories() {
-    const container = document.getElementById('categoryContainer');
-    if (!container) {
-        console.error('❌ categoryContainer not found in HTML');
-        return;
-    }
-
-    container.innerHTML = '';
-
-    Object.keys(categories).forEach(key => {
-        // Skip empty categories
-        if (!menuData[key] || menuData[key].length === 0) return;
-
-        const cat = categories[key];
-
-        const btn = document.createElement('button');
-        btn.className = 'category-btn';
-        btn.innerHTML = `
-            <span class="cat-icon">${cat.icon}</span>
-            <span class="cat-name">${cat.name}</span>
-        `;
-
-        btn.onclick = () => displayMenu(key);
-
-        container.appendChild(btn);
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     loadMenuData();
     loadData();
 
-    renderCategories();
+    
     displayMenu(currentCategory);
     updateOwnerButtonVisibility(); // ADD THIS
 });
@@ -3070,15 +3042,15 @@ function loginWithGoogle() {
             redirect_uri: window.location.origin
         });
         
-        if (isMobile) {
-            // Mobile: Show login prompt (more reliable than popup)
-            google.accounts.id.prompt((notification) => {
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    // Fallback: Use One Tap
-                    console.log('Google One Tap not displayed, trying alternative...');
-                    alert('Please use email login or try again.');
-                }
-            });
+      if (isMobile) {
+      // Mobile: Direct prompt
+    google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            console.log('Google One Tap not available');
+            // Show clearer message
+               alert('⚠️ Google Sign-In not available\n\nPlease use Email/Password login instead.');
+           }
+       });
         } else {
             // Desktop: Use popup
             google.accounts.id.prompt();
@@ -3206,7 +3178,7 @@ function initMap() {
 // Remove old listeners first
 
 // Add fresh click listener
-google.maps.event.clearListeners(googleMap, 'click');
+google.maps.event.clearListeners(googleMap, 'click');  // ADD THIS LINE
 googleMap.addListener('click', (e) => {
     const lat = e.latLng.lat();
     const lng = e.latLng.lng();
@@ -3231,7 +3203,6 @@ googleMap.addListener('click', (e) => {
     googleMap.panTo(e.latLng);
     
     console.log('Location selected:', lat, lng);
-            addMarker(e.latLng);
     });
 }
 
@@ -3247,6 +3218,7 @@ function pickLocationForProfile() {
         modal.style.display = 'block';
     }
     setTimeout(() => initMap(), 100);
+    google.maps.event.clearListeners(googleMap, 'click');
 }
 
 function addMarker(location) {
@@ -3335,8 +3307,8 @@ function getCurrentLocation() {
             if (googleMap) {
                 googleMap.setCenter(location);
                 googleMap.setZoom(16);
-                addMarker(new google.maps.LatLng(location.lat, location.lng));
             }
+            
             
             btn.innerHTML = originalText;
             btn.disabled = false;
