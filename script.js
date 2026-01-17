@@ -2888,37 +2888,10 @@ alert('✅ Login successful!\n\nWelcome back! 👋');
 updateAuthUI();
 updateOwnerButtonVisibility(); // ADD THIS LINE
 
-function updateAuthUI() {
-
-
-   function updateOwnerButtonVisibility() {
-    // Desktop owner button
-    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
-    // Mobile owner button
-    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
-    
-    // Only show if user is logged in AND is the owner
-    const shouldShow = currentUser && currentUser.email === OWNER_CREDENTIALS.email;
-    
-    if (desktopOwnerBtn) {
-        desktopOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
-    }
-    if (mobileOwnerBtn) {
-        mobileOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
-    }
-    
-}
-  updateOwnerButtonVisibility();
-}
-
-}
-
-
     }
     
     pendingVerification = null;
-
-
+}
 
 // Resend verification code
 async function resendVerificationCode() {
@@ -3178,7 +3151,7 @@ function initMap() {
 // Remove old listeners first
 
 // Add fresh click listener
-google.maps.event.clearListeners(googleMap, 'click');  // ADD THIS LINE
+google.maps.event.clearListeners(googleMap, 'click');  // ADD THIS
 googleMap.addListener('click', (e) => {
     const lat = e.latLng.lat();
     const lng = e.latLng.lng();
@@ -4180,6 +4153,7 @@ setTimeout(() => {
     }
 }, 100);
 
+
 // Review system exports
 window.openWriteReview = openWriteReview;
 window.setRating = setRating;
@@ -4198,3 +4172,35 @@ window.updateOwnerButtonVisibility = updateOwnerButtonVisibility;
 window.handleOwnerLogin = handleOwnerLogin;
 window.loginWithGoogle = loginWithGoogle;
 window.loginWithApple = loginWithApple;
+
+// Update UI when auth state changes
+function updateAuthUI() {
+    const isLoggedIn = currentUser !== null;
+    
+    // Show/hide based on login state
+    document.querySelectorAll('[data-logged-in]').forEach(el => {
+        el.style.display = isLoggedIn ? 'flex' : 'none';
+    });
+    
+    document.querySelectorAll('[data-logged-out]').forEach(el => {
+        el.style.display = isLoggedIn ? 'none' : 'flex';
+    });
+    
+    // Update owner button visibility
+    updateOwnerButtonVisibility();
+}
+
+// Show/hide owner button based on user
+function updateOwnerButtonVisibility() {
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    
+    const shouldShow = currentUser && currentUser.email === 'admin@antalyashawarma.com';
+    
+    if (desktopOwnerBtn) {
+        desktopOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
+    }
+    if (mobileOwnerBtn) {
+        mobileOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
+    }
+}
