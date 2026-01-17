@@ -477,9 +477,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMenuData();
     loadData();
 
-    renderCategories();      // 🔥 THIS WAS MISSING
-       displayMenu(currentCategory); // Default category
-    updateOwnerButtonVisibility(); // Hide owner button by default
+    renderCategories();
+    displayMenu(currentCategory);
+    updateOwnerButtonVisibility(); // ADD THIS
 });
 
 
@@ -952,6 +952,7 @@ function loadData() {
     }
     
     window.driverSystem.load();
+    updateOwnerButtonVisibility();
 }
 
 function saveCart() {
@@ -2907,12 +2908,13 @@ function verifyEmailCode() {
         
     } else if (pendingVerification.type === 'login') {
         // Complete login
-        currentUser = pendingVerification.user;
-        saveData();
-        
-        closeModal('verificationModal');
-        alert('✅ Login successful!\n\nWelcome back! 👋');
-        updateAuthUI();
+    currentUser = pendingVerification.user;
+saveData();
+
+closeModal('verificationModal');
+alert('✅ Login successful!\n\nWelcome back! 👋');
+updateAuthUI();
+updateOwnerButtonVisibility(); // ADD THIS LINE
 
 function updateAuthUI() {
 
@@ -3201,8 +3203,35 @@ function initMap() {
     });
     
     // Click to select location
-    googleMap.addListener('click', (e) => {
-        addMarker(e.latLng);
+// Remove old listeners first
+
+// Add fresh click listener
+google.maps.event.clearListeners(googleMap, 'click');
+googleMap.addListener('click', (e) => {
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
+    
+    // Update marker position
+    if (deliveryMarker) {
+        deliveryMarker.setPosition(e.latLng);
+    } else {
+        deliveryMarker = new google.maps.Marker({
+            position: e.latLng,
+            map: googleMap,
+            title: 'Delivery Location',
+            draggable: true,
+            animation: google.maps.Animation.DROP
+        });
+    }
+    
+    // Update selected location
+    selectedLocation = { lat, lng };
+    
+    // Center map on new location
+    googleMap.panTo(e.latLng);
+    
+    console.log('Location selected:', lat, lng);
+            addMarker(e.latLng);
     });
 }
 
@@ -4167,6 +4196,17 @@ function deleteUserAccount() {
     // Refresh page
     location.reload();
 }
+
+// Force hide owner buttons on initial load
+setTimeout(() => {
+    const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
+    const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
+    
+    if (!currentUser || currentUser.email !== 'admin@antalyashawarma.com') {
+        if (desktopOwnerBtn) desktopOwnerBtn.style.display = 'none';
+        if (mobileOwnerBtn) mobileOwnerBtn.style.display = 'none';
+    }
+}, 100);
 
 // Review system exports
 window.openWriteReview = openWriteReview;
