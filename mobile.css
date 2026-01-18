@@ -199,12 +199,16 @@ html {
     }
     
     .categories {
+        display: -webkit-box !important;
+        display: -webkit-flex !important;
         display: flex !important;
         gap: 0.6rem;
         padding: 0 0.8rem;
         overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        white-space: nowrap;
     }
     
     .categories::-webkit-scrollbar {
@@ -212,15 +216,25 @@ html {
     }
     
     .category-item {
+        display: -webkit-box !important;
+        display: -webkit-flex !important;
         display: flex !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-box-direction: normal !important;
+        -webkit-flex-direction: column !important;
         flex-direction: column !important;
+        -webkit-box-align: center !important;
+        -webkit-align-items: center !important;
         align-items: center !important;
         min-width: 72px;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
         padding: 0.7rem 0.5rem;
         border-radius: var(--radius-md);
         cursor: pointer;
         opacity: 0.6;
         transition: all 0.3s;
+        -webkit-tap-highlight-color: transparent;
     }
     
     .category-item.active {
@@ -527,15 +541,48 @@ html {
         background: rgba(0, 0, 0, 0.9) !important;
     }
     
-    #mapModal > div:first-child > div:last-child {
+  #mapModal > div:first-child > div:last-child {
         position: fixed !important;
         bottom: 70px !important;
         left: 0 !important;
         right: 0 !important;
         padding: 1rem !important;
-        background: rgba(10, 10, 10, 0.98) !important;
+        background: linear-gradient(180deg, rgba(10, 10, 10, 0.95), rgba(0, 0, 0, 0.98)) !important;
         z-index: 100001 !important;
-        border-top: 1px solid rgba(230, 57, 70, 0.3) !important;
+        border-top: 2px solid rgba(230, 57, 70, 0.5) !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6) !important;
+    }
+
+     #mapModal button {
+        font-size: 0.95rem !important;
+        padding: 1rem !important;
+        min-height: 50px !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        transition: all 0.3s !important;
+        border: 2px solid transparent !important;
+    }
+    
+    #mapModal button:first-child {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    #mapModal button:first-child:active {
+        background: rgba(255, 255, 255, 0.2) !important;
+        transform: scale(0.95) !important;
+    }
+    
+    #mapModal button:last-child {
+        background: linear-gradient(135deg, #e63946, #c1121f) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4) !important;
+    }
+    
+    #mapModal button:last-child:active {
+        transform: scale(0.95) !important;
+        box-shadow: 0 2px 10px rgba(230, 57, 70, 0.4) !important;
     }
     
     #mapModal > div:first-child > div:last-child > div:last-child {
@@ -544,18 +591,11 @@ html {
         gap: 0.8rem !important;
     }
     
-    #mapModal button {
-        font-size: 0.95rem !important;
-        padding: 1rem !important;
-        min-height: 50px !important;
-        font-weight: 600 !important;
-        border-radius: 12px !important;
-    }
     
-    /* HIDE OWNER BUTTON */
-    #mobileOwnerBtn,
-    .mobile-owner-btn {
-        display: none !important;
+ /* OWNER BUTTON - HIDDEN BY DEFAULT, JS CAN OVERRIDE */
+    #mobileOwnerBtn:not([style*="display: flex"]),
+    .mobile-owner-btn:not([style*="display: flex"]) {
+        display: none;
     }
 }
 

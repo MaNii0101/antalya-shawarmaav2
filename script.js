@@ -3109,8 +3109,15 @@ function pickLocation() {
 }
 
 function initMap() {
-    const mapContainer = document.getElementById('map');
-    if (!mapContainer || !window.google) return;
+    // If map already exists, restore marker and return
+    if (googleMap && deliveryMarker) {
+        deliveryMarker.setMap(googleMap);
+        if (selectedLocation) {
+            googleMap.setCenter(selectedLocation);
+            updateDistanceInfo();
+        }
+        return;
+    }
     
     const center = { lat: UK_CONFIG.restaurant.lat, lng: UK_CONFIG.restaurant.lng };
     
@@ -3153,30 +3160,34 @@ function initMap() {
         }
     });
     
-    // Click to select location
-// Remove old listeners first
+// === NEW CLICK LISTENER (Fixes Pin & Adds Distance) ===
+    
+    // 1. Clear old listeners to prevent bugs
+    google.maps.event.clearListeners(googleMap, 'click');
 
-// Add fresh click listener
-google.maps.event.clearListeners(googleMap, 'click');  // ADD THIS
-googleMap.addListener('click', (e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    
-    // Update marker position
-    if (deliveryMarker) {
-        deliveryMarker.setPosition(e.latLng);
-    } else {
-        deliveryMarker = new google.maps.Marker({
-            position: e.latLng,
-            map: googleMap,
-            title: 'Delivery Location',
-            draggable: true,
-            animation: google.maps.Animation.DROP
-        });
-    }
-    
-    // Update selected location
+    // 2. Add the new listener
+    googleMap.addListener('click', (e) => {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        
+        // Update marker position
+        if (deliveryMarker) {
+            deliveryMarker.setPosition(e.latLng);
+        } else {
+            deliveryMarker = new google.maps.Marker({
+                position: e.latLng,
+                map: googleMap,
+                title: 'Delivery Location',
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+        }
+        
+   // Update selected location
     selectedLocation = { lat, lng };
+    
+    // Calculate and show distance
+    updateDistanceInfo();
     
     // Center map on new location
     googleMap.panTo(e.latLng);
@@ -3304,10 +3315,11 @@ function getCurrentLocation() {
 
 function confirmLocation() {
     if (!selectedLocation) {
-        alert('❌ Please select a location on the map');
+        alert('Please select a location on the map');
         return;
     }
     
+    // CHECK DISTANCE LIMIT
     const distance = calculateDistance(
         UK_CONFIG.restaurant.lat,
         UK_CONFIG.restaurant.lng,
@@ -3315,6 +3327,11 @@ function confirmLocation() {
         selectedLocation.lng
     );
     
+    if (distance > 6) {
+        alert('⚠️ Sorry, you are ' + distance.toFixed(1) + ' miles away. We only deliver within 6 miles of the restaurant.');
+        return;
+    }
+
     const deliveryInfo = getDeliveryCost(distance);
     
     if (!deliveryInfo.available) {
@@ -3529,25 +3546,31 @@ function setupMobileNavigation() {
     const mobileNav = document.getElementById('mobileBottomNav');
     if (!mobileNav) return;
     
-    const buttons = mobileNav.querySelectorAll('.mobile-nav-item');
+    // Get only visible buttons (excludes hidden owner button)
+    const buttons = Array.from(mobileNav.querySelectorAll('.mobile-nav-item')).filter(btn => {
+        return !btn.classList.contains('mobile-owner-btn');
+    });
+    
     const actions = [showNotifications, showFavorites, showOrderHistory, showCart, showAccount];
     
-     buttons.forEach((btn, index) => {
+    buttons.forEach((btn, index) => {
         if (actions[index]) {
-            // Remove any existing listeners to prevent duplicates
+            // Remove any existing listeners
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             
-            // Add single click listener (works on both desktop and mobile)
+            // Add click and touchstart for Safari compatibility
             newBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 actions[index]();
             });
+            
+            newBtn.addEventListener('touchstart', function(e) {
+                e.stopPropagation();
+            }, { passive: true });
         }
     });
-    
-
 }
 
 // Make functions globally available
@@ -4206,4 +4229,76 @@ function updateOwnerButtonVisibility() {
     if (mobileOwnerBtn) {
         mobileOwnerBtn.style.display = shouldShow ? 'flex' : 'none';
     }
+}
+
+// ==========================================
+// NEW MAP DISTANCE CALCULATOR FUNCTIONS
+// ==========================================
+
+// 1. Calculate distance (Haversine Formula)
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 3959; // Earth radius in miles
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; // Distance in miles
+}
+
+// 2. Estimate Delivery Time (30mph average)
+function calculateTime(distanceMiles) {
+    const avgSpeed = 30; // mph
+    const prepTime = 15; // minutes for food prep
+    return Math.ceil((distanceMiles / avgSpeed) * 60) + prepTime;
+}
+
+// 3. Show the Info Box on Map
+function updateDistanceInfo() {
+    if (!selectedLocation) return;
+    
+    // Calculate distance from Restaurant to Customer
+    const distance = calculateDistance(
+        UK_CONFIG.restaurant.lat,
+        UK_CONFIG.restaurant.lng,
+        selectedLocation.lat,
+        selectedLocation.lng
+    );
+    
+    const time = calculateTime(distance);
+    
+    // Find or create the display box
+    let distanceInfo = document.getElementById('mapDistanceInfo');
+    if (!distanceInfo) {
+        distanceInfo = document.createElement('div');
+        distanceInfo.id = 'mapDistanceInfo';
+        // Add styling directly
+        distanceInfo.style.cssText = `
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            background: rgba(10, 10, 10, 0.95);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 2px solid #2a9d8f;
+            color: white;
+            text-align: center;
+        `;
+        document.getElementById('map').parentElement.appendChild(distanceInfo);
+    }
+    
+    // Update the text inside the box
+    if (distance > 6) {
+        distanceInfo.innerHTML = `⚠️ ${distance.toFixed(1)} miles - TOO FAR<br><span style="font-size:0.8em; font-weight:normal">Max delivery is 6 miles</span>`;
+        distanceInfo.style.borderColor = '#ef4444'; // Red border
+    } else {
+        distanceInfo.innerHTML = `📍 ${distance.toFixed(1)} miles • ⏱️ ~${time} min`;
+        distanceInfo.style.borderColor = '#2a9d8f'; // Green border
+    }
+    distanceInfo.style.display = 'block';
 }
