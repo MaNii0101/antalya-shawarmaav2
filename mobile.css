@@ -1,6 +1,6 @@
 /* ============================================
-   MOBILE CSS - FINAL FIXED VERSION
-   No more crashes, proper alignment
+   MOBILE CSS - FINAL TESTED VERSION
+   Close button works, no stuck modals
    ============================================ */
 
 :root {
@@ -74,7 +74,6 @@ html {
         min-width: 55px !important;
         border-radius: 8px !important;
         transition: background 0.2s !important;
-        touch-action: manipulation;
     }
     
     .mobile-nav-item:active {
@@ -84,7 +83,6 @@ html {
     .mobile-nav-icon {
         font-size: 1.4rem !important;
         line-height: 1 !important;
-        pointer-events: none !important;
     }
     
     .mobile-nav-label {
@@ -92,7 +90,6 @@ html {
         color: rgba(255, 255, 255, 0.7) !important;
         margin-top: 3px !important;
         font-weight: 500 !important;
-        pointer-events: none !important;
     }
     
     .mobile-nav-badge {
@@ -110,7 +107,6 @@ html {
         align-items: center !important;
         justify-content: center !important;
         font-weight: 600 !important;
-        pointer-events: none !important;
     }
     
     .mobile-nav-badge:empty,
@@ -195,19 +191,15 @@ html {
         border-radius: var(--radius-lg);
     }
     
-    /* ===== CATEGORIES - VISIBLE ===== */
+    /* CATEGORIES - VISIBLE */
     .category-bar {
         display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
         padding: 0.8rem 0;
         background: #000;
     }
     
     .categories {
         display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
         gap: 0.6rem;
         padding: 0 0.8rem;
         overflow-x: auto;
@@ -221,14 +213,13 @@ html {
     
     .category-item {
         display: flex !important;
-        visibility: visible !important;
-        opacity: 0.6 !important;
         flex-direction: column !important;
         align-items: center !important;
         min-width: 72px;
         padding: 0.7rem 0.5rem;
         border-radius: var(--radius-md);
         cursor: pointer;
+        opacity: 0.6;
         transition: all 0.3s;
     }
     
@@ -360,19 +351,13 @@ html {
         justify-content: center;
     }
     
-    /* ===== MODAL - CENTERED AND ALIGNED ===== */
+    /* MODAL WORKING */
     .modal {
         padding: 1rem !important;
         padding-bottom: 100px !important;
-        display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         overflow-y: auto !important;
-    }
-    
-    .modal[style*="display: flex"],
-    .modal.active {
-        display: flex !important;
     }
     
     .modal-content {
@@ -381,24 +366,11 @@ html {
         margin: auto !important;
         border-radius: 16px !important;
         max-height: calc(85vh - 100px) !important;
-        min-height: auto !important;
         padding: 2rem 1.5rem !important;
-        animation: modalFadeIn 0.25s ease !important;
-        position: relative !important;
-        overflow-y: auto !important;
         background: #1a1a1a !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-    
-    @keyframes modalFadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.92);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
+        position: relative !important;
+        overflow-y: auto !important;
     }
     
     .modal-content h2 {
@@ -408,52 +380,46 @@ html {
         color: white;
     }
     
-.close-btn {
+    /* CLOSE BUTTON WORKING */
+    .close-btn {
         position: absolute !important;
-        width: 40px !important;
-        height: 40px !important;
-        font-size: 1.5rem !important;
         top: 1rem !important;
         right: 1rem !important;
-        z-index: 99999 !important;
-        pointer-events: auto !important;
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: none !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-size: 1.5rem !important;
         cursor: pointer !important;
-        touch-action: manipulation !important;
-    }
-    
-    /* ===== FAVORITES & NOTIFICATIONS - PERFECT ALIGNMENT ===== */
-    #favoritesModal .modal-content,
-    #notificationsModal .modal-content {
-        padding: 2rem 1.5rem 1.5rem 1.5rem !important;
+        z-index: 100000 !important;
         display: flex !important;
-        flex-direction: column !important;
-        align-items: stretch !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     
-    #favoritesModal h2,
-    #notificationsModal h2 {
-        text-align: center !important;
-        margin-bottom: 1.5rem !important;
+    .close-btn:active {
+        background: rgba(255, 107, 107, 0.4) !important;
+        color: white !important;
+        transform: scale(0.9) !important;
     }
     
-    /* Favorites list items */
+    /* FAVORITES & NOTIFICATIONS */
     .favorite-item,
     .notification-item {
         width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 0 1rem 0 !important;
+        margin-bottom: 1rem !important;
         padding: 1rem !important;
         background: rgba(255, 255, 255, 0.05) !important;
         border-radius: 12px !important;
         display: flex !important;
-        align-items: center !important;
         gap: 1rem !important;
     }
     
-    /* ===== FORM ELEMENTS - CENTERED ===== */
+    /* FORMS */
     .form-group {
         margin-bottom: 1.2rem;
-        text-align: left;
         width: 100%;
     }
     
@@ -462,52 +428,34 @@ html {
         font-weight: 600;
         margin-bottom: 0.4rem;
         display: block;
-        text-align: left;
     }
     
     .form-group input,
     .form-group textarea,
     .form-group select {
         width: 100% !important;
-        max-width: 100% !important;
         font-size: 16px !important;
         padding: 0.9rem 1rem !important;
         border-radius: var(--radius-sm) !important;
-        height: auto !important;
         min-height: 48px !important;
         box-sizing: border-box !important;
         background: rgba(255, 255, 255, 0.05) !important;
         border: 2px solid rgba(255, 255, 255, 0.1) !important;
         color: white !important;
-        margin: 0 !important;
     }
     
-    /* DOB FIX */
     .form-group input[type="date"],
-    #authDOB,
-    input[type="date"] {
-        font-size: 16px !important;
-        padding: 0.9rem 1rem !important;
-        height: auto !important;
-        min-height: 48px !important;
+    #authDOB {
         max-height: 48px !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-        overflow: hidden !important;
     }
     
     .submit-btn {
         width: 100% !important;
-        max-width: 100% !important;
         padding: 1rem !important;
         font-size: 1rem !important;
         font-weight: 700 !important;
         border-radius: var(--radius-md) !important;
-        margin-top: 0.5rem !important;
-        margin-bottom: 0 !important;
         min-height: 50px !important;
-        box-sizing: border-box !important;
     }
     
     .submit-btn:active {
@@ -552,7 +500,7 @@ html {
         text-align: center;
     }
     
-    /* ===== MAP MODAL - FIXED ===== */
+    /* MAP MODAL */
     #mapModal {
         z-index: 100000 !important;
         padding: 0 !important;
@@ -560,19 +508,15 @@ html {
     
     #mapModal > div:first-child {
         height: 100vh !important;
-        max-height: 100vh !important;
         display: flex !important;
         flex-direction: column !important;
         padding: 0 !important;
         margin: 0 !important;
-        width: 100% !important;
     }
     
     #mapModal #map {
         flex: 1 !important;
         width: 100% !important;
-        height: auto !important;
-        min-height: 300px !important;
     }
     
     #mapModal > div:first-child > div:first-child {
@@ -594,12 +538,6 @@ html {
         border-top: 1px solid rgba(230, 57, 70, 0.3) !important;
     }
     
-    #mapModal > div:first-child > div:last-child > div:first-child {
-        text-align: center !important;
-        margin-bottom: 1rem !important;
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-    
     #mapModal > div:first-child > div:last-child > div:last-child {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -610,19 +548,14 @@ html {
         font-size: 0.95rem !important;
         padding: 1rem !important;
         min-height: 50px !important;
-        width: 100% !important;
         font-weight: 600 !important;
         border-radius: 12px !important;
-        border: none !important;
-        cursor: pointer !important;
     }
     
-    /* HIDE OWNER BUTTON - SECURITY */
+    /* HIDE OWNER BUTTON */
     #mobileOwnerBtn,
-    .mobile-owner-btn,
-    .owner-access-btn {
+    .mobile-owner-btn {
         display: none !important;
-        visibility: hidden !important;
     }
 }
 
@@ -640,63 +573,8 @@ html {
     }
 }
 
-@media (max-width: 896px) and (orientation: landscape) {
-    @media (max-width: 768px) {
-        .modal-content {
-            max-height: 85vh !important;
-        }
-    }
-}
-
 @media (min-width: 769px) and (max-width: 1024px) {
     .menu-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1rem;
-    }
-}
-
-@supports (padding: max(0px)) {
-    @media (max-width: 768px) {
-        .header {
-            padding-left: max(1rem, env(safe-area-inset-left));
-            padding-right: max(1rem, env(safe-area-inset-right));
-        }
-    }
-}
-
-
-/* ===== FIX: CLOSE BUTTONS ON MOBILE ===== */
-@media (max-width: 768px) {
-    .close-btn {
-        position: absolute !important;
-        top: 1rem !important;
-        right: 1rem !important;
-        width: 40px !important;
-        height: 40px !important;
-        z-index: 99999 !important;
-        pointer-events: auto !important;
-        cursor: pointer !important;
-        touch-action: manipulation !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-        border: none !important;
-        color: rgba(255, 255, 255, 0.7) !important;
-        font-size: 1.5rem !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-    
-    .close-btn:active {
-        background: rgba(255, 107, 107, 0.3) !important;
-        color: #fff !important;
-    }
-    
-    .modal {
-        pointer-events: auto !important;
-    }
-    
-    .modal-content {
-        pointer-events: auto !important;
     }
 }
