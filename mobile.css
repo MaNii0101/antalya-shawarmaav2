@@ -61,7 +61,7 @@ html {
         box-shadow: 0 -4px 20px rgba(0,0,0,0.6) !important;
     }
     
-    .mobile-nav-item {
+     .mobile-nav-item {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -70,10 +70,15 @@ html {
         border: none !important;
         padding: 6px 10px !important;
         cursor: pointer !important;
+        -webkit-appearance: button !important;
+        appearance: button !important;
         position: relative !important;
         min-width: 55px !important;
         border-radius: 8px !important;
         transition: background 0.2s !important;
+        -webkit-tap-highlight-color: rgba(230, 57, 70, 0.2) !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
     }
     
     .mobile-nav-item:active {

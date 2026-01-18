@@ -3109,7 +3109,10 @@ function pickLocation() {
 }
 
 function initMap() {
-    // If map already exists, restore marker and return
+    const mapContainer = document.getElementById('map');  // ← YOU FORGOT THIS!
+    if (!mapContainer || !window.google) return;
+    
+    // If map already exists, restore marker
     if (googleMap && deliveryMarker) {
         deliveryMarker.setMap(googleMap);
         if (selectedLocation) {
@@ -3120,28 +3123,21 @@ function initMap() {
     }
     
     const center = { lat: UK_CONFIG.restaurant.lat, lng: UK_CONFIG.restaurant.lng };
-    
-        const restaurantLocation = {
-        lat: 53.447830,  // UPDATED
-        lng: -2.076047   // UPDATED
-        };
+    const restaurantLocation = { lat: 53.447830, lng: -2.076047 };
 
-        googleMap = new google.maps.Map(mapContainer, {
+    googleMap = new google.maps.Map(mapContainer, {
         center: restaurantLocation,
         zoom: 15,
-
-        mapTypeId: 'hybrid', // Satellite with labels
+        mapTypeId: 'hybrid',
         mapTypeControl: true,
         mapTypeControlOptions: {
             style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
             position: google.maps.ControlPosition.TOP_RIGHT
         },
-        gestureHandling: 'greedy', // Single finger drag on mobile
+        gestureHandling: 'greedy',
         zoomControl: true,
         fullscreenControl: false,
         streetViewControl: false
-
-        
     });
     
     // Restaurant marker
@@ -3160,17 +3156,12 @@ function initMap() {
         }
     });
     
-// === NEW CLICK LISTENER (Fixes Pin & Adds Distance) ===
-    
-    // 1. Clear old listeners to prevent bugs
+    // Click listener
     google.maps.event.clearListeners(googleMap, 'click');
-
-    // 2. Add the new listener
     googleMap.addListener('click', (e) => {
         const lat = e.latLng.lat();
         const lng = e.latLng.lng();
         
-        // Update marker position
         if (deliveryMarker) {
             deliveryMarker.setPosition(e.latLng);
         } else {
@@ -3183,17 +3174,77 @@ function initMap() {
             });
         }
         
-   // Update selected location
-    selectedLocation = { lat, lng };
-    
-    // Calculate and show distance
-    updateDistanceInfo();
-    
-    // Center map on new location
-    googleMap.panTo(e.latLng);
-    
-    console.log('Location selected:', lat, lng);
+        selectedLocation = { lat, lng };
+        updateDistanceInfo();  // ← SHOWS DISTANCE
+        googleMap.panTo(e.latLng);
+        
+        console.log('Location selected:', lat, lng);
     });
+}
+
+// Calculate distance (Haversine formula)
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 3959;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Calculate time
+function calculateTime(distanceMiles) {
+    return Math.ceil((distanceMiles / 30) * 60);
+}
+
+// Show distance on map
+function updateDistanceInfo() {
+    if (!selectedLocation) return;
+    
+    const distance = calculateDistance(
+        UK_CONFIG.restaurant.lat,
+        UK_CONFIG.restaurant.lng,
+        selectedLocation.lat,
+        selectedLocation.lng
+    );
+    
+    const time = calculateTime(distance);
+    
+    let distanceInfo = document.getElementById('mapDistanceInfo');
+    if (!distanceInfo) {
+        distanceInfo = document.createElement('div');
+        distanceInfo.id = 'mapDistanceInfo';
+        distanceInfo.style.cssText = `
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 10, 0.95);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            z-index: 1000;
+            border: 2px solid rgba(230, 57, 70, 0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        `;
+        document.getElementById('map').parentElement.appendChild(distanceInfo);
+    }
+    
+    if (distance > 6) {
+        distanceInfo.innerHTML = `⚠️ ${distance.toFixed(1)} miles - TOO FAR!`;
+        distanceInfo.style.borderColor = '#ef4444';
+        distanceInfo.style.background = 'rgba(239, 68, 68, 0.2)';
+    } else {
+        distanceInfo.innerHTML = `📍 ${distance.toFixed(1)} miles • ⏱️ ${time} min`;
+        distanceInfo.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+        distanceInfo.style.background = 'rgba(10, 10, 10, 0.95)';
+    }
+    
+    distanceInfo.style.display = 'block';
 }
 
 // Variable to track if picking for profile
@@ -3319,7 +3370,7 @@ function confirmLocation() {
         return;
     }
     
-    // CHECK DISTANCE LIMIT
+    // CHECK 6-MILE LIMIT
     const distance = calculateDistance(
         UK_CONFIG.restaurant.lat,
         UK_CONFIG.restaurant.lng,
@@ -3328,7 +3379,7 @@ function confirmLocation() {
     );
     
     if (distance > 6) {
-        alert('⚠️ Sorry, you are ' + distance.toFixed(1) + ' miles away. We only deliver within 6 miles of the restaurant.');
+        alert('⚠️ Sorry, you are ' + distance.toFixed(1) + ' miles away. We only deliver within 6 miles.');
         return;
     }
 
