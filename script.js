@@ -4303,69 +4303,107 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// AUTO-HIDE NAVIGATION BAR FOR ALL MODALS
-// Works for login, signup, profile, owner, driver, restaurant
+// NAVIGATION BAR AUTO-HIDE
+// Hides nav bar when modals open
 // ============================================
 
-// Check if nav bar should be hidden
-function updateNavBarVisibility() {
-    const navBar = document.getElementById('mobileBottomNav');
-    if (!navBar) return;
+(function() {
+    // Function to check if any modal is open
+    function checkModalsAndHideNav() {
+        const modalIds = [
+            'loginModal',
+            'signupModal',
+            'authModal',
+            'editProfileModal',
+            'mapModal',
+            'ownerModal',
+            'restaurantLoginModal',
+            'driverLoginModal',
+            'driverManagementModal',
+            'driverDashboardModal',
+            'driverTrackingModal',
+            'ownerAccessModal'
+        ];
+        
+        let anyModalOpen = false;
+        
+        modalIds.forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal) {
+                const computedStyle = window.getComputedStyle(modal);
+                const display = computedStyle.display;
+                if (display !== 'none') {
+                    anyModalOpen = true;
+                }
+            }
+        });
+        
+        // Add or remove hide-nav class
+        if (anyModalOpen) {
+            document.body.classList.add('hide-nav');
+        } else {
+            document.body.classList.remove('hide-nav');
+        }
+    }
     
-    // List of all modal IDs
-    const modals = [
-        'loginModal',
-        'signupModal', 
-        'authModal',
-        'editProfileModal',
-        'mapModal',
-        'ownerModal',
-        'restaurantLoginModal',
-        'driverLoginModal',
-        'driverManagementModal',
-        'driverDashboardModal',
-        'driverTrackingModal'
-    ];
+    // Check every 200ms
+    setInterval(checkModalsAndHideNav, 200);
     
-    // Check if any modal is visible
-    let isAnyModalOpen = false;
-    modals.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            const display = window.getComputedStyle(modal).display;
-            if (display !== 'none') {
-                isAnyModalOpen = true;
+    // Also check on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', checkModalsAndHideNav);
+    } else {
+        checkModalsAndHideNav();
+    }
+    
+    console.log('✅ Navigation bar auto-hide activated');
+})();
+
+// ============================================
+// CONFIRM BUTTON FIX
+// Ensures confirm button always works
+// ============================================
+
+// Make confirmLocation globally accessible
+window.confirmLocation = confirmLocation;
+
+// Add backup click handler
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait for map modal to exist
+    setTimeout(function() {
+        const mapModal = document.getElementById('mapModal');
+        if (mapModal) {
+            // Find confirm button
+            const confirmBtn = mapModal.querySelector('button[onclick*="confirmLocation"]');
+            if (confirmBtn) {
+                // Add direct event listener as backup
+                confirmBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Confirm button clicked');
+                    if (typeof confirmLocation === 'function') {
+                        confirmLocation();
+                    } else if (typeof window.confirmLocation === 'function') {
+                        window.confirmLocation();
+                    }
+                }, true);
+                
+                // Also add touchend for mobile
+                confirmBtn.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Confirm button touched');
+                    if (typeof confirmLocation === 'function') {
+                        confirmLocation();
+                    } else if (typeof window.confirmLocation === 'function') {
+                        window.confirmLocation();
+                    }
+                }, true);
+                
+                console.log('✅ Confirm button backup handlers added');
             }
         }
-    });
-    
-    // Hide or show nav bar
-    if (isAnyModalOpen) {
-        navBar.style.transform = 'translateY(100%)';
-        navBar.style.pointerEvents = 'none';
-    } else {
-        navBar.style.transform = 'translateY(0)';
-        navBar.style.pointerEvents = 'auto';
-    }
-}
-
-// Watch for modal changes
-setInterval(updateNavBarVisibility, 100);
-
-// Also watch on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateNavBarVisibility();
-    
-    // Watch for style attribute changes on modals
-    const observer = new MutationObserver(updateNavBarVisibility);
-    
-    const modals = document.querySelectorAll('.modal, [id*="Modal"]');
-    modals.forEach(modal => {
-        observer.observe(modal, {
-            attributes: true,
-            attributeFilter: ['style']
-        });
-    });
+    }, 1000);
 });
 
-console.log('✅ Nav bar auto-hide enabled for all modals');
+console.log('✅ Map fixes loaded');
