@@ -4301,3 +4301,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// ============================================
+// AUTO-HIDE NAVIGATION BAR FOR ALL MODALS
+// Works for login, signup, profile, owner, driver, restaurant
+// ============================================
+
+// Check if nav bar should be hidden
+function updateNavBarVisibility() {
+    const navBar = document.getElementById('mobileBottomNav');
+    if (!navBar) return;
+    
+    // List of all modal IDs
+    const modals = [
+        'loginModal',
+        'signupModal', 
+        'authModal',
+        'editProfileModal',
+        'mapModal',
+        'ownerModal',
+        'restaurantLoginModal',
+        'driverLoginModal',
+        'driverManagementModal',
+        'driverDashboardModal',
+        'driverTrackingModal'
+    ];
+    
+    // Check if any modal is visible
+    let isAnyModalOpen = false;
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            const display = window.getComputedStyle(modal).display;
+            if (display !== 'none') {
+                isAnyModalOpen = true;
+            }
+        }
+    });
+    
+    // Hide or show nav bar
+    if (isAnyModalOpen) {
+        navBar.style.transform = 'translateY(100%)';
+        navBar.style.pointerEvents = 'none';
+    } else {
+        navBar.style.transform = 'translateY(0)';
+        navBar.style.pointerEvents = 'auto';
+    }
+}
+
+// Watch for modal changes
+setInterval(updateNavBarVisibility, 100);
+
+// Also watch on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateNavBarVisibility();
+    
+    // Watch for style attribute changes on modals
+    const observer = new MutationObserver(updateNavBarVisibility);
+    
+    const modals = document.querySelectorAll('.modal, [id*="Modal"]');
+    modals.forEach(modal => {
+        observer.observe(modal, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    });
+});
+
+console.log('✅ Nav bar auto-hide enabled for all modals');
