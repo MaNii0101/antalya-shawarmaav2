@@ -4407,3 +4407,50 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('✅ Map fixes loaded');
+
+
+// ADD THIS TO END OF script.js
+
+// Navigation bar hiding
+(function() {
+    const modals = [
+        'loginModal', 'signupModal', 'authModal', 'editProfileModal',
+        'mapModal', 'ownerModal', 'restaurantLoginModal',
+        'driverLoginModal', 'driverManagementModal', 
+        'driverDashboardModal', 'driverTrackingModal'
+    ];
+    
+    function checkModals() {
+        let anyOpen = false;
+        modals.forEach(id => {
+            const modal = document.getElementById(id);
+            if (modal && window.getComputedStyle(modal).display !== 'none') {
+                anyOpen = true;
+            }
+        });
+        
+        if (anyOpen) {
+            document.body.classList.add('modal-open');
+        } else {
+            document.body.classList.remove('modal-open');
+        }
+    }
+    
+    setInterval(checkModals, 100);
+    document.addEventListener('DOMContentLoaded', checkModals);
+})();
+
+// Confirm button fix
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const confirmBtn = document.querySelector('#mapModal button[onclick*="confirmLocation"]');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (typeof confirmLocation === 'function') {
+                    confirmLocation();
+                }
+            }, true);
+        }
+    }, 500);
+});
