@@ -4230,3 +4230,74 @@ function updateOwnerButtonVisibility() {
 // NEW MAP DISTANCE CALCULATOR FUNCTIONS
 // ==========================================
 
+const FULLSCREEN_MODALS = [
+    'mapModal',
+    'loginModal',
+    'signupModal',
+    'authModal',
+    'editProfileModal',
+    'ownerAccessModal',
+    'ownerDashboard'
+];
+
+// Override the existing showModal function to add body class
+const originalShowModal = window.showModal || function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+};
+
+window.showModal = function(modalId) {
+    // Call original function
+    originalShowModal(modalId);
+    
+    // Add modal-open class if it's a fullscreen modal
+    if (FULLSCREEN_MODALS.includes(modalId)) {
+        document.body.classList.add('modal-open');
+    }
+};
+
+// Override the existing closeModal function to remove body class
+const originalCloseModal = window.closeModal || function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+window.closeModal = function(modalId) {
+    // Call original function
+    originalCloseModal(modalId);
+    
+    // Remove modal-open class
+    document.body.classList.remove('modal-open');
+};
+
+// Also handle when modals are opened directly without showModal()
+document.addEventListener('DOMContentLoaded', function() {
+    // Watch for modal display changes
+    FULLSCREEN_MODALS.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            // Create a MutationObserver to watch for style changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'style') {
+                        const display = window.getComputedStyle(modal).display;
+                        if (display !== 'none') {
+                            document.body.classList.add('modal-open');
+                        } else {
+                            document.body.classList.remove('modal-open');
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(modal, {
+                attributes: true,
+                attributeFilter: ['style']
+            });
+        }
+    });
+});
