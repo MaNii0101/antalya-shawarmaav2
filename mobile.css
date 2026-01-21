@@ -596,7 +596,7 @@ html {
     /* Distance badge */
     #mapDistanceInfo {
         position: absolute !important;
-        top: 540px !important;
+        top: 475px !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
         background: rgba(10,10,10,0.95) !important;
