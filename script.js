@@ -3115,6 +3115,39 @@ function loginWithApple() {
 }
 
 // ========================================
+// DELIVERY COST CALCULATOR
+// ========================================
+function getDeliveryCost(distanceMiles) {
+    if (distanceMiles > 6) {
+        return {
+            available: false,
+            cost: 0,
+            message: '⚠️ Location is outside delivery range (max 6 miles)'
+        };
+    }
+    
+    if (distanceMiles <= 1) {
+        return {
+            available: true,
+            cost: 0,
+            message: '✅ FREE delivery'
+        };
+    } else if (distanceMiles <= 3) {
+        return {
+            available: true,
+            cost: 3.99,
+            message: `✅ ${formatPrice(3.99)} delivery • ${calculateTime(distanceMiles)} mins`
+        };
+    } else {
+        return {
+            available: true,
+            cost: 5.99,
+            message: `✅ ${formatPrice(5.99)} delivery • ${calculateTime(distanceMiles)} mins`
+        };
+    }
+}
+
+// ========================================
 // LOCATION FUNCTIONS
 // ========================================
 function pickLocation() {
@@ -3311,7 +3344,7 @@ function confirmLocation() {
     }
     
     // CHECK 6-MILE LIMIT
-   const distance = calculateDistance(
+    const distance = calculateDistance(
         UK_CONFIG.restaurant.lat,
         UK_CONFIG.restaurant.lng,
         selectedLocation.lat,
