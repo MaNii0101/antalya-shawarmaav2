@@ -4473,17 +4473,81 @@ console.log('✅ Map fixes loaded');
     document.addEventListener('DOMContentLoaded', checkModals);
 })();
 
-// Confirm button fix
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        const confirmBtn = document.querySelector('#mapModal button[onclick*="confirmLocation"]');
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (typeof confirmLocation === 'function') {
-                    confirmLocation();
+(function() {
+    'use strict';
+    
+    const NAV_BAR_ID = 'mobileBottomNav';
+    const MODAL_SELECTORS = [
+        '#loginModal',
+        '#signupModal',
+        '#authModal',
+        '#editProfileModal',
+        '#mapModal',
+        '#ownerModal',
+        '#ownerAccessModal',
+        '#restaurantLoginModal',
+        '#driverLoginModal',
+        '#driverManagementModal',
+        '#driverDashboardModal',
+        '#driverTrackingModal',
+        '#foodItemModal',
+        '.modal'
+    ];
+    
+    function isAnyModalOpen() {
+        for (let selector of MODAL_SELECTORS) {
+            const modals = document.querySelectorAll(selector);
+            for (let modal of modals) {
+                const style = window.getComputedStyle(modal);
+                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                    return true;
                 }
-            }, true);
+            }
         }
+        return false;
+    }
+    
+    function updateNavBarVisibility() {
+        const navBar = document.getElementById(NAV_BAR_ID);
+        if (!navBar) return;
+        
+        if (isAnyModalOpen()) {
+            document.body.classList.add('modal-open');
+            navBar.style.transform = 'translateY(100%)';
+            navBar.style.opacity = '0';
+            navBar.style.pointerEvents = 'none';
+        } else {
+            document.body.classList.remove('modal-open');
+            navBar.style.transform = 'translateY(0)';
+            navBar.style.opacity = '1';
+            navBar.style.pointerEvents = 'auto';
+        }
+    }
+    
+    // Check every 100ms (fast enough to catch modal opens)
+    setInterval(updateNavBarVisibility, 100);
+    
+    // Also check immediately on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateNavBarVisibility);
+    } else {
+        updateNavBarVisibility();
+    }
+    
+    // Watch for attribute changes on modals
+    const observer = new MutationObserver(updateNavBarVisibility);
+    
+    setTimeout(() => {
+        MODAL_SELECTORS.forEach(selector => {
+            const modals = document.querySelectorAll(selector);
+            modals.forEach(modal => {
+                observer.observe(modal, {
+                    attributes: true,
+                    attributeFilter: ['style', 'class']
+                });
+            });
+        });
     }, 500);
-});
+    
+    console.log('✅ Navigation bar auto-hide enabled');
+})();
