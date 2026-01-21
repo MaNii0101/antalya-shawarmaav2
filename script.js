@@ -702,7 +702,7 @@ function updateDistanceInfo() {
         distanceInfo.style.borderColor = '#ef4444';
         distanceInfo.style.background = 'rgba(239, 68, 68, 0.2)';
     } else {
-        distanceInfo.innerHTML = `📍 ${distance.toFixed(1)} miles away • ⏱️ ${time} min delivery`;
+        distanceInfo.innerHTML = `📍 ${distance.toFixed(1)} miles away  ⏱️ ${time} min delivery`;
         distanceInfo.style.borderColor = 'rgba(16, 185, 129, 0.5)';
         distanceInfo.style.background = 'rgba(10, 10, 10, 0.95)';
     }
