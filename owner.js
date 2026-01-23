@@ -161,6 +161,11 @@ function showRestaurantDashboard() {
         if (mobileNav) mobileNav.style.cssText = 'display: none !important;';
         if (header) header.style.cssText = 'display: none !important;';
     }
+    
+    // Update additional restaurant stats
+    if (typeof updateRestaurantStats === 'function') {
+        updateRestaurantStats();
+    }
 }
 
 function acceptOrder(orderId) {
@@ -839,12 +844,49 @@ function updateOwnerStats() {
     const totalUsers = userDatabase.length;
     const totalDrivers = window.driverSystem.getAll().length;
     
-    document.getElementById('revenueStat').textContent = formatPrice(totalRevenue);
-    document.getElementById('ordersStat').textContent = totalOrders;
-    document.getElementById('pendingStat').textContent = pendingCount;
-    document.getElementById('usersStat').textContent = totalUsers;
-    document.getElementById('driverCountStat').textContent = totalDrivers;
-    document.getElementById('driversRegisteredText').textContent = `${totalDrivers} drivers registered`;
+    // Main stats
+    const revenueEl = document.getElementById('revenueStat');
+    const ordersEl = document.getElementById('ordersStat');
+    const pendingEl = document.getElementById('pendingStat');
+    const usersEl = document.getElementById('usersStat');
+    const driverCountEl = document.getElementById('driverCountStat');
+    const driversTextEl = document.getElementById('driversRegisteredText');
+    
+    if (revenueEl) revenueEl.textContent = formatPrice(totalRevenue);
+    if (ordersEl) ordersEl.textContent = totalOrders;
+    if (pendingEl) pendingEl.textContent = pendingCount;
+    if (usersEl) usersEl.textContent = totalUsers;
+    if (driverCountEl) driverCountEl.textContent = totalDrivers;
+    if (driversTextEl) driversTextEl.textContent = totalDrivers + ' registered';
+    
+    // Today's stats
+    const today = new Date().toDateString();
+    const todayOrders = [...pendingOrders, ...orderHistory].filter(o => {
+        const orderDate = new Date(o.createdAt);
+        return orderDate.toDateString() === today;
+    });
+    
+    const todayRevenue = todayOrders.reduce((sum, o) => sum + o.total, 0);
+    const avgOrderVal = todayOrders.length > 0 ? todayRevenue / todayOrders.length : 0;
+    
+    // Count new users today (simplified - just show total for now)
+    const newUsersToday = userDatabase.filter(u => {
+        if (!u.createdAt) return false;
+        const userDate = new Date(u.createdAt);
+        return userDate.toDateString() === today;
+    }).length;
+    
+    const todayRevenueEl = document.getElementById('todayRevenue');
+    const todayOrdersEl = document.getElementById('todayOrders');
+    const avgOrderEl = document.getElementById('avgOrderValue');
+    const newCustomersEl = document.getElementById('newCustomers');
+    const avgRatingEl = document.getElementById('avgRatingStat');
+    
+    if (todayRevenueEl) todayRevenueEl.textContent = formatPrice(todayRevenue);
+    if (todayOrdersEl) todayOrdersEl.textContent = todayOrders.length;
+    if (avgOrderEl) avgOrderEl.textContent = formatPrice(avgOrderVal);
+    if (newCustomersEl) newCustomersEl.textContent = newUsersToday;
+    if (avgRatingEl) avgRatingEl.textContent = '5.0'; // Placeholder - can be calculated from reviews
 }
 
 // ========================================

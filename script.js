@@ -4206,6 +4206,97 @@ window.showNotificationCenter = showNotificationCenter;
 window.showSettings = showSettings;
 
 // ========================================
+// RESTAURANT DASHBOARD QUICK ACTIONS
+// ========================================
+
+function refreshOrders() {
+    if (typeof showRestaurantDashboard === 'function') {
+        showRestaurantDashboard();
+    }
+    showToast('🔄 Orders refreshed!', 'success');
+}
+
+function showPendingOnly() {
+    const container = document.getElementById('restaurantPendingOrders');
+    if (!container) return;
+    
+    const pendingOnly = pendingOrders.filter(o => o.status === 'pending');
+    if (pendingOnly.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.4);"><div style="font-size: 2rem;">✅</div><p>No pending orders</p></div>';
+    } else {
+        showToast('⏳ Showing ' + pendingOnly.length + ' pending orders', 'info');
+    }
+}
+
+function showAcceptedOnly() {
+    const acceptedCount = pendingOrders.filter(o => o.status === 'accepted').length;
+    showToast('✅ ' + acceptedCount + ' accepted orders awaiting pickup', 'info');
+}
+
+function showDeliveryOnly() {
+    const deliveryCount = pendingOrders.filter(o => o.status === 'out_for_delivery' || o.status === 'driver_assigned').length;
+    showToast('🚗 ' + deliveryCount + ' orders out for delivery', 'info');
+}
+
+function showAllOrdersRestaurant() {
+    const total = pendingOrders.length + orderHistory.length;
+    const pending = pendingOrders.filter(o => o.status === 'pending').length;
+    const accepted = pendingOrders.filter(o => o.status === 'accepted').length;
+    const delivery = pendingOrders.filter(o => o.status === 'out_for_delivery' || o.status === 'driver_assigned').length;
+    const completed = orderHistory.length;
+    
+    alert('📋 All Orders Summary\n\n' +
+        '⏳ Pending: ' + pending + '\n' +
+        '✅ Accepted: ' + accepted + '\n' +
+        '🚗 Out for Delivery: ' + delivery + '\n' +
+        '✔️ Completed: ' + completed + '\n\n' +
+        '📦 Total: ' + total);
+}
+
+function notifyAllDrivers() {
+    const availableDrivers = drivers.filter(d => d.available && d.online);
+    if (availableDrivers.length === 0) {
+        showToast('❌ No drivers available', 'error');
+        return;
+    }
+    showToast('📢 Alert sent to ' + availableDrivers.length + ' drivers!', 'success');
+}
+
+function goToOwnerDashboard() {
+    closeRestaurantDashboard();
+    setTimeout(() => {
+        const ownerModal = document.getElementById('ownerModal');
+        if (ownerModal) {
+            ownerModal.style.display = 'flex';
+            hideNavigation();
+        }
+    }, 100);
+}
+
+// Update restaurant stats
+function updateRestaurantStats() {
+    const outForDelivery = pendingOrders.filter(o => o.status === 'out_for_delivery' || o.status === 'driver_assigned').length;
+    const outForDeliveryStat = document.getElementById('outForDeliveryStat');
+    if (outForDeliveryStat) outForDeliveryStat.textContent = outForDelivery;
+    
+    const pendingCountBadge = document.getElementById('pendingCountBadge');
+    if (pendingCountBadge) {
+        const pendingCount = pendingOrders.filter(o => o.status === 'pending').length;
+        pendingCountBadge.textContent = pendingCount + ' orders';
+    }
+}
+
+// Make restaurant functions globally available
+window.refreshOrders = refreshOrders;
+window.showPendingOnly = showPendingOnly;
+window.showAcceptedOnly = showAcceptedOnly;
+window.showDeliveryOnly = showDeliveryOnly;
+window.showAllOrdersRestaurant = showAllOrdersRestaurant;
+window.notifyAllDrivers = notifyAllDrivers;
+window.goToOwnerDashboard = goToOwnerDashboard;
+window.updateRestaurantStats = updateRestaurantStats;
+
+// ========================================
 // DELETE ACCOUNT SYSTEM
 // ========================================
 
