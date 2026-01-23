@@ -4458,3 +4458,29 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 console.log('✅ Antalya Shawarma script loaded successfully');
+
+// FIX: Star rating click handlers
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('#starRating span');
+    stars.forEach((star, index) => {
+        star.style.cursor = 'pointer';
+        star.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const rating = index + 1;
+            selectedRating = rating;
+            document.getElementById('reviewRating').value = rating;
+            
+            // Update display
+            stars.forEach((s, i) => {
+                if (i < rating) {
+                    s.textContent = '⭐';
+                    s.style.transform = 'scale(1.1)';
+                } else {
+                    s.textContent = '☆';
+                    s.style.transform = 'scale(1)';
+                }
+            });
+        });
+    });
+});
