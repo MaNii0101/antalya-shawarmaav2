@@ -341,7 +341,7 @@
                     <div class="form-group" id="addressGroup" style="display: none;">
                         <label>Delivery Location *</label>
                         <input type="text" id="authAddress" class="form-input" placeholder="Click to select on map" readonly>
-                        <button type="button" class="submit-btn" onclick="pickLocation()" style="margin-top: 0.5rem; background: linear-gradient(45deg, #3b82f6, #2563eb);">📍 Pick Location on Map</button>
+                        <button type="button" class="submit-btn" onclick="pickLocation()" style="margin-top: 0.5rem; background: linear-gradient(45deg, #f59e0b, #d97706) !important;">📍 Pick Location on Map</button>
                     </div>
                     <button type="submit" class="submit-btn" id="authSubmitBtn" style="background: linear-gradient(45deg, #ff6b6b, #ee5a6f);">Login</button>
                 </form>
@@ -486,7 +486,7 @@
     <!-- OWNER DASHBOARD -->
     <div id="ownerDashboard" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; overflow-y: auto; padding: 2rem;">
         <div style="max-width: 1200px; margin: 0 auto; position: relative;">
-            <button onclick="document.getElementById('ownerDashboard').style.display = 'none';" style="position: fixed; top: 2rem; right: 2rem; background: #ff4444; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.8rem; cursor: pointer; z-index: 10001;">×</button>
+            <button onclick="closeOwnerDashboard()" style="position: fixed; top: 2rem; right: 2rem; background: #ff4444; color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.8rem; cursor: pointer; z-index: 10001;">×</button>
             
             <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 3rem; border-radius: 20px; text-align: center; color: white; margin-bottom: 2rem;">
                 <img src="logo.png" alt="Antalya Shawarma" style="height: 80px; width: auto; margin-bottom: 1rem;">
@@ -494,35 +494,42 @@
                 <p style="margin: 1rem 0 0; font-size: 1.2rem; opacity: 0.95;">Full System Access & Control Panel</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💰</div>
-                    <div id="revenueStat" style="font-size: 2rem; font-weight: 700;">£0.00</div>
-                    <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Total Revenue</div>
+            <!-- NEW STATS - Name Above Count -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Total Revenue</div>
+                    <div id="revenueStat" style="font-size: 1.6rem; font-weight: 800;">£0.00</div>
                 </div>
                 
-                <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📦</div>
-                    <div id="ordersStat" style="font-size: 2rem; font-weight: 700;">0</div>
-                    <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Total Orders</div>
+                <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Total Orders</div>
+                    <div id="ordersStat" style="font-size: 1.6rem; font-weight: 800;">0</div>
                 </div>
                 
-                <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏳</div>
-                    <div id="pendingStat" style="font-size: 2rem; font-weight: 700;">0</div>
-                    <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Pending</div>
+                <div style="background: linear-gradient(135deg, #f59e0b, #d97706); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Pending</div>
+                    <div id="pendingStat" style="font-size: 1.6rem; font-weight: 800;">0</div>
                 </div>
                 
-                <div style="background: linear-gradient(135deg, #ec4899, #db2777); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👥</div>
-                    <div id="usersStat" style="font-size: 2rem; font-weight: 700;">0</div>
-                    <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Users</div>
+                <div style="background: linear-gradient(135deg, #ec4899, #db2777); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Users</div>
+                    <div id="usersStat" style="font-size: 1.6rem; font-weight: 800;">0</div>
                 </div>
                 
-                <div style="background: linear-gradient(135deg, #14b8a6, #0d9488); padding: 2rem; border-radius: 15px; text-align: center; color: white;">
-                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚗</div>
-                    <div id="driverCountStat" style="font-size: 2rem; font-weight: 700;">3</div>
-                    <div style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Drivers</div>
+                <div style="background: linear-gradient(135deg, #14b8a6, #0d9488); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚗</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Drivers</div>
+                    <div id="driverCountStat" style="font-size: 1.6rem; font-weight: 800;">3</div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); padding: 1.5rem 1rem; border-radius: 15px; text-align: center; color: white;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">⭐</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 0.3rem;">Avg Rating</div>
+                    <div id="avgRatingStat" style="font-size: 1.6rem; font-weight: 800;">5.0</div>
                 </div>
             </div>
             
@@ -550,6 +557,80 @@
                     <span>Restaurant Dashboard</span>
                     <span style="font-size: 0.85rem; opacity: 0.9; font-weight: 400;">Order management</span>
                 </button>
+            </div>
+            
+            <!-- NEW: Quick Actions Grid - Desktop Style -->
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="color: #8b5cf6; margin: 0 0 1.5rem 0; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Quick Actions</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <button onclick="showAllOrders()" style="padding: 1.2rem; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">📋</span>
+                        <span>All Orders</span>
+                    </button>
+                    <button onclick="showAllUsers()" style="padding: 1.2rem; background: rgba(236,72,153,0.15); color: #ec4899; border: 1px solid rgba(236,72,153,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">👥</span>
+                        <span>All Users</span>
+                    </button>
+                    <button onclick="showAllReviews()" style="padding: 1.2rem; background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">⭐</span>
+                        <span>Reviews</span>
+                    </button>
+                    <button onclick="showAnalytics()" style="padding: 1.2rem; background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">📊</span>
+                        <span>Analytics</span>
+                    </button>
+                    <button onclick="showNotificationCenter()" style="padding: 1.2rem; background: rgba(139,92,246,0.15); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">🔔</span>
+                        <span>Notifications</span>
+                    </button>
+                    <button onclick="showSettings()" style="padding: 1.2rem; background: rgba(107,114,128,0.15); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.8rem;">⚙️</span>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- NEW: Today's Summary Card -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 1.5rem;">
+                    <h3 style="color: #3b82f6; margin: 0 0 1rem 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">📅 Today's Summary</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="background: rgba(16,185,129,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.3rem;">Revenue</div>
+                            <div id="todayRevenue" style="font-size: 1.4rem; font-weight: 700; color: #10b981;">£0.00</div>
+                        </div>
+                        <div style="background: rgba(59,130,246,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.3rem;">Orders</div>
+                            <div id="todayOrders" style="font-size: 1.4rem; font-weight: 700; color: #3b82f6;">0</div>
+                        </div>
+                        <div style="background: rgba(245,158,11,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.3rem;">Avg Order</div>
+                            <div id="avgOrderValue" style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">£0.00</div>
+                        </div>
+                        <div style="background: rgba(236,72,153,0.1); padding: 1rem; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.3rem;">New Users</div>
+                            <div id="newCustomers" style="font-size: 1.4rem; font-weight: 700; color: #ec4899;">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 1.5rem;">
+                    <h3 style="color: #f59e0b; margin: 0 0 1rem 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">🔥 Popular Items</h3>
+                    <div id="popularItemsList" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <span>🌯 Mix Grill Wrap</span>
+                            <span style="color: #10b981; font-weight: 600;">23 sold</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <span>🍖 Chicken Portion</span>
+                            <span style="color: #10b981; font-weight: 600;">18 sold</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <span>🥙 Lamb Kebab</span>
+                            <span style="color: #10b981; font-weight: 600;">15 sold</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div style="background: rgba(16,185,129,0.15); border: 2px solid #10b981; padding: 2.5rem; border-radius: 15px; text-align: center;">
@@ -1293,9 +1374,6 @@
     <script src="owner.js?v=3.0"></script>
     <script src="driver.js?v=3.0"></script>
     <script src="utils.js?v=3.0"></script>
-    <script src="mobile-fixes.js"></script>
-    <script src="mobile-organize.js"></script>
-    
     <script>
         // Card field toggle
         function toggleCardFields() {

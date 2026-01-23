@@ -173,17 +173,6 @@ const RESTAURANT_CREDENTIALS = {
     password: 'staff2024'
 };
 
-
-
-// Security: Input Sanitization
-function sanitizeInput(input) {
-    if (typeof input !== 'string') return input;
-    return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                .replace(/javascript:/gi, '')
-                .replace(/on\w+\s*=/gi, '')
-                .trim();
-}
-
 // Session Protection
 // Generate session token
 const SESSION_TOKEN = 'ast_' + Math.random().toString(36).substr(2, 16) + Date.now().toString(36);
@@ -3444,6 +3433,9 @@ function closeModal(modalId) {
         
         // Re-enable body scrolling
         document.body.style.overflow = '';
+        
+        // SHOW NAVIGATION (if no other modals open)
+        setTimeout(showNavigation, 50);
     } catch (e) {
         console.error('Error closing modal:', e);
     }
@@ -3457,8 +3449,54 @@ function openModal(modalId) {
         // Show modal - both class and inline style for consistency  
         modal.style.display = 'flex';
         modal.classList.add('active');
+        
+        // HIDE NAVIGATION
+        hideNavigation();
     } catch (e) {
         console.error('Error opening modal:', e);
+    }
+}
+
+// Helper function to hide navigation
+function hideNavigation() {
+    document.body.classList.add('modal-open');
+    const mobileNav = document.querySelector('.mobile-bottom-nav');
+    const header = document.querySelector('.header');
+    if (mobileNav) {
+        mobileNav.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
+    }
+    if (header) {
+        header.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
+    }
+}
+
+// Helper function to show navigation
+function showNavigation() {
+    // Check if any modal is still open
+    let anyModalOpen = false;
+    document.querySelectorAll('.modal').forEach(m => {
+        const style = window.getComputedStyle(m);
+        if (style.display !== 'none' && style.visibility !== 'hidden') {
+            anyModalOpen = true;
+        }
+    });
+    
+    // Also check dashboards
+    const ownerDash = document.getElementById('ownerDashboard');
+    const restDash = document.getElementById('restaurantDashboard');
+    if (ownerDash && ownerDash.style.display !== 'none') anyModalOpen = true;
+    if (restDash && restDash.style.display !== 'none') anyModalOpen = true;
+    
+    if (!anyModalOpen) {
+        document.body.classList.remove('modal-open');
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
+        const header = document.querySelector('.header');
+        if (mobileNav) {
+            mobileNav.style.cssText = '';
+        }
+        if (header) {
+            header.style.cssText = '';
+        }
     }
 }
 
@@ -3501,6 +3539,7 @@ function handleOwnerLogin() {
 
     closeModal('ownerModal');
     document.getElementById('ownerDashboard').style.display = 'block';
+    hideNavigation(); // Hide navigation when dashboard opens
     updateOwnerStats();
     
     alert('✅ Owner access granted!');
@@ -4113,9 +4152,58 @@ function deleteOwnerReply(reviewId, replyIndex) {
 function showOwnerDashboardDirect() {
     if (isOwnerLoggedIn) {
         document.getElementById('ownerDashboard').style.display = 'block';
+        hideNavigation(); // Hide navigation when dashboard opens
         updateOwnerStats();
     }
 }
+
+// Close owner dashboard and show navigation
+function closeOwnerDashboard() {
+    document.getElementById('ownerDashboard').style.display = 'none';
+    showNavigation();
+}
+
+// Make closeOwnerDashboard globally available
+window.closeOwnerDashboard = closeOwnerDashboard;
+
+// Quick Action Functions for Owner Dashboard
+function showAllOrders() {
+    alert('📋 All Orders\n\nTotal Orders: ' + (orderHistory.length + pendingOrders.length) + '\nPending: ' + pendingOrders.length + '\nCompleted: ' + orderHistory.length);
+}
+
+function showAllUsers() {
+    alert('👥 All Users\n\nTotal Registered Users: ' + userDatabase.length + '\n\nUse the Reset Data Options to manage user accounts.');
+}
+
+function showAllReviews() {
+    closeOwnerDashboard();
+    setTimeout(() => {
+        const reviewSection = document.querySelector('.social-footer');
+        if (reviewSection) reviewSection.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+}
+
+function showAnalytics() {
+    const totalRevenue = orderHistory.reduce((sum, o) => sum + o.total, 0);
+    const avgOrder = orderHistory.length > 0 ? totalRevenue / orderHistory.length : 0;
+    alert('📊 Analytics Summary\n\n💰 Total Revenue: ' + formatPrice(totalRevenue) + '\n📦 Total Orders: ' + orderHistory.length + '\n📈 Avg Order Value: ' + formatPrice(avgOrder) + '\n👥 Total Users: ' + userDatabase.length);
+}
+
+function showNotificationCenter() {
+    alert('🔔 Notification Center\n\nNo new system notifications.\n\nCustomer notifications are managed through the order system.');
+}
+
+function showSettings() {
+    alert('⚙️ Settings\n\nRestaurant: ' + UK_CONFIG.restaurant.name + '\nAddress: ' + UK_CONFIG.restaurant.address + '\nPhone: ' + UK_CONFIG.restaurant.phone + '\n\nHours: 11:00 AM - 11:00 PM\nLast Orders: 10:30 PM\nMax Delivery: ' + UK_CONFIG.maxDeliveryDistance + ' miles');
+}
+
+// Make functions globally available
+window.showAllOrders = showAllOrders;
+window.showAllUsers = showAllUsers;
+window.showAllReviews = showAllReviews;
+window.showAnalytics = showAnalytics;
+window.showNotificationCenter = showNotificationCenter;
+window.showSettings = showSettings;
 
 // ========================================
 // DELETE ACCOUNT SYSTEM
@@ -4260,294 +4348,22 @@ function updateOwnerButtonVisibility() {
 }
 
 // ==========================================
-// NEW MAP DISTANCE CALCULATOR FUNCTIONS
+// CONFIRM BUTTON FIX - Map Location
 // ==========================================
-
-const FULLSCREEN_MODALS = [
-    'mapModal',
-    'loginModal',
-    'signupModal',
-    'authModal',
-    'editProfileModal',
-    'ownerAccessModal',
-    'ownerDashboard'
-];
-
-// Override the existing showModal function to add body class
-const originalShowModal = window.showModal || function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'flex';
-    }
-};
-
-window.showModal = function(modalId) {
-    // Call original function
-    originalShowModal(modalId);
-    
-    // Add modal-open class if it's a fullscreen modal
-    if (FULLSCREEN_MODALS.includes(modalId)) {
-        document.body.classList.add('modal-open');
-    }
-};
-
-// Override the existing closeModal function to remove body class
-const originalCloseModal = window.closeModal || function(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
-};
-
-window.closeModal = function(modalId) {
-    // Call original function
-    originalCloseModal(modalId);
-    
-    // Remove modal-open class
-    document.body.classList.remove('modal-open');
-};
-
-// Also handle when modals are opened directly without showModal()
-document.addEventListener('DOMContentLoaded', function() {
-    // Watch for modal display changes
-    FULLSCREEN_MODALS.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            // Create a MutationObserver to watch for style changes
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.attributeName === 'style') {
-                        const display = window.getComputedStyle(modal).display;
-                        if (display !== 'none') {
-                            document.body.classList.add('modal-open');
-                        } else {
-                            document.body.classList.remove('modal-open');
-                        }
-                    }
-                });
-            });
-            
-            observer.observe(modal, {
-                attributes: true,
-                attributeFilter: ['style']
-            });
-        }
-    });
-});
-
-// ============================================
-// NAVIGATION BAR AUTO-HIDE
-// Hides nav bar when modals open
-// ============================================
-
-(function() {
-    // Function to check if any modal is open
-    function checkModalsAndHideNav() {
-        const modalIds = [
-            'loginModal',
-            'signupModal',
-            'authModal',
-            'editProfileModal',
-            'mapModal',
-            'ownerModal',
-            'restaurantLoginModal',
-            'driverLoginModal',
-            'driverManagementModal',
-            'driverDashboardModal',
-            'driverTrackingModal',
-            'ownerAccessModal'
-        ];
-        
-        let anyModalOpen = false;
-        
-        modalIds.forEach(id => {
-            const modal = document.getElementById(id);
-            if (modal) {
-                const computedStyle = window.getComputedStyle(modal);
-                const display = computedStyle.display;
-                if (display !== 'none') {
-                    anyModalOpen = true;
-                }
-            }
-        });
-        
-        // Add or remove hide-nav class
-        if (anyModalOpen) {
-            document.body.classList.add('hide-nav');
-        } else {
-            document.body.classList.remove('hide-nav');
-        }
-    }
-    
-    // Check every 200ms
-    setInterval(checkModalsAndHideNav, 200);
-    
-    // Also check on page load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', checkModalsAndHideNav);
-    } else {
-        checkModalsAndHideNav();
-    }
-    
-    console.log('✅ Navigation bar auto-hide activated');
-})();
-
-// ============================================
-// CONFIRM BUTTON FIX
-// Ensures confirm button always works
-// ============================================
-
-// Make confirmLocation globally accessible
 window.confirmLocation = confirmLocation;
 
-// Add backup click handler
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait for map modal to exist
     setTimeout(function() {
-        const mapModal = document.getElementById('mapModal');
-        if (mapModal) {
-            // Find confirm button
-            const confirmBtn = mapModal.querySelector('button[onclick*="confirmLocation"]');
-            if (confirmBtn) {
-                // Add direct event listener as backup
-                confirmBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Confirm button clicked');
-                    if (typeof confirmLocation === 'function') {
-                        confirmLocation();
-                    } else if (typeof window.confirmLocation === 'function') {
-                        window.confirmLocation();
-                    }
-                }, true);
-                
-                // Also add touchend for mobile
-                confirmBtn.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Confirm button touched');
-                    if (typeof confirmLocation === 'function') {
-                        confirmLocation();
-                    } else if (typeof window.confirmLocation === 'function') {
-                        window.confirmLocation();
-                    }
-                }, true);
-                
-                console.log('✅ Confirm button backup handlers added');
-            }
+        const confirmBtn = document.querySelector('#mapModal button[onclick*="confirmLocation"]');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (typeof confirmLocation === 'function') {
+                    confirmLocation();
+                }
+            }, true);
         }
-    }, 1000);
+    }, 500);
 });
 
-console.log('✅ Map fixes loaded');
-
-
-// ADD THIS TO END OF script.js
-
-// Navigation bar hiding
-(function() {
-    const modals = [
-        'loginModal', 'signupModal', 'authModal', 'editProfileModal',
-        'mapModal', 'ownerModal', 'restaurantLoginModal',
-        'driverLoginModal', 'driverManagementModal', 
-        'driverDashboardModal', 'driverTrackingModal'
-    ];
-    
-    function checkModals() {
-        let anyOpen = false;
-        modals.forEach(id => {
-            const modal = document.getElementById(id);
-            if (modal && window.getComputedStyle(modal).display !== 'none') {
-                anyOpen = true;
-            }
-        });
-        
-        if (anyOpen) {
-            document.body.classList.add('modal-open');
-        } else {
-            document.body.classList.remove('modal-open');
-        }
-    }
-    
-    setInterval(checkModals, 100);
-    document.addEventListener('DOMContentLoaded', checkModals);
-})();
-
-(function() {
-    'use strict';
-    
-    const NAV_BAR_ID = 'mobileBottomNav';
-    const MODAL_SELECTORS = [
-        '#loginModal',
-        '#signupModal',
-        '#authModal',
-        '#editProfileModal',
-        '#mapModal',
-        '#ownerModal',
-        '#ownerAccessModal',
-        '#restaurantLoginModal',
-        '#driverLoginModal',
-        '#driverManagementModal',
-        '#driverDashboardModal',
-        '#driverTrackingModal',
-        '#foodItemModal',
-        '.modal'
-    ];
-    
-    function isAnyModalOpen() {
-        for (let selector of MODAL_SELECTORS) {
-            const modals = document.querySelectorAll(selector);
-            for (let modal of modals) {
-                const style = window.getComputedStyle(modal);
-                if (style.display !== 'none' && style.visibility !== 'hidden') {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    function updateNavBarVisibility() {
-        const navBar = document.getElementById(NAV_BAR_ID);
-        if (!navBar) return;
-        
-        if (isAnyModalOpen()) {
-            document.body.classList.add('modal-open');
-            navBar.style.transform = 'translateY(100%)';
-            navBar.style.opacity = '0';
-            navBar.style.pointerEvents = 'none';
-        } else {
-            document.body.classList.remove('modal-open');
-            navBar.style.transform = 'translateY(0)';
-            navBar.style.opacity = '1';
-            navBar.style.pointerEvents = 'auto';
-        }
-    }
-    
-    // Check every 100ms (fast enough to catch modal opens)
-    setInterval(updateNavBarVisibility, 100);
-    
-    // Also check immediately on page load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateNavBarVisibility);
-    } else {
-        updateNavBarVisibility();
-    }
-    
-    // Watch for attribute changes on modals
-    const observer = new MutationObserver(updateNavBarVisibility);
-    
-    setTimeout(() => {
-        MODAL_SELECTORS.forEach(selector => {
-            const modals = document.querySelectorAll(selector);
-            modals.forEach(modal => {
-                observer.observe(modal, {
-                    attributes: true,
-                    attributeFilter: ['style', 'class']
-                });
-            });
-        });
-    }, 500);
-    
-    console.log('✅ Navigation bar auto-hide enabled');
-})();
+console.log('✅ Antalya Shawarma script loaded successfully');

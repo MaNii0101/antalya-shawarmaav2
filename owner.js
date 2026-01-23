@@ -150,6 +150,17 @@ function showRestaurantDashboard() {
     }
     
     modal.style.display = 'block';
+    
+    // Hide navigation when dashboard opens
+    if (typeof hideNavigation === 'function') {
+        hideNavigation();
+    } else {
+        // Fallback if hideNavigation not available
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
+        const header = document.querySelector('.header');
+        if (mobileNav) mobileNav.style.cssText = 'display: none !important;';
+        if (header) header.style.cssText = 'display: none !important;';
+    }
 }
 
 function acceptOrder(orderId) {
@@ -439,6 +450,16 @@ function completeOrder(orderId) {
 function closeRestaurantDashboard() {
     isRestaurantLoggedIn = false;
     document.getElementById('restaurantDashboard').style.display = 'none';
+    
+    // Show navigation when dashboard closes
+    if (typeof showNavigation === 'function') {
+        showNavigation();
+    } else {
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
+        const header = document.querySelector('.header');
+        if (mobileNav) mobileNav.style.cssText = '';
+        if (header) header.style.cssText = '';
+    }
 }
 
 // ========================================
@@ -784,6 +805,17 @@ function handleOwnerLogin() {
     
     closeModal('ownerModal');
     document.getElementById('ownerDashboard').style.display = 'block';
+    
+    // Hide navigation when dashboard opens
+    if (typeof hideNavigation === 'function') {
+        hideNavigation();
+    } else {
+        const mobileNav = document.querySelector('.mobile-bottom-nav');
+        const header = document.querySelector('.header');
+        if (mobileNav) mobileNav.style.cssText = 'display: none !important;';
+        if (header) header.style.cssText = 'display: none !important;';
+    }
+    
     updateOwnerStats();
     
     alert('✅ Owner access granted!');
