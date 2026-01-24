@@ -832,15 +832,10 @@ body {
 }
 
 /* ========================================
-   STAR RATING STYLES
+   REVIEW STAR RATING STYLES
    ======================================== */
-.star-rating-container {
-    display: flex;
-    justify-content: center;
-    gap: 0.3rem;
-}
-
-.star-btn {
+.review-star,
+#starRating button {
     background: none !important;
     border: none !important;
     cursor: pointer;
@@ -848,40 +843,46 @@ body {
     font-size: 2.2rem;
     min-width: 48px;
     min-height: 48px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s ease;
+    transition: transform 0.15s ease, outline 0.15s ease;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-}
-
-.star-btn:hover {
-    transform: scale(1.2);
-}
-
-.star-btn:focus {
-    outline: 2px solid #f59e0b;
-    outline-offset: 2px;
+    outline: 2px solid transparent;
     border-radius: 8px;
 }
 
-.star-btn:active {
-    transform: scale(0.95);
+.review-star:hover,
+#starRating button:hover {
+    transform: scale(1.2);
 }
 
+.review-star:focus,
+#starRating button:focus {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+}
+
+.review-star:active,
+#starRating button:active {
+    transform: scale(1.1);
+}
+
+/* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-    .star-btn {
+    .review-star,
+    #starRating button {
         min-width: 52px;
         min-height: 52px;
         font-size: 2.4rem;
     }
     
-    .star-btn:active {
+    .review-star:active,
+    #starRating button:active {
         transform: scale(1.15);
-        background: rgba(245, 158, 11, 0.1) !important;
-        border-radius: 12px;
+        background: rgba(245, 158, 11, 0.15) !important;
     }
 }

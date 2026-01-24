@@ -18,15 +18,14 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id" content="888032224287-20qgalf8pvpg7s7589il4f025cva4944.apps.googleusercontent.com">
     
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
-   (function(){
-      emailjs.init({
-        publicKey: "RP9gGNpu9OJx0Laq4",
-      });
-   })();
-</script>
-    <script src="script.js" defer></script> 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init({
+            publicKey: "RP9gGNpu9OJx0Laq4",
+          });
+       })();
+    </script>
 
     
 </head>
@@ -971,15 +970,15 @@
             </div>
             
             <form onsubmit="submitReview(event)">
-                <!-- Star Rating - Touch/Click/Keyboard Accessible -->
+                <!-- Star Rating -->
                 <div class="form-group" style="text-align: center;">
                     <label style="display: block; margin-bottom: 0.8rem;">Your Rating *</label>
-                    <div id="starRating" class="star-rating-container" role="radiogroup" aria-label="Rating from 1 to 5 stars" style="display: flex; justify-content: center; gap: 0.3rem; font-size: 2.2rem;">
-                        <button type="button" class="star-btn" data-rating="1" role="radio" aria-checked="false" aria-label="1 star" tabindex="0" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation;">☆</button>
-                        <button type="button" class="star-btn" data-rating="2" role="radio" aria-checked="false" aria-label="2 stars" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation;">☆</button>
-                        <button type="button" class="star-btn" data-rating="3" role="radio" aria-checked="false" aria-label="3 stars" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation;">☆</button>
-                        <button type="button" class="star-btn" data-rating="4" role="radio" aria-checked="false" aria-label="4 stars" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation;">☆</button>
-                        <button type="button" class="star-btn" data-rating="5" role="radio" aria-checked="false" aria-label="5 stars" tabindex="-1" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; transition: transform 0.15s ease; user-select: none; -webkit-user-select: none; touch-action: manipulation;">☆</button>
+                    <div id="starRating" style="display: flex; justify-content: center; gap: 0.3rem; font-size: 2.2rem;">
+                        <button type="button" class="review-star" data-rating="1" onclick="setRating(1)" ontouchend="setRating(1); event.preventDefault();" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: transform 0.15s;">☆</button>
+                        <button type="button" class="review-star" data-rating="2" onclick="setRating(2)" ontouchend="setRating(2); event.preventDefault();" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: transform 0.15s;">☆</button>
+                        <button type="button" class="review-star" data-rating="3" onclick="setRating(3)" ontouchend="setRating(3); event.preventDefault();" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: transform 0.15s;">☆</button>
+                        <button type="button" class="review-star" data-rating="4" onclick="setRating(4)" ontouchend="setRating(4); event.preventDefault();" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: transform 0.15s;">☆</button>
+                        <button type="button" class="review-star" data-rating="5" onclick="setRating(5)" ontouchend="setRating(5); event.preventDefault();" style="background: none; border: none; cursor: pointer; padding: 0.5rem; font-size: inherit; min-width: 48px; min-height: 48px; user-select: none; -webkit-user-select: none; touch-action: manipulation; transition: transform 0.15s;">☆</button>
                     </div>
                     <input type="hidden" id="reviewRating" value="0">
                 </div>

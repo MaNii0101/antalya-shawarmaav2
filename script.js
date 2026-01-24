@@ -3727,13 +3727,8 @@ window.refreshDriverLocation = refreshDriverLocation;
 window.closeTrackingModal = closeTrackingModal;
 window.startDriverLocationTracking = startDriverLocationTracking;
 
-// Driver rating functions
-window.openDriverRating = openDriverRating;
-window.setRating = setRating;
-window.previewRating = previewRating;
-window.resetPreview = resetPreview;
-window.submitDriverRating = submitDriverRating;
-window.showDeliveryRatingPopup = showDeliveryRatingPopup;
+// Note: Driver rating functions (setDriverRating, previewDriverRating, etc.) 
+// are now exported from driver.js to avoid conflicts with review setRating
 
 // Order functions
 window.userCanOrder = userCanOrder;
@@ -3835,48 +3830,42 @@ function openWriteReview() {
     
     // Reset form
     selectedRating = 0;
+    updateStarDisplay();
     document.getElementById('reviewText').value = '';
     document.getElementById('reviewRating').value = '0';
     
     openModal('writeReviewModal');
-    
-    // Reinitialize star rating after modal is visible
-    setTimeout(function() {
-        if (typeof window.reinitStarRating === 'function') {
-            window.reinitStarRating();
-        }
-        updateStarDisplay();
-    }, 100);
 }
 
-// Set star rating (for review modal)
+// Set star rating
 function setRating(rating) {
+    console.log('setRating called with rating:', rating);
     selectedRating = rating;
-    const ratingInput = document.getElementById('reviewRating');
-    if (ratingInput) ratingInput.value = rating;
+    document.getElementById('reviewRating').value = rating;
     updateStarDisplay();
+    
+    // Haptic feedback on mobile
+    if (navigator.vibrate) {
+        navigator.vibrate(10);
+    }
 }
 
-// Update star display (works with both span and button elements)
+// Update star display - works with both span and button elements
 function updateStarDisplay() {
     const container = document.getElementById('starRating');
+    console.log('updateStarDisplay called, container:', container, 'selectedRating:', selectedRating);
     if (!container) return;
     
-    // Support both .star-btn buttons and legacy span elements
-    const stars = container.querySelectorAll('.star-btn, span');
+    // Support both button.review-star and span elements
+    const stars = container.querySelectorAll('button.review-star, button[data-rating], span');
+    console.log('Found stars:', stars.length);
     stars.forEach((star, index) => {
         if (index < selectedRating) {
             star.textContent = '⭐';
-            star.style.transform = 'scale(1.1)';
-            if (star.setAttribute) {
-                star.setAttribute('aria-checked', index + 1 === selectedRating ? 'true' : 'false');
-            }
+            star.style.transform = 'scale(1.15)';
         } else {
             star.textContent = '☆';
             star.style.transform = 'scale(1)';
-            if (star.setAttribute) {
-                star.setAttribute('aria-checked', 'false');
-            }
         }
     });
 }
@@ -4477,183 +4466,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('✅ Antalya Shawarma script loaded successfully');
 
-// ========================================
-// STAR RATING SYSTEM - Complete Fix
-// Supports: Click, Touch, Keyboard navigation
-// ========================================
-(function initStarRating() {
-    'use strict';
-    
-    // Initialize on DOM ready AND when modal opens
-    function setupStarRating() {
-        const container = document.getElementById('starRating');
-        if (!container) return;
-        
-        const stars = container.querySelectorAll('.star-btn');
-        if (!stars.length) return;
-        
-        // Remove any existing listeners by cloning
-        stars.forEach((star, index) => {
-            const newStar = star.cloneNode(true);
-            star.parentNode.replaceChild(newStar, star);
-        });
-        
-        // Get fresh references after cloning
-        const freshStars = container.querySelectorAll('.star-btn');
-        
-        freshStars.forEach((star, index) => {
-            const rating = index + 1;
-            
-            // Handle click
-            star.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStarSelect(rating, freshStars);
-            });
-            
-            // Handle touch for mobile
-            star.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStarSelect(rating, freshStars);
-            }, { passive: false });
-            
-            // Handle keyboard navigation
-            star.addEventListener('keydown', function(e) {
-                handleStarKeyboard(e, rating, freshStars);
-            });
-            
-            // Hover preview
-            star.addEventListener('mouseenter', function() {
-                previewStars(rating, freshStars);
-            });
-            
-            star.addEventListener('mouseleave', function() {
-                // Restore to selected rating on mouse leave
-                const currentRating = parseInt(document.getElementById('reviewRating')?.value || '0');
-                updateStarVisuals(currentRating, freshStars);
-            });
-        });
-    }
-    
-    function handleStarSelect(rating, stars) {
-        selectedRating = rating;
-        const ratingInput = document.getElementById('reviewRating');
-        if (ratingInput) ratingInput.value = rating;
-        
-        updateStarVisuals(rating, stars);
-        updateAriaAttributes(rating, stars);
-        
-        // Haptic feedback on mobile
-        if (navigator.vibrate) {
-            navigator.vibrate(10);
-        }
-    }
-    
-    function handleStarKeyboard(e, currentIndex, stars) {
-        let newIndex = currentIndex;
-        
-        switch(e.key) {
-            case 'ArrowRight':
-            case 'ArrowUp':
-                e.preventDefault();
-                newIndex = Math.min(currentIndex + 1, 5);
-                break;
-            case 'ArrowLeft':
-            case 'ArrowDown':
-                e.preventDefault();
-                newIndex = Math.max(currentIndex - 1, 1);
-                break;
-            case 'Enter':
-            case ' ':
-                e.preventDefault();
-                handleStarSelect(currentIndex, stars);
-                return;
-            case 'Home':
-                e.preventDefault();
-                newIndex = 1;
-                break;
-            case 'End':
-                e.preventDefault();
-                newIndex = 5;
-                break;
-            default:
-                return;
-        }
-        
-        // Focus the new star
-        const newStar = stars[newIndex - 1];
-        if (newStar) {
-            newStar.focus();
-            previewStars(newIndex, stars);
-        }
-    }
-    
-    function previewStars(rating, stars) {
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.textContent = '⭐';
-                star.style.transform = 'scale(1.15)';
-            } else {
-                star.textContent = '☆';
-                star.style.transform = 'scale(1)';
-            }
-        });
-    }
-    
-    function updateStarVisuals(rating, stars) {
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.textContent = '⭐';
-                star.style.transform = 'scale(1.1)';
-            } else {
-                star.textContent = '☆';
-                star.style.transform = 'scale(1)';
-            }
-        });
-    }
-    
-    function updateAriaAttributes(rating, stars) {
-        stars.forEach((star, index) => {
-            const isSelected = index < rating;
-            star.setAttribute('aria-checked', index + 1 === rating ? 'true' : 'false');
-            star.setAttribute('tabindex', index + 1 === rating ? '0' : '-1');
-        });
-    }
-    
-    // Setup on DOMContentLoaded
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupStarRating);
-    } else {
-        setupStarRating();
-    }
-    
-    // Re-setup when writeReviewModal becomes visible
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                const modal = document.getElementById('writeReviewModal');
-                if (modal && modal.style.display !== 'none') {
-                    setTimeout(setupStarRating, 50);
-                }
-            }
-        });
-    });
-    
-    // Start observing when DOM is ready
-    function startObserver() {
-        const modal = document.getElementById('writeReviewModal');
-        if (modal) {
-            observer.observe(modal, { attributes: true, attributeFilter: ['style', 'class'] });
-        }
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startObserver);
-    } else {
-        startObserver();
-    }
-    
-    // Also expose global reinit function
-    window.reinitStarRating = setupStarRating;
-})();
+// Export updateStarDisplay for review stars
+window.updateStarDisplay = updateStarDisplay;
