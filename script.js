@@ -2796,7 +2796,6 @@ function showVerificationModal(email, type) {
     modal.className = 'modal';
     modal.style.display = 'flex';
     
-    const typeText = type === 'registration' ? 'Registration' : 'Login';
     const messageText = type === 'registration' ? 'Complete your registration' : 'Complete your login';
     
     modal.innerHTML = `
@@ -3797,14 +3796,23 @@ let showingAllReviews = false;
 
 // Load reviews from localStorage
 function loadReviews() {
+    console.log('🔄 loadReviews called');
     const saved = localStorage.getItem('restaurantReviews');
+    console.log('💾 Saved reviews from localStorage:', saved);
+    
     if (saved) {
         try {
             restaurantReviews = JSON.parse(saved);
+            console.log('✅ Reviews parsed successfully, count:', restaurantReviews.length);
         } catch(e) {
+            console.error('❌ Error parsing reviews:', e);
             restaurantReviews = [];
         }
+    } else {
+        console.log('ℹ️ No saved reviews found');
     }
+    
+    console.log('📊 Final restaurantReviews:', restaurantReviews);
     displayReviews();
 }
 
@@ -3874,6 +3882,8 @@ function updateStarDisplay() {
 function submitReview(event) {
     event.preventDefault();
     
+    console.log('📝 submitReview called');
+    
     if (!currentUser) {
         alert('❌ Please login first');
         return;
@@ -3889,6 +3899,8 @@ function submitReview(event) {
     
     const rating = parseInt(document.getElementById('reviewRating').value);
     const text = document.getElementById('reviewText').value.trim();
+    
+    console.log('Rating:', rating, 'Text:', text);
     
     if (rating < 1 || rating > 5) {
         alert('❌ Please select a rating (1-5 stars)');
@@ -3911,9 +3923,19 @@ function submitReview(event) {
         replies: []
     };
     
+    console.log('✅ Review created:', review);
+    
     restaurantReviews.unshift(review);
+    console.log('📊 Total reviews now:', restaurantReviews.length);
+    
     saveReviews();
-    displayReviews();
+    console.log('💾 Reviews saved to localStorage');
+    
+    // Force refresh the display
+    setTimeout(() => {
+        displayReviews();
+        console.log('🔄 displayReviews called from setTimeout');
+    }, 100);
     
     closeModal('writeReviewModal');
     alert('✅ Thank you for your review!');
@@ -3921,17 +3943,25 @@ function submitReview(event) {
 
 // Display reviews
 function displayReviews() {
+    console.log('🔍 displayReviews called, reviews count:', restaurantReviews.length);
+    
     const container = document.getElementById('reviewsList');
     const noReviewsMsg = document.getElementById('noReviewsMessage');
     const avgDisplay = document.getElementById('averageRatingDisplay');
     const showMoreContainer = document.getElementById('showMoreReviewsContainer');
     
-    if (!container) return;
+    if (!container) {
+        console.error('❌ reviewsList container not found!');
+        return;
+    }
+    
+    console.log('✅ Container found:', container);
     
     if (restaurantReviews.length === 0) {
         container.innerHTML = '';
         if (noReviewsMsg) noReviewsMsg.style.display = 'block';
         if (showMoreContainer) showMoreContainer.style.display = 'none';
+        console.log('ℹ️ No reviews to display');
         return;
     }
     
@@ -3949,6 +3979,7 @@ function displayReviews() {
     
     // Show more/less logic
     const reviewsToShow = showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3);
+    console.log('📝 Displaying', reviewsToShow.length, 'reviews out of', restaurantReviews.length);
     
     if (showMoreContainer) {
         if (restaurantReviews.length > 3) {
@@ -3962,64 +3993,79 @@ function displayReviews() {
         }
     }
     
-    container.innerHTML = reviewsToShow.map(review => {
-        const stars = '⭐'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-        const timeAgo = getTimeAgo(new Date(review.date));
-        const isOwn = currentUser && review.userId === currentUser.email;
-        const canDelete = isOwn || isOwnerLoggedIn;
-        
-        const userAvatar = review.userPic 
-            ? `<img src="${review.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
-            : `<span style="font-size: 1.5rem;">${review.userName.charAt(0).toUpperCase()}</span>`;
-        
-        return `
-            <div class="review-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.2rem;">
-                <div style="display: flex; gap: 1rem; margin-bottom: 0.8rem;">
-                    <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; color: white; font-weight: bold;">
-                        ${userAvatar}
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                            <span style="font-weight: 700; color: #fff;">${review.userName}</span>
-                            ${isOwn ? '<span style="background: rgba(230,57,70,0.2); color: #e63946; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem;">You</span>' : ''}
+    try {
+        const reviewHTML = reviewsToShow.map(review => {
+            // Add safety checks
+            if (!review) {
+                console.warn('⚠️ Null review found, skipping');
+                return '';
+            }
+            
+            const userName = review.userName || 'Anonymous';
+            const stars = '⭐'.repeat(review.rating || 0) + '☆'.repeat(5 - (review.rating || 0));
+            const timeAgo = getTimeAgo(new Date(review.date));
+            const isOwn = currentUser && review.userId === currentUser.email;
+            const canDelete = isOwn || isOwnerLoggedIn;
+            
+            const userAvatar = review.userPic 
+                ? `<img src="${review.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
+                : `<span style="font-size: 1.5rem;">${userName.charAt(0).toUpperCase()}</span>`;
+            
+            return `
+                <div class="review-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1.2rem;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 0.8rem;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; color: white; font-weight: bold;">
+                            ${userAvatar}
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
-                            <span style="font-size: 0.85rem;">${stars}</span>
-                            <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">• ${timeAgo}</span>
-                        </div>
-                    </div>
-                    ${canDelete ? `<button onclick="deleteReview(${review.id})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>` : ''}
-                </div>
-                
-                <p style="color: rgba(255,255,255,0.85); line-height: 1.5; margin: 0 0 1rem 0;">${review.text}</p>
-                
-                ${review.replies && review.replies.length > 0 ? `
-                    <div style="margin-top: 0.5rem;">
-                        <button onclick="openReplies(${review.id})" style="background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #e63946; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
-                            Show replies (${review.replies.length}) ↓
-                        </button>
-                    </div>
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
-                        <div style="background: rgba(230,57,70,0.05); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
-                                <img src="logo.png" alt="Restaurant" style="height: 20px; width: auto;">
-                                <span style="font-weight: 700; font-size: 0.85rem; color: #f59e0b;">RESTAURANT OWNER</span>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="font-weight: 700; color: #fff;">${userName}</span>
+                                ${isOwn ? '<span style="background: rgba(230,57,70,0.2); color: #e63946; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.7rem;">You</span>' : ''}
                             </div>
-                            <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${review.replies[review.replies.length - 1].text}</div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem;">
+                                <span style="font-size: 0.85rem;">${stars}</span>
+                                <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">• ${timeAgo}</span>
+                            </div>
                         </div>
+                        ${canDelete ? `<button onclick="deleteReview(${review.id})" style="background: transparent; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>` : ''}
                     </div>
-                ` : `
-                    ${isOwnerLoggedIn ? `
+                    
+                    <p style="color: rgba(255,255,255,0.85); line-height: 1.5; margin: 0 0 1rem 0;">${review.text || ''}</p>
+                    
+                    ${review.replies && review.replies.length > 0 ? `
                         <div style="margin-top: 0.5rem;">
-                            <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: #8b5cf6; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
-                                Reply as Owner
+                            <button onclick="openReplies(${review.id})" style="background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #e63946; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
+                                Show replies (${review.replies.length}) ↓
                             </button>
                         </div>
-                    ` : ''}
-                `}
-            </div>
-        `;
-    }).join('');
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                            <div style="background: rgba(230,57,70,0.05); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                                    <img src="logo.png" alt="Restaurant" style="height: 20px; width: auto;">
+                                    <span style="font-weight: 700; font-size: 0.85rem; color: #f59e0b;">RESTAURANT OWNER</span>
+                                </div>
+                                <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${review.replies[review.replies.length - 1].text}</div>
+                            </div>
+                        </div>
+                    ` : `
+                        ${isOwnerLoggedIn ? `
+                            <div style="margin-top: 0.5rem;">
+                                <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: #8b5cf6; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
+                                    Reply as Owner
+                                </button>
+                            </div>
+                        ` : ''}
+                    `}
+                </div>
+            `;
+        }).join('');
+        
+        container.innerHTML = reviewHTML;
+        console.log('✅ Reviews HTML rendered successfully');
+    } catch (error) {
+        console.error('❌ Error rendering reviews:', error);
+        container.innerHTML = '<div style="color: #ef4444; padding: 1rem;">Error displaying reviews. Please refresh the page.</div>';
+    }
 }
 
 // Toggle show more reviews
@@ -4405,6 +4451,7 @@ window.submitOwnerReply = submitOwnerReply;
 window.deleteReview = deleteReview;
 window.deleteOwnerReply = deleteOwnerReply;
 window.loadReviews = loadReviews;
+window.displayReviews = displayReviews; // Export for debugging
 window.toggleShowMoreReviews = toggleShowMoreReviews;
 window.showOwnerDashboardDirect = showOwnerDashboardDirect;
 window.openForgotPasswordFromChangePassword = openForgotPasswordFromChangePassword;
