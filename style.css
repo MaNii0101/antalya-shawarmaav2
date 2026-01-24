@@ -830,3 +830,58 @@ body {
 .icon-btn[title="Driver"]:hover::after {
     width: 80%;
 }
+
+/* ========================================
+   STAR RATING STYLES
+   ======================================== */
+.star-rating-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.star-btn {
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 2.2rem;
+    min-width: 48px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.star-btn:hover {
+    transform: scale(1.2);
+}
+
+.star-btn:focus {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.star-btn:active {
+    transform: scale(0.95);
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .star-btn {
+        min-width: 52px;
+        min-height: 52px;
+        font-size: 2.4rem;
+    }
+    
+    .star-btn:active {
+        transform: scale(1.15);
+        background: rgba(245, 158, 11, 0.1) !important;
+        border-radius: 12px;
+    }
+}

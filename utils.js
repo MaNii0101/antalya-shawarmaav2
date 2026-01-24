@@ -169,12 +169,17 @@ window.addEventListener('orientationchange', function() {
     }, 100);
 });
 
-// Prevent zoom on double tap (iOS)
+// Prevent zoom on double tap (iOS) - but allow buttons and interactive elements
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function(event) {
     const now = Date.now();
     if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
+        // Don't prevent default for interactive elements
+        const target = event.target;
+        const isInteractive = target.closest('button, a, input, select, textarea, [role="button"], [role="radio"], .star-btn, .star-rating-container');
+        if (!isInteractive) {
+            event.preventDefault();
+        }
     }
     lastTouchEnd = now;
 }, false);
