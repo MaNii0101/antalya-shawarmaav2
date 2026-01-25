@@ -3995,11 +3995,16 @@ function displayReviews() {
     }
     
     // Show more/less logic
-    const reviewsToShow = showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3);
+    // OWNER sees ALL reviews immediately, customers see first 3
+    const reviewsToShow = isOwnerLoggedIn ? restaurantReviews : 
+                         (showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3));
     console.log('📝 Displaying', reviewsToShow.length, 'reviews out of', restaurantReviews.length);
     
     if (showMoreContainer) {
-        if (restaurantReviews.length > 3) {
+        // Hide "Show more" button for owner (they see all reviews already)
+        if (isOwnerLoggedIn) {
+            showMoreContainer.style.display = 'none';
+        } else if (restaurantReviews.length > 3) {
             showMoreContainer.style.display = 'block';
             const btn = document.getElementById('showMoreReviewsBtn');
             if (btn) {
@@ -4050,25 +4055,30 @@ function displayReviews() {
                     <p style="color: rgba(255,255,255,0.85); line-height: 1.5; margin: 0 0 1rem 0;">${review.text || ''}</p>
                     
                     ${review.replies && review.replies.length > 0 ? `
-                        <div style="margin-top: 0.5rem;">
-                            <button onclick="openReplies(${review.id})" style="background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #e63946; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
-                                Show replies (${review.replies.length}) ↓
-                            </button>
-                        </div>
                         <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
-                            <div style="background: rgba(230,57,70,0.05); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #e63946;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                            <div style="background: rgba(230,57,70,0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid #e63946;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                     <img src="logo.png" alt="Restaurant" style="height: 20px; width: auto;">
                                     <span style="font-weight: 700; font-size: 0.85rem; color: #f59e0b;">RESTAURANT OWNER</span>
                                 </div>
-                                <div style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">${review.replies[review.replies.length - 1].text}</div>
+                                <div style="color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.5;">${review.replies[review.replies.length - 1].text}</div>
+                                ${review.replies.length > 1 ? `
+                                    <button onclick="openReplies(${review.id})" style="background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: #e63946; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 0.5rem;">
+                                        View all replies (${review.replies.length})
+                                    </button>
+                                ` : ''}
                             </div>
+                            ${isOwnerLoggedIn ? `
+                                <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); color: #a78bfa; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; width: 100%;">
+                                    ✏️ Edit Reply
+                                </button>
+                            ` : ''}
                         </div>
                     ` : `
                         ${isOwnerLoggedIn ? `
-                            <div style="margin-top: 0.5rem;">
-                                <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: #8b5cf6; padding: 0.4rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
-                                    Reply as Owner
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                                <button onclick="openReplies(${review.id})" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; width: 100%; transition: transform 0.2s;">
+                                    💬 Reply as Owner
                                 </button>
                             </div>
                         ` : ''}
