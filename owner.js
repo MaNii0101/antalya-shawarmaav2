@@ -1347,3 +1347,96 @@ function previewCategoryImage() {
     }
 }
 
+// ========================================
+// OWNER REVIEW MANAGEMENT SYSTEM
+// ========================================
+
+/**
+ * Check if current user is owner
+ * Returns true if user is logged in via Owner Dashboard (with PIN) 
+ * OR logged in with admin email
+ */
+function isUserOwner() {
+    const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
+    return isOwnerLoggedIn || isAdmin;
+}
+
+/**
+ * Submit owner reply to a review
+ */
+function submitOwnerReply() {
+    if (!isUserOwner()) {
+        alert('❌ Only restaurant owner can reply to reviews');
+        return;
+    }
+    
+    const text = document.getElementById('replyText').value.trim();
+    if (text.length < 2) {
+        alert('❌ Please write a reply (minimum 2 characters)');
+        return;
+    }
+    
+    const review = restaurantReviews.find(r => r.id === currentReviewId);
+    if (!review) {
+        alert('❌ Review not found');
+        return;
+    }
+    
+    const reply = {
+        isOwner: true,
+        text: text,
+        date: new Date().toISOString()
+    };
+    
+    if (!review.replies) review.replies = [];
+    review.replies.push(reply);
+    saveReviews();
+    
+    // Refresh display
+    openReplies(currentReviewId);
+    displayReviews();
+    
+    // Clear input
+    document.getElementById('replyText').value = '';
+    
+    alert('✅ Reply posted successfully!');
+}
+
+/**
+ * Delete owner reply from a review
+ */
+function deleteOwnerReply(reviewId, replyIndex) {
+    if (!isUserOwner()) {
+        alert('❌ Only owner can delete replies');
+        return;
+    }
+    
+    if (!confirm('Delete this reply?')) return;
+    
+    const review = restaurantReviews.find(r => r.id === reviewId);
+    if (!review || !review.replies) return;
+    
+    review.replies.splice(replyIndex, 1);
+    saveReviews();
+    
+    // Refresh display
+    if (review.replies.length > 0) {
+        openReplies(reviewId);
+    } else {
+        closeModal('repliesModal');
+    }
+    displayReviews();
+    
+    alert('✅ Reply deleted');
+}
+
+/**
+ * Check if user can delete a specific review
+ * (Owner can delete any review, users can only delete their own)
+ */
+function canDeleteReview(review) {
+    if (!currentUser) return false;
+    const isOwn = review.userId === currentUser.email;
+    return isOwn || isUserOwner();
+}
+

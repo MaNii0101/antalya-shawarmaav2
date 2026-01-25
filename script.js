@@ -4022,7 +4022,10 @@ function displayReviews() {
             const stars = '⭐'.repeat(review.rating || 0) + '☆'.repeat(5 - (review.rating || 0));
             const timeAgo = getTimeAgo(new Date(review.date));
             const isOwn = currentUser && review.userId === currentUser.email;
-            const canDelete = isOwn || isOwnerLoggedIn;
+            
+            // Check if user is owner (uses function from owner.js)
+            const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
+            const canDelete = isOwn || isOwner;
             
             const userAvatar = review.userPic 
                 ? `<img src="${review.userPic}" style="width: 100%; height: 100%; object-fit: cover;">`
@@ -4063,14 +4066,14 @@ function displayReviews() {
                                     </button>
                                 ` : ''}
                             </div>
-                            ${isOwnerLoggedIn ? `
+                            ${isOwner ? `
                                 <button onclick="openReplies(${review.id})" style="background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.4); color: #a78bfa; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; width: 100%;">
                                     ✏️ Edit Reply
                                 </button>
                             ` : ''}
                         </div>
                     ` : `
-                        ${isOwnerLoggedIn ? `
+                        ${isOwner ? `
                             <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
                                 <button onclick="openReplies(${review.id})" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9rem; width: 100%; transition: transform 0.2s;">
                                     💬 Reply as Owner
@@ -4142,9 +4145,10 @@ function openReplies(reviewId) {
     const container = document.getElementById('repliesContent');
     const ownerReplySection = document.getElementById('ownerReplySection');
     
-    // Show owner reply section only if owner is logged in
+    // Show owner reply section only if owner is logged in OR user is admin
     if (ownerReplySection) {
-        ownerReplySection.style.display = isOwnerLoggedIn ? 'block' : 'none';
+        const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
+        ownerReplySection.style.display = isOwner ? 'block' : 'none';
     }
     
     if (!review.replies || review.replies.length === 0) {
@@ -4177,38 +4181,8 @@ function openReplies(reviewId) {
     openModal('repliesModal');
 }
 
-// Submit owner reply
-function submitOwnerReply() {
-    if (!isOwnerLoggedIn) {
-        alert('❌ Only restaurant owner can reply to reviews');
-        return;
-    }
-    
-    const text = document.getElementById('replyText').value.trim();
-    if (text.length < 2) {
-        alert('❌ Please write a reply');
-        return;
-    }
-    
-    const review = restaurantReviews.find(r => r.id === currentReviewId);
-    if (!review) return;
-    
-    const reply = {
-        isOwner: true,
-        text: text,
-        date: new Date().toISOString()
-    };
-    
-    if (!review.replies) review.replies = [];
-    review.replies.push(reply);
-    saveReviews();
-    
-    // Refresh replies modal
-    openReplies(currentReviewId);
-    displayReviews();
-    
-    alert('✅ Reply posted!');
-}
+// Submit owner reply - MOVED TO owner.js
+// See owner.js for submitOwnerReply() function
 
 // Delete review (owner or own review)
 function deleteReview(reviewId) {
@@ -4216,8 +4190,9 @@ function deleteReview(reviewId) {
     if (!review) return;
     
     const isOwn = currentUser && review.userId === currentUser.email;
+    const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
     
-    if (!isOwn && !isOwnerLoggedIn) {
+    if (!isOwn && !isOwner) {
         alert('❌ You can only delete your own reviews');
         return;
     }
@@ -4230,23 +4205,8 @@ function deleteReview(reviewId) {
     alert('✅ Review deleted');
 }
 
-// Delete owner reply
-function deleteOwnerReply(reviewId, replyIndex) {
-    if (!isOwnerLoggedIn) {
-        alert('❌ Only owner can delete replies');
-        return;
-    }
-    
-    const review = restaurantReviews.find(r => r.id === reviewId);
-    if (!review || !review.replies[replyIndex]) return;
-    
-    if (!confirm('Delete this reply?')) return;
-    
-    review.replies.splice(replyIndex, 1);
-    saveReviews();
-    openReplies(reviewId);
-    displayReviews();
-}
+// Delete owner reply - MOVED TO owner.js
+// See owner.js for deleteOwnerReply() function
 
 // Show owner dashboard direct (for owner button)
 function showOwnerDashboardDirect() {
