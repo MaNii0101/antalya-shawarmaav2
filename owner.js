@@ -801,6 +801,17 @@ function handleOwnerLogin() {
     
     isOwnerLoggedIn = true;
     
+    // IMPORTANT: Set currentUser so script.js can check admin email
+    currentUser = {
+        email: OWNER_CREDENTIALS.email,
+        name: 'Restaurant Owner',
+        role: 'owner',
+        profilePicture: null
+    };
+    
+    // Update UI to show logged in state
+    updateAuthUI();
+    
     // Show owner button on ALL devices (desktop + mobile)
     const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
     const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
