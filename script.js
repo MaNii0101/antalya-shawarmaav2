@@ -3995,16 +3995,11 @@ function displayReviews() {
     }
     
     // Show more/less logic
-    // OWNER sees ALL reviews immediately, customers see first 3
-    const reviewsToShow = isOwnerLoggedIn ? restaurantReviews : 
-                         (showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3));
+    const reviewsToShow = showingAllReviews ? restaurantReviews : restaurantReviews.slice(0, 3);
     console.log('📝 Displaying', reviewsToShow.length, 'reviews out of', restaurantReviews.length);
     
     if (showMoreContainer) {
-        // Hide "Show more" button for owner (they see all reviews already)
-        if (isOwnerLoggedIn) {
-            showMoreContainer.style.display = 'none';
-        } else if (restaurantReviews.length > 3) {
+        if (restaurantReviews.length > 3) {
             showMoreContainer.style.display = 'block';
             const btn = document.getElementById('showMoreReviewsBtn');
             if (btn) {
