@@ -801,17 +801,6 @@ function handleOwnerLogin() {
     
     isOwnerLoggedIn = true;
     
-    // IMPORTANT: Set currentUser so script.js can check admin email
-    currentUser = {
-        email: OWNER_CREDENTIALS.email,
-        name: 'Restaurant Owner',
-        role: 'owner',
-        profilePicture: null
-    };
-    
-    // Update UI to show logged in state
-    updateAuthUI();
-    
     // Show owner button on ALL devices (desktop + mobile)
     const desktopOwnerBtn = document.getElementById('ownerAccessBtn');
     const mobileOwnerBtn = document.getElementById('mobileOwnerBtn');
@@ -833,6 +822,9 @@ function handleOwnerLogin() {
     }
     
     updateOwnerStats();
+    
+    console.log('✅ Owner logged in, isOwnerLoggedIn:', isOwnerLoggedIn);
+    console.log('✅ Owner button visible:', desktopOwnerBtn ? desktopOwnerBtn.style.display : 'not found');
     
     alert('✅ Owner access granted!');
     
@@ -1364,12 +1356,12 @@ function previewCategoryImage() {
 
 /**
  * Check if current user is owner
- * Returns true if user is logged in via Owner Dashboard (with PIN) 
- * OR logged in with admin email
+ * Simple check: if owner button is visible, user is owner
  */
 function isUserOwner() {
-    const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
-    return isOwnerLoggedIn || isAdmin;
+    const ownerBtn = document.getElementById('ownerAccessBtn');
+    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    return isOwnerLoggedIn || isOwnerVisible;
 }
 
 /**

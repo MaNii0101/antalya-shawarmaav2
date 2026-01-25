@@ -4023,15 +4023,14 @@ function displayReviews() {
             const timeAgo = getTimeAgo(new Date(review.date));
             const isOwn = currentUser && review.userId === currentUser.email;
             
-            // Check if user is owner - try function from owner.js first, then fallback to direct check
-            const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
-            const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
+            // Simple owner check - if owner button is visible, user is owner
+            const ownerBtn = document.getElementById('ownerAccessBtn');
+            const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+            const isOwner = isOwnerLoggedIn || isOwnerVisible;
             
-            // Debug logging
-            console.log('🔍 Owner Check:', {
+            console.log('🔍 Simple Owner Check:', {
                 isOwnerLoggedIn: isOwnerLoggedIn,
-                isAdmin: isAdmin,
-                currentUserEmail: currentUser ? currentUser.email : 'none',
+                ownerButtonVisible: isOwnerVisible,
                 isOwner: isOwner
             });
             
@@ -4155,11 +4154,14 @@ function openReplies(reviewId) {
     const container = document.getElementById('repliesContent');
     const ownerReplySection = document.getElementById('ownerReplySection');
     
-    // Show owner reply section only if owner is logged in OR user is admin
+    // Simple owner check
+    const ownerBtn = document.getElementById('ownerAccessBtn');
+    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    const isOwner = isOwnerLoggedIn || isOwnerVisible;
+    
     if (ownerReplySection) {
-        const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
-        const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
         ownerReplySection.style.display = isOwner ? 'block' : 'none';
+        console.log('🔍 Reply modal owner check:', isOwner);
     }
     
     if (!review.replies || review.replies.length === 0) {
@@ -4201,8 +4203,9 @@ function deleteReview(reviewId) {
     if (!review) return;
     
     const isOwn = currentUser && review.userId === currentUser.email;
-    const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
-    const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
+    const ownerBtn = document.getElementById('ownerAccessBtn');
+    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    const isOwner = isOwnerLoggedIn || isOwnerVisible;
     
     if (!isOwn && !isOwner) {
         alert('❌ You can only delete your own reviews');
