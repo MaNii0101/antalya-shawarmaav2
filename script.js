@@ -3554,6 +3554,13 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMenuData(); // Load custom menu data from owner
     loadReviews(); // Load customer reviews
     
+    // Additional review display after a delay to ensure DOM is ready
+    setTimeout(() => {
+        console.log('🔄 Additional review display check after DOM load');
+        loadReviews();
+        displayReviews();
+    }, 500);
+    
     // Debug: Check if data loaded correctly
     console.log('📦 Categories:', Object.keys(categories).length);
     console.log('🍽️ Menu items:', Object.values(menuData).flat().length);
@@ -3931,13 +3938,24 @@ function submitReview(event) {
     saveReviews();
     console.log('💾 Reviews saved to localStorage');
     
-    // Force refresh the display
-    setTimeout(() => {
-        displayReviews();
-        console.log('🔄 displayReviews called from setTimeout');
-    }, 100);
-    
     closeModal('writeReviewModal');
+    
+    // Force refresh the display with multiple attempts
+    console.log('🔄 Attempting to display reviews...');
+    displayReviews();
+    
+    setTimeout(() => {
+        console.log('🔄 Second attempt to display reviews...');
+        displayReviews();
+        
+        // Scroll to reviews section
+        const reviewsSection = document.querySelector('.reviews-section');
+        if (reviewsSection) {
+            console.log('📜 Scrolling to reviews section');
+            reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }, 200);
+    
     alert('✅ Thank you for your review!');
 }
 
@@ -4453,6 +4471,34 @@ window.deleteOwnerReply = deleteOwnerReply;
 window.loadReviews = loadReviews;
 window.displayReviews = displayReviews; // Export for debugging
 window.toggleShowMoreReviews = toggleShowMoreReviews;
+
+// Debug helper function
+window.debugReviews = function() {
+    console.log('=== REVIEW DEBUG INFO ===');
+    console.log('📊 restaurantReviews array length:', restaurantReviews.length);
+    console.log('📋 Reviews data:', restaurantReviews);
+    console.log('💾 localStorage:', localStorage.getItem('restaurantReviews'));
+    
+    const container = document.getElementById('reviewsList');
+    console.log('📦 Container exists:', !!container);
+    if (container) {
+        console.log('👁️ Container display:', getComputedStyle(container).display);
+        console.log('🔢 Container children count:', container.children.length);
+        console.log('📏 Container innerHTML length:', container.innerHTML.length);
+    }
+    
+    const noMsg = document.getElementById('noReviewsMessage');
+    console.log('🚫 No reviews message display:', noMsg ? getComputedStyle(noMsg).display : 'not found');
+    
+    console.log('🔄 Attempting to refresh display...');
+    displayReviews();
+    
+    return {
+        reviewsCount: restaurantReviews.length,
+        containerExists: !!container,
+        containerChildren: container ? container.children.length : 0
+    };
+};
 window.showOwnerDashboardDirect = showOwnerDashboardDirect;
 window.openForgotPasswordFromChangePassword = openForgotPasswordFromChangePassword;
 window.confirmDeleteAccount = confirmDeleteAccount;
