@@ -4023,8 +4023,18 @@ function displayReviews() {
             const timeAgo = getTimeAgo(new Date(review.date));
             const isOwn = currentUser && review.userId === currentUser.email;
             
-            // Check if user is owner (uses function from owner.js)
-            const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
+            // Check if user is owner - try function from owner.js first, then fallback to direct check
+            const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
+            const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
+            
+            // Debug logging
+            console.log('🔍 Owner Check:', {
+                isOwnerLoggedIn: isOwnerLoggedIn,
+                isAdmin: isAdmin,
+                currentUserEmail: currentUser ? currentUser.email : 'none',
+                isOwner: isOwner
+            });
+            
             const canDelete = isOwn || isOwner;
             
             const userAvatar = review.userPic 
@@ -4147,7 +4157,8 @@ function openReplies(reviewId) {
     
     // Show owner reply section only if owner is logged in OR user is admin
     if (ownerReplySection) {
-        const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
+        const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
+        const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
         ownerReplySection.style.display = isOwner ? 'block' : 'none';
     }
     
@@ -4190,7 +4201,8 @@ function deleteReview(reviewId) {
     if (!review) return;
     
     const isOwn = currentUser && review.userId === currentUser.email;
-    const isOwner = typeof isUserOwner === 'function' ? isUserOwner() : false;
+    const isAdmin = currentUser && currentUser.email === 'admin@antalyashawarma.com';
+    const isOwner = (typeof isUserOwner === 'function' ? isUserOwner() : false) || isOwnerLoggedIn || isAdmin;
     
     if (!isOwn && !isOwner) {
         alert('❌ You can only delete your own reviews');
