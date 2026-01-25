@@ -523,6 +523,7 @@ let currentDriver = null;
 let restaurantReviews = [];
 let currentReviewId = null;
 let selectedRating = 0;
+let showingAllReviews = false;
 
 let ownerBankDetails = {
     bankName: 'Barclays Bank UK',
@@ -3799,8 +3800,6 @@ window.closeModal = closeModal;
 // REVIEWS SYSTEM
 // ========================================
 
-let showingAllReviews = false;
-
 // Load reviews from localStorage
 function loadReviews() {
     console.log('🔄 loadReviews called');
@@ -4078,11 +4077,36 @@ function displayReviews() {
             `;
         }).join('');
         
+        console.log('📏 Generated HTML length:', reviewHTML.length);
+        console.log('📊 reviewsToShow length:', reviewsToShow.length);
+        
+        if (reviewHTML.length === 0) {
+            console.error('❌ Generated HTML is empty! reviewsToShow:', reviewsToShow);
+        }
+        
         container.innerHTML = reviewHTML;
-        console.log('✅ Reviews HTML rendered successfully');
+        console.log('✅ Reviews HTML set to container');
+        console.log('👶 Container now has', container.children.length, 'children');
+        
+        // Force a reflow to ensure DOM updates
+        container.offsetHeight;
+        
+        // Verify it persists
+        setTimeout(() => {
+            const currentChildren = container.children.length;
+            console.log('⏰ After 100ms, container has', currentChildren, 'children');
+            if (currentChildren === 0 && restaurantReviews.length > 0) {
+                console.error('⚠️ WARNING: Reviews were cleared after being set!');
+                console.log('Attempting to restore...');
+                container.innerHTML = reviewHTML;
+            }
+        }, 100);
+        
     } catch (error) {
         console.error('❌ Error rendering reviews:', error);
-        container.innerHTML = '<div style="color: #ef4444; padding: 1rem;">Error displaying reviews. Please refresh the page.</div>';
+        console.error('❌ Error details:', error.message);
+        console.error('❌ Stack:', error.stack);
+        container.innerHTML = '<div style="color: #ef4444; padding: 1rem;">Error displaying reviews. Please check console.</div>';
     }
 }
 
