@@ -1356,16 +1356,10 @@ function previewCategoryImage() {
 
 /**
  * Check if current user is owner
- * Checks if owner button is visible using computed style
+ * Simple: just check if owner logged in via dashboard
  */
 function isUserOwner() {
-    const ownerBtn = document.getElementById('ownerAccessBtn');
-    let isOwnerVisible = false;
-    if (ownerBtn) {
-        const computedStyle = window.getComputedStyle(ownerBtn);
-        isOwnerVisible = computedStyle.display !== 'none';
-    }
-    return isOwnerLoggedIn || isOwnerVisible;
+    return isOwnerLoggedIn;
 }
 
 /**

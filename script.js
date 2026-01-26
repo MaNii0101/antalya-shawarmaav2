@@ -1951,7 +1951,7 @@ function showAccount() {
             <button onclick="openChangeEmail()" style="background: linear-gradient(45deg, #f4a261, #e76f51); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 📧 Change Email
             </button>
-            <button type="button" onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
+            <button onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 🔒 Change Password
             </button>
         </div>
@@ -2404,34 +2404,17 @@ function verifyAndChangeEmail(event) {
 }
 
 function openChangePassword() {
-    console.log('🔒 openChangePassword called');
-    
-    // Don't close account modal yet - keep it open in case modal doesn't exist
-    
-    const modal = document.getElementById('changePasswordModal');
-    console.log('Change password modal found:', !!modal);
-    
-    if (!modal) {
-        console.error('❌ changePasswordModal not found in DOM!');
-        alert('Error: Change password modal not found. Please refresh the page.');
-        return;
-    }
-    
-    // Close account modal only if change password modal exists
     closeModal('accountModal');
     
-    // Clear form fields
-    const currentPwdField = document.getElementById('currentPassword');
-    const newPwdField = document.getElementById('newPassword');
-    const confirmPwdField = document.getElementById('confirmNewPassword');
-    
-    if (currentPwdField) currentPwdField.value = '';
-    if (newPwdField) newPwdField.value = '';
-    if (confirmPwdField) confirmPwdField.value = '';
-    
-    // Open the modal
-    openModal('changePasswordModal');
-    console.log('✅ Change password modal opened');
+    const modal = document.getElementById('changePasswordModal');
+    if (modal) {
+        // Clear form
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmNewPassword').value = '';
+        
+        openModal('changePasswordModal');
+    }
 }
 
 function verifyAndChangePassword(event) {
@@ -3540,28 +3523,7 @@ function toggleMobileMenu() {
 
 
 // Call this after successful owner login
-function handleOwnerLogin() {
-    const email = document.getElementById('devEmail').value.trim();
-    const password = document.getElementById('devPassword').value;
-    const pin = document.getElementById('devPin').value;
-    
-    if (email !== OWNER_CREDENTIALS.email || 
-        password !== OWNER_CREDENTIALS.password || 
-        pin !== OWNER_CREDENTIALS.pin) {
-        alert('❌ Invalid credentials');
-        return;
-    }
-    
-    isOwnerLoggedIn = true;
-
-    closeModal('ownerModal');
-    document.getElementById('ownerDashboard').style.display = 'block';
-    hideNavigation(); // Hide navigation when dashboard opens
-    updateOwnerStats();
-    
-    alert('✅ Owner access granted!');
-}
-
+// handleOwnerLogin is in owner.js - removed duplicate
 
 document.addEventListener('DOMContentLoaded', function() {
     updateOwnerButtonVisibility(); // Ensure owner button is hidden on load    
@@ -4040,20 +4002,11 @@ function displayReviews() {
             const timeAgo = getTimeAgo(new Date(review.date));
             const isOwn = currentUser && review.userId === currentUser.email;
             
-            // Check if owner button is visible (using computed style)
-            const ownerBtn = document.getElementById('ownerAccessBtn');
-            let isOwnerVisible = false;
-            if (ownerBtn) {
-                const computedStyle = window.getComputedStyle(ownerBtn);
-                isOwnerVisible = computedStyle.display !== 'none';
-            }
-            const isOwner = isOwnerLoggedIn || isOwnerVisible;
+            // SIMPLE: Just check if owner is logged in
+            const isOwner = isOwnerLoggedIn;
             
             console.log('🔍 Owner Check:', {
-                ownerBtnFound: !!ownerBtn,
-                ownerBtnDisplay: ownerBtn ? window.getComputedStyle(ownerBtn).display : 'not found',
                 isOwnerLoggedIn: isOwnerLoggedIn,
-                isOwnerVisible: isOwnerVisible,
                 isOwner: isOwner
             });
             
@@ -4177,22 +4130,12 @@ function openReplies(reviewId) {
     const container = document.getElementById('repliesContent');
     const ownerReplySection = document.getElementById('ownerReplySection');
     
-    // Check if owner button is visible (using computed style)
-    const ownerBtn = document.getElementById('ownerAccessBtn');
-    let isOwnerVisible = false;
-    if (ownerBtn) {
-        const computedStyle = window.getComputedStyle(ownerBtn);
-        isOwnerVisible = computedStyle.display !== 'none';
-    }
-    const isOwner = isOwnerLoggedIn || isOwnerVisible;
+    // SIMPLE: Just check if owner is logged in
+    const isOwner = isOwnerLoggedIn;
     
     if (ownerReplySection) {
         ownerReplySection.style.display = isOwner ? 'block' : 'none';
-        console.log('🔍 Reply modal owner check:', {
-            isOwnerLoggedIn: isOwnerLoggedIn,
-            isOwnerVisible: isOwnerVisible,
-            isOwner: isOwner
-        });
+        console.log('🔍 Reply modal owner check:', isOwner);
     }
     
     if (!review.replies || review.replies.length === 0) {
@@ -4234,15 +4177,7 @@ function deleteReview(reviewId) {
     if (!review) return;
     
     const isOwn = currentUser && review.userId === currentUser.email;
-    
-    // Check if owner button is visible (using computed style)
-    const ownerBtn = document.getElementById('ownerAccessBtn');
-    let isOwnerVisible = false;
-    if (ownerBtn) {
-        const computedStyle = window.getComputedStyle(ownerBtn);
-        isOwnerVisible = computedStyle.display !== 'none';
-    }
-    const isOwner = isOwnerLoggedIn || isOwnerVisible;
+    const isOwner = isOwnerLoggedIn;  // SIMPLE
     
     if (!isOwn && !isOwner) {
         alert('❌ You can only delete your own reviews');
