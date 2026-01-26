@@ -1356,11 +1356,15 @@ function previewCategoryImage() {
 
 /**
  * Check if current user is owner
- * Simple check: if owner button is visible, user is owner
+ * Checks if owner button is visible using computed style
  */
 function isUserOwner() {
     const ownerBtn = document.getElementById('ownerAccessBtn');
-    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    let isOwnerVisible = false;
+    if (ownerBtn) {
+        const computedStyle = window.getComputedStyle(ownerBtn);
+        isOwnerVisible = computedStyle.display !== 'none';
+    }
     return isOwnerLoggedIn || isOwnerVisible;
 }
 

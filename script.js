@@ -1951,7 +1951,7 @@ function showAccount() {
             <button onclick="openChangeEmail()" style="background: linear-gradient(45deg, #f4a261, #e76f51); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 📧 Change Email
             </button>
-            <button onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
+            <button type="button" onclick="openChangePassword()" style="background: linear-gradient(45deg, #ef4444, #dc2626); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem;">
                 🔒 Change Password
             </button>
         </div>
@@ -2404,17 +2404,34 @@ function verifyAndChangeEmail(event) {
 }
 
 function openChangePassword() {
-    closeModal('accountModal');
+    console.log('🔒 openChangePassword called');
+    
+    // Don't close account modal yet - keep it open in case modal doesn't exist
     
     const modal = document.getElementById('changePasswordModal');
-    if (modal) {
-        // Clear form
-        document.getElementById('currentPassword').value = '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('confirmNewPassword').value = '';
-        
-        openModal('changePasswordModal');
+    console.log('Change password modal found:', !!modal);
+    
+    if (!modal) {
+        console.error('❌ changePasswordModal not found in DOM!');
+        alert('Error: Change password modal not found. Please refresh the page.');
+        return;
     }
+    
+    // Close account modal only if change password modal exists
+    closeModal('accountModal');
+    
+    // Clear form fields
+    const currentPwdField = document.getElementById('currentPassword');
+    const newPwdField = document.getElementById('newPassword');
+    const confirmPwdField = document.getElementById('confirmNewPassword');
+    
+    if (currentPwdField) currentPwdField.value = '';
+    if (newPwdField) newPwdField.value = '';
+    if (confirmPwdField) confirmPwdField.value = '';
+    
+    // Open the modal
+    openModal('changePasswordModal');
+    console.log('✅ Change password modal opened');
 }
 
 function verifyAndChangePassword(event) {
@@ -4023,14 +4040,20 @@ function displayReviews() {
             const timeAgo = getTimeAgo(new Date(review.date));
             const isOwn = currentUser && review.userId === currentUser.email;
             
-            // Simple owner check - if owner button is visible, user is owner
+            // Check if owner button is visible (using computed style)
             const ownerBtn = document.getElementById('ownerAccessBtn');
-            const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+            let isOwnerVisible = false;
+            if (ownerBtn) {
+                const computedStyle = window.getComputedStyle(ownerBtn);
+                isOwnerVisible = computedStyle.display !== 'none';
+            }
             const isOwner = isOwnerLoggedIn || isOwnerVisible;
             
-            console.log('🔍 Simple Owner Check:', {
+            console.log('🔍 Owner Check:', {
+                ownerBtnFound: !!ownerBtn,
+                ownerBtnDisplay: ownerBtn ? window.getComputedStyle(ownerBtn).display : 'not found',
                 isOwnerLoggedIn: isOwnerLoggedIn,
-                ownerButtonVisible: isOwnerVisible,
+                isOwnerVisible: isOwnerVisible,
                 isOwner: isOwner
             });
             
@@ -4154,14 +4177,22 @@ function openReplies(reviewId) {
     const container = document.getElementById('repliesContent');
     const ownerReplySection = document.getElementById('ownerReplySection');
     
-    // Simple owner check
+    // Check if owner button is visible (using computed style)
     const ownerBtn = document.getElementById('ownerAccessBtn');
-    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    let isOwnerVisible = false;
+    if (ownerBtn) {
+        const computedStyle = window.getComputedStyle(ownerBtn);
+        isOwnerVisible = computedStyle.display !== 'none';
+    }
     const isOwner = isOwnerLoggedIn || isOwnerVisible;
     
     if (ownerReplySection) {
         ownerReplySection.style.display = isOwner ? 'block' : 'none';
-        console.log('🔍 Reply modal owner check:', isOwner);
+        console.log('🔍 Reply modal owner check:', {
+            isOwnerLoggedIn: isOwnerLoggedIn,
+            isOwnerVisible: isOwnerVisible,
+            isOwner: isOwner
+        });
     }
     
     if (!review.replies || review.replies.length === 0) {
@@ -4203,8 +4234,14 @@ function deleteReview(reviewId) {
     if (!review) return;
     
     const isOwn = currentUser && review.userId === currentUser.email;
+    
+    // Check if owner button is visible (using computed style)
     const ownerBtn = document.getElementById('ownerAccessBtn');
-    const isOwnerVisible = ownerBtn && ownerBtn.style.display !== 'none';
+    let isOwnerVisible = false;
+    if (ownerBtn) {
+        const computedStyle = window.getComputedStyle(ownerBtn);
+        isOwnerVisible = computedStyle.display !== 'none';
+    }
     const isOwner = isOwnerLoggedIn || isOwnerVisible;
     
     if (!isOwn && !isOwner) {
